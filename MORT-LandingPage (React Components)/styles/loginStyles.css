@@ -1,0 +1,119 @@
+.login-style {
+  width: 80%;
+  margin: auto;
+  background: #bdeffa;
+  font-family: 'Segoe UI', sans-serif;
+  font-size: 15px;
+  display: flex;
+  justify-content: center;
+  padding-top: 60px;
+  text-align: center;
+}
+
+.form-toggle {
+  margin-bottom: 20px;
+}
+
+.form-toggle button {
+  padding: 10px;
+  margin: 0 5px;
+  cursor: pointer;
+  border: none;
+  border-radius: 5px;
+  background: #1d75d4;
+}
+
+.form-toggle button:active{
+  background: darkblue;
+}
+
+.form-container {
+  display: flex;
+  flex-direction: column;
+  background-color: white;
+}
+
+input {
+  margin: 10px 0;
+  padding: 10px;
+  width: 90%;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  background-color: #e8e8e8;
+}
+
+.form-buttons {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 25px;
+  width: 90%;
+  margin: 15px;
+}
+
+.cancel-button,
+.submit-button {
+  padding: 10px;
+  width: 25%;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.cancel-button {
+  background: #cccccc;
+  color: #333;
+}
+
+.submit-button {
+  background: #3d8c43;
+  color: white;
+}
+
+button[type="submit"]:hover {
+  background: #45a049;
+}
+
+.submit-button:active {
+  transform: scale(0.95);
+  background-color: #2e6f34;
+}
+
+.cancel-button:active{
+  transform: scale(0.95);
+  background-color: #999999;
+}
+
+.hidden {
+  display: none;
+}
+
+.login-p {
+  margin-top: 10px;
+  font-size: 0.9em;
+  color: #d33;
+}
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+}
+
+.modal-content {
+  background: white;
+  padding: 30px;
+  border-radius: 46px;
+  width: 90%;
+  max-width: 400px;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+}
+
+.hidden {
+  display: none;
+}
