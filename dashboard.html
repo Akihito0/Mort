@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="todos.css"><!-- CSS style paras todo -->
     <title>MORT</title>
 </head>
 
@@ -18,14 +19,16 @@
             <div class="logo-name"><span>MO</span>RT</div>
         </a>
         <ul class="side-menu">
-            <li class="active"><a href="#"><i class='bx bx-home'></i>Home</a></li>
-            <li><a href="#"><i class='bx bx-book'></i>Notes</a></li>
-            <li><a href="#"><i class='bx bx-check'></i>TO-DO List</a></li>
-            <li><a href="#"><i class='bx bx-note'></i>PDF Extractor</a></li>
+            <li class="active"><a href="#"><i class='bx bxs-dashboard'></i>Home</a></li>
+            <li><a href="#"><i class='bx bx-store-alt'></i>Notes</a></li>
+            <li><a href="#"><i class='bx bx-analyse'></i>Summarizer</a></li>
+            <li><a href="#" id="show-todo"><i class='bx bx-message-square-dots'></i>TO-DO List</a></li>
+            <li><a href="#"><i class='bx bx-group'></i>PDF Extractor</a></li>
+            <li><a href="#"><i class='bx bx-cog'></i>Settings</a></li>
         </ul>
         <ul class="side-menu">
             <li>
-                <a href="login.html" class="logout">
+                <a href="#" class="logout">
                     <i class='bx bx-log-out-circle'></i>
                     Logout
                 </a>
@@ -56,28 +59,66 @@
             </a>
         </nav>
 
-        <!-- End of Navbar -->
-
-        <main>
+        <!-- ✅ This is the only addition -->
+        <main id="dashboard-view">
             <div class="header">
                 <div class="left">
-                    <h1>Hello UserName</h1>
+                    <h1>Dashboard</h1>
+                    <ul class="breadcrumb">
+                        <li><a href="#">Home</a></li>
+                        /
+                        <li><a href="#" class="active">Home</a></li>
+                    </ul>
                 </div>
+                <a href="#" class="report">
+                    <i class='bx bx-cloud-download'></i>
+                    <span>What to put</span>
+                </a>
             </div>
+
+            <!-- Insights -->
+            <ul class="insights">
+                <li>
+                    <i class='bx bx-calendar-check'></i>
+                    <span class="info">
+                        <h3>calendar?</h3>
+                        <p>------</p>
+                    </span>
+                </li>
+                <li><i class='bx bx-show-alt'></i>
+                    <span class="info">
+                        <h3>----</h3>
+                        <p>----t</p>
+                    </span>
+                </li>
+                <li><i class='bx bx-line-chart'></i>
+                    <span class="info">
+                        <h3>----</h3>
+                        <p>----</p>
+                    </span>
+                </li>
+                <li><i class='bx bx-dollar-circle'></i>
+                    <span class="info">
+                        <h3>----</h3>
+                        <p>----</p>
+                    </span>
+                </li>
+            </ul>
+            <!-- End of Insights -->
 
             <div class="bottom-data">
                 <div class="orders">
                     <div class="header">
-                        <i class='bx bx-check'></i>
-                        <h3>Unfinished Tasks</h3>
+                        <i class='bx bx-receipt'></i>
+                        <h3>Recent Orders</h3>
                         <i class='bx bx-filter'></i>
                         <i class='bx bx-search'></i>
                     </div>
                     <table>
                         <thead>
                             <tr>
-                                <th>Task Title</th>
-                                <th>Deadline</th>
+                                <th>User</th>
+                                <th>----</th>
                                 <th>Status</th>
                             </tr>
                         </thead>
@@ -110,11 +151,11 @@
                     </table>
                 </div>
 
-                <!-- Recent Activity -->
+                <!-- Reminders -->
                 <div class="reminders">
                     <div class="header">
                         <i class='bx bx-note'></i>
-                        <h3>Recent Activity</h3>
+                        <h3>Remiders</h3>
                         <i class='bx bx-filter'></i>
                         <i class='bx bx-plus'></i>
                     </div>
@@ -142,16 +183,122 @@
                         </li>
                     </ul>
                 </div>
-
-                <!-- End of Recent Activity-->
-
+                <!-- End of Reminders -->
             </div>
-
         </main>
 
+        <!-- TO-DO Section -->
+        <div id="todo-view" class="hidden">
+            <div class="main-container">
+                <div class="todo-app">
+                    <div class="header">
+                        <div class="header-left">
+                            <h2>To-Do</h2>
+                            <span id="current-date"></span>
+                        </div>
+                        <!--Ga add kog class paras buttons-->
+                        <div class="header-buttons">
+                            <button onclick="toggleForm()">+ Add Task</button>
+                            <button onclick="toggleCalendar()">📅 View Calendar</button>
+                        </div>
+                    </div>
+                        <div id="task-form" class="form hidden">
+                             <input type="text" id="title" placeholder="Task Title" class="rounded" />
+                                <textarea id="description" placeholder="Description" class="rounded"></textarea>
+                                    <input type="date" id="due-date" class="rounded" />
+                                <select id="status" class="rounded colored-select">
+                                    <option value="Not Started" class="gray">Not Started</option>
+                                    <option value="In Progress" class="blue">In Progress</option>
+                                    <option value="Completed" class="green">Completed</option>
+                                </select>
+
+                                <select id="priority" class="rounded colored-select">
+                                    <option value="Low" class="green">Low Priority</option>
+                                    <option value="Medium" class="orange">Medium Priority</option>
+                                    <option value="High" class="red">High Priority</option>
+                                </select>
+                             <button onclick="saveTask()">Save Task</button>
+                        </div>
+                        <div class="filter-section">
+                            <h4>Filter Tasks</h4>
+                                <div class="filters">
+                                    <select id="filter-priority" onchange="applyFilters()" class="rounded colored-select">
+                                        <option value="">All Priorities</option>
+                                        <option value="High">High Priority</option>
+                                        <option value="Medium">Medium Priority</option>
+                                        <option value="Low">Low Priority</option>
+                                    </select>
+
+                                    <select id="filter-status" onchange="applyFilters()" class="rounded colored-select">
+                                        <option value="">All Status</option>
+                                        <option value="Not Started">Not Started</option>
+                                        <option value="In Progress">In Progress</option>
+                                    </select>
+
+                                    <input type="date" id="filter-date" onchange="applyFilters()" class="rounded" />
+                                    <button onclick="resetFilters()" class="rounded">Reset Filters</button>
+                                </div>
+                        </div>
+                    <div id="todo-tasks"></div>
+                </div>
+                <div class="right-panel">
+                    <div class="task-status">
+                        <h3>Task Status</h3>
+                        <div class="circular-bars">
+                            <div class="circle-container">
+                                <svg><circle cx="35" cy="35" r="30" class="bg" /><circle id="completed-bar" cx="35" cy="35" r="30" class="progress green" /></svg>
+                                <div class="label" id="completed-count">0%</div>
+                                <p>Completed</p>
+                            </div>
+                            <div class="circle-container">
+                                <svg><circle cx="35" cy="35" r="30" class="bg" /><circle id="progress-bar" cx="35" cy="35" r="30" class="progress blue" /></svg>
+                                <div class="label" id="progress-count">0%</div>
+                                <p>In Progress</p>
+                            </div>
+                            <div class="circle-container">
+                                <svg><circle cx="35" cy="35" r="30" class="bg" /><circle id="notstarted-bar" cx="35" cy="35" r="30" class="progress red" /></svg>
+                                <div class="label" id="notstarted-count">0%</div>
+                                <p>Not Started</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="completed-tasks">
+                        <h3>Completed Task</h3>
+                        <div id="completed-tasks"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+                <div id="calendar-view" class="hidden">
+                    <div class="header">
+                        <h2>📅 Calendar View</h2>
+                        <button onclick="toggleCalendar()">🔙 Back to To-Do</button>
+                    </div>
+
+                    <div class="calendar-layout">
+                        <!-- Left Panel: No Due Date Tasks -->
+                        <div class="no-due-date-tasks">
+                        <h3>Tasks Without Due Dates</h3>
+                        <div id="unscheduled-tasks"></div>
+                        </div>
+
+                        <!-- Right Panel: Scheduled Tasks -->
+                        <div class="calendar-container">
+                        <div class="calendar-header">
+                            <h3>Scheduled Tasks</h3>
+                            <div class="month-nav">
+                            <button onclick="prevMonth()">◀</button>
+                            <span id="calendar-month" class="calendar-month"></span>
+                            <button onclick="nextMonth()">▶</button>
+                            </div>
+                        </div>
+                        <div id="calendar-scheduled" class="calendar-grid"></div>
+                        </div>
+                    </div>
+                </div>
     </div>
-
+    <!-- Scripts -->
     <script src="index.js"></script>
+    <!-- <script src="main/script.js"></script> --><!--Remove script since akoa gbutang ang script sa index paras todo-->
 </body>
-
 </html>
