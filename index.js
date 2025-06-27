@@ -378,6 +378,17 @@ function handleDrop(event, newDate) {
     }
 }
 
+function handleDropToUnscheduled(event) {
+    event.preventDefault();
+    const taskId = event.dataTransfer.getData("text/plain");
+    const task = tasks.find(t => t.id == taskId);
+    if (task) {
+        task.dueDate = "";
+        renderTasks();
+        loadCalendarTasks(tasks);
+    }
+}
+
 function loadCalendarTasks(tasks = []) {
     generateCalendarGrid();
 

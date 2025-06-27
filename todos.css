@@ -487,7 +487,14 @@ select#status.text-completed {
   padding: 6px;
   overflow-y: auto;
 }
-
+#unscheduled-tasks,
+.drop-zone {
+    border: 2px dashed #ccc;
+    padding: 10px;
+    min-height: 100px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+}
 /* Task Card */
 .calendar-task {
   background-color: #e8f0fe;
