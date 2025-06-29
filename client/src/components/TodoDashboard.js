@@ -203,7 +203,7 @@ const TodoDashboard = () => {
               >
                 <div>
                   <div className="task-title">{task.title}</div>
-                  <div className="task-date">Due: {task.dueDate !== 'None' ? task.dueDate : 'None'}</div>
+                  <div className="task-date">Due: {task.dueDate || 'None'}</div>
                   <div className="badges">
                     <span className={`badge status-badge ${task.status.replace(/\s+/g, '-').toLowerCase()}`}>{task.status}</span>
                     <span className={`badge priority-badge ${task.priority.toLowerCase()}`}>{task.priority} Priority</span>
@@ -246,7 +246,7 @@ const TodoDashboard = () => {
             <div key={task.id} className="task-row completed">
               <div>
                 <div className="task-title">{task.title}</div>
-                <div className="task-date">Due: {typeof task.dueDate === 'string' ? task.dueDate : 'None'}</div>
+                <div className="task-date">Due: {task.dueDate || 'None'}</div>
               </div>
             </div>
           ))}
