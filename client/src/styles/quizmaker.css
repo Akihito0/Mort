@@ -390,9 +390,11 @@ body.dark .checkboxes-group label {
   gap: 0.5rem;
   font-size: 1rem;
   cursor: pointer;
-  color: #fff; /* Optional: for dark mode consistency */
+  
 }
-
+body:not(.dark) .modal.note-dropdown ul label {
+  color: #222; /* or #333 for better readability */
+}
 body.dark .modal.note-dropdown {
   background: #2a2a40;
   color: #f1f1f1;
