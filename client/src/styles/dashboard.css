@@ -693,3 +693,6 @@ body, .app-container {
     z-index: 999;
   }
 }
+body.dark .content main .header {
+  background: transparent;
+}

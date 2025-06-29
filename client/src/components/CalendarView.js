@@ -1,5 +1,5 @@
-// CalendarView.jsx
 import React, { useEffect } from 'react';
+import { auth, db, doc, updateDoc } from '../firestore-database/firebase';
 import '../styles/CalendarView.css';
 
 const CalendarView = ({ tasks, setTasks, onBack }) => {
@@ -37,14 +37,32 @@ const CalendarView = ({ tasks, setTasks, onBack }) => {
     e.dataTransfer.setData('text/plain', id);
   };
 
-  const handleDrop = (e, date) => {
+  const handleDrop = async (e, date) => {
     e.preventDefault();
-    const id = e.dataTransfer.getData('text/plain');
-    const today = new Date().toISOString().split('T')[0];
-    if (date < today) return alert("Can't set task to past date.");
+    const taskId = e.dataTransfer.getData('text/plain');
+    const today = new Date().toLocaleDateString('en-CA');
 
-    const updatedTasks = tasks.map(t => t.id === parseInt(id) ? { ...t, dueDate: date } : t);
-    setTasks(updatedTasks);
+    if (date < today) return alert("Can't set task to a past date.");
+
+    const taskToUpdate = tasks.find(t => t.id === taskId);
+    if (!taskToUpdate) return;
+
+    const updatedTask = { ...taskToUpdate, dueDate: date };
+
+    try {
+      const user = auth.currentUser;
+      if (!user) throw new Error("User not authenticated.");
+      const userName = user.displayName || user.uid;
+      const taskRef = doc(db, 'Mort-Task', userName, 'Task', taskId);
+
+      await updateDoc(taskRef, { dueDate: date });
+
+      const updatedTasks = tasks.map(t => t.id === taskId ? updatedTask : t);
+      setTasks(updatedTasks);
+    } catch (error) {
+      console.error("Failed to update due date:", error);
+      alert("Error updating due date.");
+    }
   };
 
   const generateCalendarGrid = () => {
@@ -54,18 +72,33 @@ const CalendarView = ({ tasks, setTasks, onBack }) => {
 
     const firstDay = new Date(currentYear, currentMonth, 1);
     const lastDay = new Date(currentYear, currentMonth + 1, 0);
+    const todayStr = new Date().toLocaleDateString('en-CA');
 
     for (let day = 1; day <= lastDay.getDate(); day++) {
       const date = new Date(currentYear, currentMonth, day);
-      const dateStr = date.toISOString().split('T')[0];
-      const div = document.createElement('div');
-      div.className = 'calendar-day';
-      div.dataset.date = dateStr;
-      div.innerHTML = `
-        <div class='day-label'>${date.toDateString()}</div>
-        <div class='drop-zone' ondragover='event.preventDefault()' ondrop=''> </div>
-      `;
-      container.appendChild(div);
+      const dateStr = date.toLocaleDateString('en-CA');
+
+      const dayDiv = document.createElement('div');
+      dayDiv.className = 'calendar-day';
+      dayDiv.dataset.date = dateStr;
+
+      const label = document.createElement('div');
+      label.className = 'day-label';
+      label.textContent = date.toDateString();
+
+      const dropZone = document.createElement('div');
+      dropZone.className = 'drop-zone';
+
+      if (dateStr < todayStr) {
+        dropZone.classList.add('disabled-drop');
+      } else {
+        dropZone.ondragover = allowDrop;
+        dropZone.ondrop = (e) => handleDrop(e, dateStr);
+      }
+
+      dayDiv.appendChild(label);
+      dayDiv.appendChild(dropZone);
+      container.appendChild(dayDiv);
     }
   };
 
@@ -92,7 +125,7 @@ const CalendarView = ({ tasks, setTasks, onBack }) => {
   };
 
   return (
-    <div id="calendar-view">
+   <div id="calendar-view">
       <div className="header">
         <h2>📅 Calendar View</h2>
         <button onClick={onBack}>🔙 Back to To-Do</button>

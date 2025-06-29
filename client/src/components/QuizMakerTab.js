@@ -3,7 +3,6 @@ import '../styles/quizmaker.css';
 import axios from 'axios';
 import MixedQuizPlayer from './MixedQuizPlayer.js';
 
-
 const QuizMakerTab = ({ notes }) => {
   const [topics, setTopics] = useState([]);
   const [selectedTopics, setSelectedTopics] = useState([]);
@@ -16,6 +15,9 @@ const QuizMakerTab = ({ notes }) => {
   });
   const [quiz, setQuiz] = useState(null);
 
+  const [showNoteDropdown, setShowNoteDropdown] = useState(false);
+  const [selectedNotesToAdd, setSelectedNotesToAdd] = useState([]);
+
   const toggleTopic = (topic) => {
     setSelectedTopics((prev) =>
       prev.includes(topic) ? prev.filter((t) => t !== topic) : [...prev, topic]
@@ -24,10 +26,23 @@ const QuizMakerTab = ({ notes }) => {
 
   const handleAddFromNotes = () => {
     if (!notes || notes.length === 0) return alert("No notes available.");
-    const choices = notes.map((note) => `${note.title}`);
-    const selected = window.prompt(`Select note title to add as topic:\n${choices.join('\n')}`);
-    const found = notes.find((note) => note.title === selected);
-    if (found) setTopics((prev) => [...prev, { title: found.title, content: found.content }]);
+    setShowNoteDropdown(true);
+  };
+
+  const toggleNoteSelection = (title) => {
+    setSelectedNotesToAdd((prev) =>
+      prev.includes(title) ? prev.filter(t => t !== title) : [...prev, title]
+    );
+  };
+
+  const confirmAddSelectedNotes = () => {
+    const newTopics = notes
+      .filter(note => selectedNotesToAdd.includes(note.title))
+      .map(note => ({ title: note.title, content: note.content }));
+
+    setTopics(prev => [...prev, ...newTopics]);
+    setShowNoteDropdown(false);
+    setSelectedNotesToAdd([]);
   };
 
   const handleAddFromPDF = async () => {
@@ -70,7 +85,7 @@ const QuizMakerTab = ({ notes }) => {
 
     const selectedTypes = Object.entries(questionTypes)
       .filter(([, v]) => v)
-      .map(([k]) => k); // ['multipleChoice', 'trueFalse']
+      .map(([k]) => k);
 
     try {
       const res = await axios.post('https://reactmort-server.onrender.com/custom-quiz', {
@@ -168,6 +183,31 @@ const QuizMakerTab = ({ notes }) => {
 
       {quiz && <MixedQuizPlayer quiz={quiz} showAnswers={showAnswers} onClose={() => setQuiz(null)} />}
 
+      {showNoteDropdown && (
+        <div className="modal-backdrop">
+          <div className="modal note-dropdown">
+            <h3>Select Notes to Add as Topics</h3>
+            <ul>
+              {notes.map((note, i) => (
+                <li key={i}>
+                  <label>
+                    <input
+                      type="checkbox"
+                      checked={selectedNotesToAdd.includes(note.title)}
+                      onChange={() => toggleNoteSelection(note.title)}
+                    />
+                    {note.title}
+                  </label>
+                </li>
+              ))}
+            </ul>
+            <div className="btn-group">
+              <button className="btn" onClick={confirmAddSelectedNotes}>✅ Add</button>
+              <button className="btn danger" onClick={() => setShowNoteDropdown(false)}>❌ Cancel</button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

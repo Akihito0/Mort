@@ -31,7 +31,7 @@ const Dashboard = () => {
   const handleNavClick = (tab) => {
     setActiveTab(tab);
     if (window.innerWidth <= 768) {
-      setSidebarOpen(false); // auto-close sidebar on mobile
+      setSidebarOpen(false); 
     }
   };
 
@@ -126,10 +126,6 @@ const Dashboard = () => {
                     <li><a href="#" className="active">Home</a></li>
                   </ul>
                 </div>
-                <a href="#" className="report">
-                  <i className='bx bx-cloud-download'></i>
-                  <span>Report</span>
-                </a>
               </div>
 
               <ul className="insights">
@@ -162,9 +158,9 @@ const Dashboard = () => {
               </div>
             )}
           {activeTab === 'quiz' && (
-              <div className="quiz-tab-wrapper">
-                <QuizMakerTab />
-              </div>
+            <div className="quiz-tab-wrapper">
+              <QuizMakerTab notes={notes} />
+            </div>
           )}
         </main>
       </div>
@@ -216,7 +212,7 @@ const Reminders = () => (
     <ul className="task-list">
       <li className="completed"><div className="task-title"><i className='bx bx-check-circle'></i><p>WHEN MANI MAHUMAN</p></div><i className='bx bx-dots-vertical-rounded'></i></li>
       <li className="completed"><div className="task-title"><i className='bx bx-check-circle'></i><p>I HAVE NO IDEA</p></div><i className='bx bx-dots-vertical-rounded'></i></li>
-      <li className="not-completed"><div className="task-title"><i className='bx bx-x-circle'></i><p>PAPASA NALANG MI KING JULIEN</p></div><i className='bx bx-dots-vertical-rounded'></i></li>
+      <li className="not-completed"><div className="task-title"><i className='bx bx-x-circle'></i><p>SUBMIT FINAL REPORT</p></div><i className='bx bx-dots-vertical-rounded'></i></li>
     </ul>
   </div>
 );

@@ -10,17 +10,16 @@ import {
   updateProfile,
   signInWithPopup
 } from "firebase/auth";
-
 import {
   getFirestore,
   doc,
   setDoc,
-  getDocs,        // Read documents
-  addDoc,         // Create documents
-  updateDoc,      // Update documents
-  deleteDoc,      // Delete documents
-  collection,     // Reference a collection
-  onSnapshot      // Real-time listener
+  getDocs,
+  addDoc,
+  updateDoc,
+  deleteDoc,
+  collection,
+  onSnapshot
 } from "firebase/firestore";
 
 const firebaseConfig = {
@@ -50,10 +49,10 @@ export {
   browserSessionPersistence,
   doc,
   setDoc,
-  getDocs,         // export for reading tasks
-  addDoc,          // export for adding tasks
-  updateDoc,       // export for editing tasks
-  deleteDoc,       // export for deleting tasks
-  collection,      // export for accessing collections
-  onSnapshot       // export for real-time updates
+  getDocs,
+  addDoc,
+  updateDoc,
+  deleteDoc,
+  collection,
+  onSnapshot
 };

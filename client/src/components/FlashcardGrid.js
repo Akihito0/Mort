@@ -13,7 +13,17 @@ const FlashcardSetCard = ({ set, onDelete, onOpen, onRename }) => {
   return (
     <div className="note-card" key={set.id}>
       {isEditing ? (
-        <div style={{ display: 'flex', gap: '0.5rem' }}>
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '0.25rem',
+            flexWrap: 'nowrap',
+            width: '100%',
+            maxWidth: '100%',
+            overflow: 'hidden'
+          }}
+        >
           <input
             type="text"
             value={tempTitle}
@@ -27,10 +37,33 @@ const FlashcardSetCard = ({ set, onDelete, onOpen, onRename }) => {
             }}
             autoFocus
             className="input"
-            style={{ flex: 1 }}
+            style={{
+              flex: '1 1 auto',
+              minWidth: 0
+            }}
           />
-          <button className="btn success" onClick={handleRename}>✅</button>
-          <button className="btn danger" onClick={() => setIsEditing(false)}>❌</button>
+          <button
+            className="btn success"
+            onClick={handleRename}
+            style={{
+              flex: '0 0 auto',
+              padding: '6px 8px',
+              fontSize: '1rem'
+            }}
+          >
+            ✅
+          </button>
+          <button
+            className="btn danger"
+            onClick={() => setIsEditing(false)}
+            style={{
+              flex: '0 0 auto',
+              padding: '6px 8px',
+              fontSize: '1rem'
+            }}
+          >
+            ❌
+          </button>
         </div>
       ) : (
         <>

@@ -78,56 +78,72 @@
 #calendar-scheduled {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
-  gap: 12px;
+  gap: 16px;
   margin-top: 20px;
-  padding: 0 10px;
+  padding: 0;
 }
  
 /* Each Day Cell */
 .calendar-day {
-  background-color: #fff;
-  border: 1px solid #e0e0e0;
-  border-radius: 8px;
-  box-shadow: 0 1px 3px rgba(60, 64, 67, 0.1);
-  padding: 10px;
-  min-height: 220px;
+  background-color: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 12px;
+  min-height: 180px;
   display: flex;
   flex-direction: column;
-  font-family: 'Roboto', sans-serif;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+  transition: box-shadow 0.2s ease;
 }
- 
+ .calendar-day:hover {
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+}
+
 .day-label {
-  font-weight: 500;
-  font-size: 13px;
-  color: #5f6368;
+  font-weight: 600;
+  font-size: 14px;
+  color: #334155;
   margin-bottom: 8px;
   text-align: left;
-  border-bottom: 1px solid #e0e0e0;
-  padding-bottom: 4px;
+  border-bottom: 1px solid #e5e7eb;
+  padding-bottom: 6px;
 }
  
 /* Drop Area */
 .drop-zone {
   flex-grow: 1;
-  background: #f8f9fa;
-  border: 2px dashed #dadce0;
-  border-radius: 6px;
+  background: #f9fafb;
+  border: 2px dashed transparent;
+  border-radius: 8px;
   padding: 6px;
-  overflow-y: auto;
+  transition: border 0.2s ease, background 0.2s ease;
+  min-height: 80px;
 }
  
+.drop-zone:hover {
+  border-color: #3b82f6;
+  background-color: #f0f9ff;
+}
+
 /* Task Card */
 .calendar-task {
-  background-color: #e8f0fe;
-  border-left: 4px solid #1a73e8;
-  padding: 10px;
-  border-radius: 6px;
+  background-color: #e0f2fe;
+  border-left: 4px solid #0284c7;
+  padding: 10px 12px;
+  border-radius: 8px;
   margin-bottom: 8px;
-  cursor: move;
+  cursor: grab;
   font-size: 14px;
-  color: #202124;
+  color: #0f172a;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  transition: transform 0.1s ease;
 }
- 
+
+.calendar-task:active {
+  cursor: grabbing;
+  transform: scale(0.98);
+}
+
 .calendar-task strong {
   display: block;
   font-weight: 500;
@@ -135,8 +151,11 @@
 }
  
 .calendar-task small {
-  color: #5f6368;
+  color: #475569;
   font-size: 12px;
+}
+.calendar-task:hover {
+  background-color: #bae6fd;
 }
  
 /* buttons */
@@ -172,4 +191,100 @@
  
 .header-buttons button:hover {
   background-color: #102a5e;
+}
+/* Dark mode styles */
+body.dark #calendar-view {
+  background: #1e1e2f;
+  color: #f1f1f1;
+}
+body.dark .header {
+  background: #2a2a40;
+  color: #f1f1f1;
+}
+body.dark .calendar-container,
+body.dark .no-due-date-tasks {
+  background: #2a2a40;
+}
+body.dark .calendar-day {
+  background: #2c2c3a;
+  border-color: #444;
+}
+body.dark .day-label {
+  color: #ddd;
+  border-bottom: 1px solid #444;
+}
+body.dark .drop-zone {
+  background: #2f2f45;
+  border-color: #555;
+}
+body.dark .drop-zone:hover {
+  background: #3a3a55;
+  border-color: #7c3aed;
+}
+body.dark .calendar-task {
+  background-color: #3c3c5a;
+  border-left-color: #4f46e5;
+  color: #fff;
+}
+body.dark .calendar-task small {
+  color: #bbb;
+}
+body.dark #calendar-view {
+  background: #1e1e2f;
+}
+/* Header background fix */
+body.dark #calendar-view .header {
+  background: #2a2a40;
+  color: #f1f1f1;
+}
+
+/* Light buttons on dark header */
+body.dark #calendar-view .header button {
+  background: #6d28d9;
+  color: white;
+}
+body.dark #calendar-view .header button:hover {
+  background: #5b21b6;
+}
+
+/* Task and calendar containers */
+body.dark .calendar-container,
+body.dark .no-due-date-tasks {
+  background: #2a2a40;
+  color: #f1f1f1;
+}
+
+/* Optional: if you add weekday labels */
+body.dark .calendar-weekday {
+  color: #ddd;
+}
+body.dark #calendar-view .header h2 {
+  color: #f1f1f1;
+}
+
+
+/* Responsive layout */
+@media (max-width: 768px) {
+  .calendar-layout {
+    flex-direction: column;
+    gap: 12px;
+  }
+  .calendar-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .calendar-task {
+    font-size: 13px;
+    padding: 8px;
+  }
+  .day-label {
+    font-size: 13px;
+  }
+  .drop-zone {
+    min-height: 60px;
+  }
+  .calendar-day {
+    min-height: 140px;
+    padding: 10px;
+  }
 }
