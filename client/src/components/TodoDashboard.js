@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import CalendarView from './CalendarView.js';
 import '../styles/TodoDashboard.css';
+import { auth, db, collection, addDoc, getDocs, updateDoc, deleteDoc, doc } from '../firestore-database/firebase';
 
 const TodoDashboard = () => {
   const [tasks, setTasks] = useState([]);
@@ -18,32 +19,73 @@ const TodoDashboard = () => {
     updateProgress();
   }, [tasks]);
 
-  const saveTask = () => {
-    if (!title || !description) return alert('Please fill out all required fields');
+  useEffect(() => {
+  const fetchTasks = async () => {
+    const user = auth.currentUser;
+    if (!user) return;
 
-    const newTask = {
-      id: editId || Date.now(),
-      title,
-      description,
-      status,
-      priority,
-      dueDate: dueDate || 'None',
-    };
+    const userName = user.displayName || user.uid;
+    const snapshot = await getDocs(collection(db, 'Mort-Task', userName, 'Task'));
+    const fetchedTasks = snapshot.docs.map(docSnap => {
+      const data = docSnap.data();
+      return {
+        id: docSnap.id,
+        ...data,
+        dueDate: data.dueDate || '',
+        created: data.created || '',
+      };
+    });
 
+    setTasks(fetchedTasks);
+  };
+
+  fetchTasks();
+  }, []);
+
+  const saveTask = async () => {
+  if (!title || !description) return alert('Please fill out all required fields');
+  
+  const user = auth.currentUser;
+  if (!user) return;
+  const userName = user.displayName || user.uid;
+
+  const taskData = {
+    title,
+    description,
+    status,
+    priority,
+    dueDate: dueDate || null, // already a string like '2025-06-29'
+    created: new Date().toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+    }),
+  };
+
+  try {
     if (editId) {
-      setTasks(tasks.map(t => (t.id === editId ? newTask : t)));
+      const docRef = doc(db, 'Mort-Task', userName, 'Task', editId);
+      await updateDoc(docRef, taskData);
+      setTasks(tasks.map(t => (t.id === editId ? { ...taskData, id: editId } : t)));
       setEditId(null);
     } else {
-      setTasks([...tasks, newTask]);
+      const docRef = await addDoc(collection(db, 'Mort-Task', userName, 'Task'), taskData);
+      setTasks([...tasks, { ...taskData, id: docRef.id }]);
     }
 
+    // Clear form
     setTitle('');
     setDescription('');
     setStatus('Not Started');
     setPriority('Low');
     setDueDate('');
     setShowForm(false);
-  };
+  } catch (error) {
+    console.error('Error saving task:', error);
+    alert('Failed to save task. Check console for details.');
+  }
+};
+
 
   const editTask = (id) => {
     const task = tasks.find(t => t.id === id);
@@ -51,14 +93,18 @@ const TodoDashboard = () => {
     setDescription(task.description);
     setStatus(task.status);
     setPriority(task.priority);
-    setDueDate(task.dueDate !== 'None' ? task.dueDate : '');
+    setDueDate(task.dueDate || '');
     setEditId(id);
     setShowForm(true);
   };
 
-  const deleteTask = (id) => {
-    setTasks(tasks.filter(t => t.id !== id));
-  };
+  const deleteTask = async (id) => {
+  const user = auth.currentUser;
+  if (!user) return;
+  const userName = user.displayName || user.uid;
+  await deleteDoc(doc(db, 'Mort-Task', userName, 'Task', id));
+  setTasks(tasks.filter(t => t.id !== id));
+};
 
   const updateProgress = () => {
     const total = tasks.length || 1;
@@ -200,7 +246,7 @@ const TodoDashboard = () => {
             <div key={task.id} className="task-row completed">
               <div>
                 <div className="task-title">{task.title}</div>
-                <div className="task-date">Due: {task.dueDate !== 'None' ? task.dueDate : 'None'}</div>
+                <div className="task-date">Due: {typeof task.dueDate === 'string' ? task.dueDate : 'None'}</div>
               </div>
             </div>
           ))}

@@ -3,20 +3,103 @@ import { useNavigate } from 'react-router-dom';
 
 import '../styles/LoginRegister.css';
 
+// Firebase imports
+import {
+  auth,
+  db,
+  GoogleAuthProvider,
+  signInWithEmailAndPassword,
+  createUserWithEmailAndPassword,
+  updateProfile,
+  signInWithPopup,
+  setPersistence,
+  browserSessionPersistence,
+  doc,
+  setDoc
+} from '../firestore-database/firebase';
+
 const LoginRegister = () => {
   const [isRegister, setIsRegister] = useState(false);
   const [showPassword, setShowPassword] = useState({ login: false, register: false });
   const navigate = useNavigate();
 
-  const handleLogin = (e) => {
-    e.preventDefault();
-    navigate('/dashboard');
+  const [formData, setFormData] = useState({
+    name: '',
+    surname: '',
+    email: '',
+    password: ''
+  });
+
+  const handleInput = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleRegister = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
-    alert('Account created!');
-    setIsRegister(false);
+    try {
+      await signInWithEmailAndPassword(auth, formData.email, formData.password);
+      navigate('/dashboard');
+    } catch (error) {
+      alert("Login Failed: " + error.message);
+    }
+  };
+
+  //Firebase Google login with Firestore user saving
+  const handleGoogleLogin = async (e) => {
+    e.preventDefault();
+    const provider = new GoogleAuthProvider();
+    provider.setCustomParameters({ prompt: 'select_account' });
+
+    try {
+      await setPersistence(auth, browserSessionPersistence);
+      const result = await signInWithPopup(auth, provider);
+      const user = result.user;
+
+      await setDoc(doc(db, "Morts-User", user.uid), {
+        name: user.displayName?.split(" ")[0] || "",
+        surname: user.displayName?.split(" ")[1] || "",
+        email: user.email,
+        uid: user.uid,
+        provider: "google",
+        createdAt: new Date().toISOString()
+      }, { merge: true });
+
+      navigate('/dashboard');
+    } catch (error) {
+      if (error.code !== 'auth/popup-closed-by-user') {
+        alert("Google Login Failed: " + error.message);
+      }
+    }
+  };
+
+  // 🟩 Firebase register with Firestore user saving
+  const handleRegister = async (e) => {
+    e.preventDefault();
+    try {
+      const userCredential = await createUserWithEmailAndPassword(auth, formData.email, formData.password);
+      const user = userCredential.user;
+
+      await updateProfile(user, {
+        displayName: `${formData.name} ${formData.surname}`
+      });
+
+      await setDoc(doc(db, "Morts-User", user.uid), {
+        name: formData.name,
+        surname: formData.surname,
+        email: formData.email,
+        uid: user.uid,
+        provider: "email",
+        createdAt: new Date().toISOString()
+      });
+
+      alert("Account successfully created! Please log in.");
+      setIsRegister(false);
+      setFormData({ name: '', surname: '', email: '', password: '' });
+
+    } catch (error) {
+      alert("Registration Failed: " + error.message);
+    }
   };
 
   return (
@@ -28,13 +111,26 @@ const LoginRegister = () => {
           <form className="login__form" onSubmit={handleLogin}>
             <div className="login__content grid">
               <div className="login__box">
-                <input type="email" required placeholder=" " className="login__input" />
+                {/* 🟩 Bind email to formData */}
+                <input
+                  type="email"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleInput}
+                  required
+                  placeholder=" "
+                  className="login__input"
+                />
                 <label className="login__label">Email</label>
                 <i className="ri-mail-fill login__icon"></i>
               </div>
               <div className="login__box">
+                {/* 🟩 Bind password to formData */}
                 <input
                   type={showPassword.login ? 'text' : 'password'}
+                  name="password"
+                  value={formData.password}
+                  onChange={handleInput}
                   required
                   placeholder=" "
                   className="login__input"
@@ -55,7 +151,10 @@ const LoginRegister = () => {
           <div className="login__social">
             <p className="login__social-title">Or login with</p>
             <div className="login__social-links">
-              <a href="#" className="login__social-link"><img src="/assets/icon-google.svg" className="login__social-img" alt="Google" /></a>
+              {/* 🟩 Google sign in button */}
+              <button onClick={handleGoogleLogin} type="button" className="login__social-link">
+                <img src="/assets/icon-google.svg" className="login__social-img" alt="Google" />
+              </button>
               <a href="#" className="login__social-link"><img src="/assets/icon-facebook.svg" className="login__social-img" alt="Facebook" /></a>
               <a href="#" className="login__social-link"><img src="/assets/icon-apple.svg" className="login__social-img" alt="Apple" /></a>
             </div>
@@ -75,24 +174,55 @@ const LoginRegister = () => {
             <div className="login__content grid">
               <div className="login__group grid">
                 <div className="login__box">
-                  <input type="text" required placeholder=" " className="login__input" />
+                  {/* 🟩 Bind name to formData */}
+                  <input
+                    type="text"
+                    name="name"
+                    value={formData.name}
+                    onChange={handleInput}
+                    required
+                    placeholder=" "
+                    className="login__input"
+                  />
                   <label className="login__label">Name</label>
                   <i className="ri-id-card-fill login__icon"></i>
                 </div>
                 <div className="login__box">
-                  <input type="text" required placeholder=" " className="login__input" />
+                  {/* 🟩 Bind surname to formData */}
+                  <input
+                    type="text"
+                    name="surname"
+                    value={formData.surname}
+                    onChange={handleInput}
+                    required
+                    placeholder=" "
+                    className="login__input"
+                  />
                   <label className="login__label">Surname</label>
                   <i className="ri-id-card-fill login__icon"></i>
                 </div>
               </div>
               <div className="login__box">
-                <input type="email" required placeholder=" " className="login__input" />
+                {/* 🟩 Bind email to formData */}
+                <input
+                  type="email"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleInput}
+                  required
+                  placeholder=" "
+                  className="login__input"
+                />
                 <label className="login__label">Email</label>
                 <i className="ri-mail-fill login__icon"></i>
               </div>
               <div className="login__box">
+                {/* 🟩 Bind password to formData */}
                 <input
                   type={showPassword.register ? 'text' : 'password'}
+                  name="password"
+                  value={formData.password}
+                  onChange={handleInput}
                   required
                   placeholder=" "
                   className="login__input"

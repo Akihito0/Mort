@@ -4,8 +4,12 @@ import TodoDashboard from '../components/TodoDashboard.js';
 import PdfTab from '../components/PdfTab.js';
 import QuizMakerTab from '../components/QuizMakerTab.js';
 import '../styles/dashboard.css';
+import { signOut } from 'firebase/auth'; // logging out
+import { auth } from '../firestore-database/firebase'; //Firebase auth instance
+import { useNavigate } from 'react-router-dom'; // Required for navigate()
 
 const Dashboard = () => {
+  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('home');
   const [isDark, setIsDark] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(true);
@@ -14,6 +18,15 @@ const Dashboard = () => {
   useEffect(() => {
     document.body.classList.toggle('dark', isDark);
   }, [isDark]);
+
+  const handleLogout = async () => {
+  try {
+    await signOut(auth); // 🔹 Firebase logout
+    navigate('/');       // 🔹 Redirect to login
+  } catch (error) {
+    alert("Logout failed: " + error.message);
+  }
+};
 
   const handleNavClick = (tab) => {
     setActiveTab(tab);
@@ -65,7 +78,7 @@ const Dashboard = () => {
         </ul>
         <ul className="side-menu">
           <li>
-            <a href="#" className="logout">
+            <a href="#" className="logout" onClick={(e) => { e.preventDefault(); handleLogout(); }}>
               <i className='bx bx-log-out-circle'></i>Logout
             </a>
           </li>
@@ -121,9 +134,9 @@ const Dashboard = () => {
 
               <ul className="insights">
                 <li><i className='bx bx-calendar-check'></i><span className="info"><h3>Calendar</h3><p>------</p></span></li>
-                <li><i className='bx bx-show-alt'></i><span className="info"><h3>Insights</h3><p>----</p></span></li>
-                <li><i className='bx bx-line-chart'></i><span className="info"><h3>Statistics</h3><p>----</p></span></li>
-                <li><i className='bx bx-dollar-circle'></i><span className="info"><h3>Revenue</h3><p>----</p></span></li>
+                {/* <li><i className='bx bx-show-alt'></i><span className="info"><h3>Insights</h3><p>----</p></span></li>
+                <li><i className='bx bx-line-chart'></i><span className="info"><h3>Statistics</h3><p>----</p></span></li> */}
+                {/* <li><i className='bx bx-dollar-circle'></i><span className="info"><h3>Revenue</h3><p>----</p></span></li> */}
               </ul>
 
               <div className="bottom-data">
@@ -163,7 +176,7 @@ const Orders = () => (
   <div className="orders">
     <div className="header">
       <i className='bx bx-receipt'></i>
-      <h3>Recent Orders</h3>
+      <h3>Recent Task</h3>
       <i className='bx bx-filter'></i>
       <i className='bx bx-search'></i>
     </div>
