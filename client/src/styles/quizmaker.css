@@ -1,0 +1,238 @@
+/* quizmaker.css */
+
+.quiz-maker-modal {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 2rem;
+  background-color: #f9f9f9;
+  min-height: 100vh; /* Changed height to min-height for better content handling */
+  overflow-y: auto;
+}
+
+.quiz-maker-container {
+  background: white;
+  border: 1px solid #ccc;
+  border-radius: 12px;
+  padding: 2rem;
+  max-width: 1100px;
+  width: 100%;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Added subtle shadow */
+}
+
+h2 {
+  text-align: center;
+  color: #333;
+  margin-bottom: 1.5rem;
+}
+
+h3 {
+  color: #555;
+  margin-top: 0;
+  margin-bottom: 1rem;
+}
+
+.quiz-maker-body {
+  display: flex;
+  gap: 2rem;
+  margin-top: 1rem;
+  flex-wrap: wrap; /* Allows columns to wrap on smaller screens */
+}
+
+/* Topic Selection Column */
+.topic-selection {
+  flex: 1;
+  min-width: 300px;
+  background-color: #fcfcfc;
+  border: 1px solid #eee;
+  border-radius: 8px;
+  padding: 1.5rem;
+}
+
+.topic-selection ul {
+  list-style: none;
+  padding: 0;
+  max-height: 300px; /* Added max-height for scrollable topics */
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 0.5rem;
+}
+
+.topic-selection li {
+  margin-bottom: 0.5rem;
+}
+
+.topic-selection button {
+  width: 100%;
+  text-align: left;
+  padding: 0.8rem 1rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  background-color: #f1f1f1;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: background-color 0.2s ease, border-color 0.2s ease;
+  display: flex; /* Aligns text and emoji nicely */
+  align-items: center;
+}
+
+.topic-selection button:hover:not(.selected) {
+  background-color: #e0e0e0;
+}
+
+.topic-selection button.selected {
+  background-color: #e6ffe6; /* Lighter green for selection */
+  border-color: #4CAF50;
+  color: #333;
+  font-weight: bold;
+}
+
+/* Quiz Settings Column */
+.quiz-settings {
+  flex: 1;
+  min-width: 300px;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem; /* Increased gap between setting blocks */
+  background-color: #fcfcfc;
+  border: 1px solid #eee;
+  border-radius: 8px;
+  padding: 1.5rem;
+}
+
+.setting-block {
+  margin-bottom: 0; /* Resetting original margin-bottom, using gap in parent */
+}
+
+.setting-block label {
+  display: block; /* Ensures label is on its own line */
+  margin-bottom: 0.5rem;
+  color: #333;
+}
+
+.quiz-settings input[type="number"],
+.quiz-settings select {
+  padding: 0.8rem; /* Slightly increased padding */
+  font-size: 1rem;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  width: 100%;
+  box-sizing: border-box; /* Ensures padding doesn't add to total width */
+}
+
+/* Fix for Question Types Alignment */
+.checkboxes-group { /* New class for the container */
+  display: flex;
+  flex-direction: column; /* Still stack checkboxes vertically */
+  gap: 0.75rem; /* Space between checkboxes */
+}
+
+.checkboxes-group label {
+  display: flex;
+  align-items: center; /* Vertically aligns text with checkbox */
+  gap: 0.75rem; /* Space between checkbox and its text */
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+.checkboxes-group input[type="checkbox"] {
+  /* Basic styling for checkboxes if needed, otherwise browser default is fine */
+  width: auto; /* Override 100% width from general input rule */
+  margin: 0; /* Remove default margin */
+}
+
+
+.selected-topics {
+  margin-top: 1rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid #eee; /* Separator for clarity */
+}
+
+.selected-topics ul {
+  list-style: none;
+  padding-left: 0;
+  max-height: 150px; /* Max height for selected topics */
+  overflow-y: auto;
+}
+
+.selected-topics li {
+  background: #e9e9e9;
+  padding: 0.6rem 0.8rem;
+  margin-bottom: 0.5rem;
+  border-radius: 6px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.95rem;
+}
+
+.selected-topics li span {
+  flex-grow: 1; /* Allows topic text to take available space */
+}
+
+.selected-topics li button {
+  background: transparent;
+  border: none;
+  color: #e74c3c; /* Red for remove button */
+  font-size: 1.2rem;
+  cursor: pointer;
+  padding: 0 0.3rem;
+  margin-left: 0.5rem;
+  transition: color 0.2s ease;
+}
+
+.selected-topics li button:hover {
+  color: #c0392b;
+}
+
+.no-topics {
+  color: #999;
+  font-style: italic;
+  text-align: center;
+  padding: 1rem;
+  border: 1px dashed #ddd;
+  border-radius: 6px;
+}
+
+.start-btn {
+  margin-top: 2rem; /* Increased margin for better separation */
+  padding: 0.9rem; /* Increased padding */
+  background-color: #007bff; /* More vibrant blue */
+  color: white;
+  border: none;
+  border-radius: 8px; /* Slightly more rounded */
+  cursor: pointer;
+  width: 100%;
+  font-size: 1.1rem; /* Slightly larger font */
+  font-weight: bold;
+  transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+.start-btn:hover {
+  background-color: #0056b3;
+  transform: translateY(-1px);
+}
+
+.extra-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 1.5rem; /* Increased gap */
+  margin-top: 2rem;
+  flex-wrap: wrap; /* Allows buttons to wrap */
+}
+
+.extra-buttons button {
+  padding: 0.6rem 1.2rem; /* Adjusted padding */
+  border: none;
+  background: #6c757d; /* Grey tone */
+  color: white;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.95rem;
+  transition: background-color 0.2s ease;
+}
+
+.extra-buttons button:hover {
+  background: #5a6268;
+}

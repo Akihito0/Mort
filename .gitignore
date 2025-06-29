@@ -1,0 +1,18 @@
+# Ignore all node_modules folders (any depth)
+node_modules/
+
+# Ignore environment files
+.env
+server/.env
+
+# Ignore logs (optional)
+*.log
+
+# Ignore user uploads (optional — if these are not supposed to be versioned)
+server/uploads/
+
+# Ignore OS & editor junk
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
