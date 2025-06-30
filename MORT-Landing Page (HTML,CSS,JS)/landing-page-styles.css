@@ -1,0 +1,228 @@
+html{
+    font-size: 30px;
+}
+body{
+    padding: 0;
+    margin: 0;
+}
+.main{
+    background: linear-gradient(180deg, white, #eee4ec 10%, #9ec9ef);
+  	width: 100%;
+	margin: 0;
+    padding: 0;
+    min-height: 100vh;
+    background-repeat: no-repeat;
+    display: flex;
+    flex-direction: column;
+}
+.header{
+    position: fixed;
+  	top: 0px;
+  	left: 0px;
+  	box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+  	background-color: white;
+  	width: 100%;
+  	height: 50px;
+    margin: 0 auto;
+    align-items: center;
+    display: flex;
+    justify-content: space-between;
+    z-index: 1000;
+}
+
+a {
+    text-decoration: none;
+}
+
+.logo{
+    font-family: 'Poppins', sans-serif;
+    font-size: 24px;
+    font-weight: 700;
+    height: 56px;
+    display: flex;
+    align-items: center;
+    color: #1976D2;
+    z-index: 500;
+    box-sizing: content-box;
+}
+
+.logo .logo-name span{
+    color: #363949;
+}
+
+.logo .bx{
+    min-width: 60px;
+    display: flex;
+    justify-content: center;
+    font-family: 'Poppins';
+    font-size: 1rem;
+    color: #1d75d4;
+}
+
+.page1{
+    background-image: url('images/landing-background.jpg');
+    background-size: cover;
+    background-position: center;
+  	width: 100%;
+    height: 100vh;
+	margin: 0 auto;
+    background-repeat: no-repeat;
+    text-align: center;
+    position: relative;
+    z-index: 2;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.blur-container {
+    display: inline-block;
+    box-shadow: 0px 0px 10px 9px rgba(0, 0, 0, 0.25);
+    border-radius: 9999px; /* Full pill shape */
+    background-color: rgba(0, 0, 0, 0.29);
+    padding: 0.5rem 2rem; 
+    color: white;
+    backdrop-filter: blur(2px);
+}
+
+.page2{
+    width: 80%;
+    height: auto;
+	margin: 0 auto;
+    position: relative;
+    z-index: 1;
+}
+
+.side-by-side {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 80px;
+  margin: 100px 0;
+  text-align: center;
+}
+
+.text-content, .image-content {
+  flex: 1;
+}
+
+.text-content h4{
+    font-family: Bebas Neue;
+    font-size: 1.75rem;
+}
+
+.text-content p{
+    font-family: Inter;
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+.image-content img {
+  width: 90%;
+  height: auto;
+  border-radius: 10px;
+}
+
+@media (max-width: 768px) {
+  .side-by-side,
+  .side-by-side.reverse {
+    flex-direction: column;
+    text-align: center;
+  }
+}
+
+.start-learning-with {
+    font-family: Bebas Neue;
+  	font-size: 30px;
+  	letter-spacing: 0.04em;
+  	display: inline-block;
+}
+button{
+    font-family: Bebas Neue;
+  	font-size: 18px;
+    color: white;
+    transition: all 0.1s ease;
+    display: inline-block;
+    white-space: nowrap;
+    cursor: pointer;
+}
+.get-started-button {
+    width: auto;
+    border-radius: 60px;
+    border: 0;
+    background-color: #1d75d4;
+    height: 50px;
+    margin: 0 auto;
+    display: block;
+    white-space: wrap;
+    padding: 10px 20px;
+}
+.sign-up-button, .home-button{
+    width: auto;
+    border-radius: 60px;
+    border: 0;
+    background-color: #1d75d4;
+    height: 30px;
+    z-index: 1000;
+    padding: 0 20px;
+}
+.log-in-button, .services-button, .about-us-button{
+    width: auto;
+    border-radius: 60px;
+    border: 0;
+    background-color: white;
+    color: black;
+    height: 30px;
+    z-index: 1000;
+    padding: 0 20px;
+}
+.center-buttons {
+    display: flex;
+    gap: 5%;
+    justify-content: center; 
+    align-items: center;
+}
+.right-buttons {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    justify-content: center;
+    margin: 0 10px;
+}
+button:active {
+    transform: scale(0.95);
+    background-color: darkblue;
+}
+.log-in-button:active , .services-button:active, .about-us-button:active{
+    transform: scale(0.95);
+    background-color: white;
+    color: #1d75d4;
+}
+p.discover{
+    font-family: Bebas Neue;
+  	font-size: 30px;
+    font-weight: normal;
+  	letter-spacing: 0.04em;
+  	display: inline-block;
+    margin-bottom: 5vh;
+}
+footer{
+    margin: auto;
+    display: block;
+    text-align: center;
+    font-size: 0.5rem;
+  	font-weight: 300;
+  	font-family: 'Alumni Sans';
+    width: 100%;
+    background-color: white;
+}
+.about{
+	color: blue;
+}
+.temp-display{
+    width: 80%;
+    height: auto;
+    display: block;
+    margin: auto;
+    margin-bottom: 200px;
+}

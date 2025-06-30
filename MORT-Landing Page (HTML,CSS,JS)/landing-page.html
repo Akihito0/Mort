@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html>
+<head>
+  	<meta charset="utf-8">
+  	<meta name="viewport" content="initial-scale=1, width=device-width">
+  	
+  	<link rel="stylesheet"  href="landing-page-styles.css" />
+    <link rel="stylesheet" href="loginStyles.css" />
+  	<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bebas Neue:wght@400&display=swap" />
+  	<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300&display=swap" />
+  	<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Alumni Sans:wght@300&display=swap" />
+  	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/glider-js/glider.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css">
+
+    <script src="https://cdn.jsdelivr.net/npm/glider-js/glider.min.js"></script>
+</head>
+<body>
+    
+  	<!--main container-->
+    <div class="main">
+        <main>
+            <!--header-->
+            <div class="header">
+                <a href="#" class="logo">
+                    <i class='bx bx-code-alt'></i>
+                    <div class="logo-name"><span>MO</span>RT</div>
+                </a>
+                <div class="center-buttons">
+                    <button class="home-button">HOME</button>
+                    <button class="services-button">SERVICES</button>
+                    <button class="about-us-button">ABOUT US</button>
+                </div>
+                <div class="right-buttons">
+                    <button class="log-in-button">LOG IN</button> 
+                    <button class="sign-up-button">SIGN UP</button>
+                </div>
+            </div>
+
+            <!--Get Started container-->
+            <div class="page1">
+                <div class="blur-container">
+                    <p class="start-learning-with">Start Learning with MORT Today. Empower your learning journey with AI-driven tools.</p>
+                    <button class="get-started-button">Get Started</button>
+                </div>
+            </div>
+
+            <!--Discover container-->
+            <div id="services" class="page2">
+
+                <div class="side-by-side">
+                    <div class="text-content">
+                        <p class="discover">DISCOVER HOW MORT CAN TRANSFORM YOUR STUDY ROUTINE.</p>
+                    </div>
+                    <div class="image-content">
+                        <img src="images/pen-and-book.png" alt="pen and book image" />
+                    </div>
+                </div>
+                
+                <div class="side-by-side">
+                    <div class="image-content">
+                        <img src="images/to-do-list.png" alt="To Do List" />
+                    </div>
+                    <div class="text-content">
+                        <h4>To-Do List</h4>
+                        <p>Stay on top of your day with our interactive to-do list. Easily add tasks, set deadlines, and check them off as you go for satisfying progress.</p>
+                    </div>
+                </div>
+
+                <div class="side-by-side">
+                    <div class="text-content">
+                        <h4>PDF Upload & Text Extraction</h4>
+                        <p>Transform physical documents into digital gold with our PDF scanner and summarizer. Quickly scan and get AI-powered summaries of your most important information.</p>
+                    </div>
+                    <div class="image-content">
+                        <img src="images/pdf-extraction.png" alt="PDF Upload & Text Extraction" />
+                    </div>
+                </div>
+                
+                <div class="side-by-side">
+                    <div class="image-content">
+                        <img src="images/quiz-maker.png" alt="Quiz Maker" />
+                    </div>
+                    <div class="text-content">
+                        <h4>Quiz Maker</h4>
+                        <p>Create custom quizzes in minutes with our intuitive quiz maker. Perfect for studying, teaching, or just testing your knowledge on any topic.</p>
+                    </div>
+                </div>
+                
+                <div class="side-by-side">
+                    <div class="text-content">
+                        <h4>Notes</h4>
+                        <p>Capture and organize your thoughts effortlessly with our interactive notes. Write, format, and link ideas in a way that truly works for you.</p>
+                    </div>
+                    <div class="image-content">
+                        <img src="images/notes.png" alt="Notes" />
+                    </div>
+                </div>
+
+                <div class="side-by-side ">
+                    <div class="image-content">
+                        <img src="images/mort-helper.png" alt="MORT HELPER" />
+                    </div>
+                    <div class="text-content">
+                        <h4>Intergrated with gemini</h4>
+                        <p>Get instant answers and assistance whenever you need it with our AI chatbot (powered by Gemini). Your smart companion for quick queries and helpful insights.</p>
+                    </div>
+                </div>
+                
+            </div>
+            </main>
+            <footer>
+        <p>
+            <span class="about">About</span>
+            <span class="span"> | </span>
+            <span class="about">Contact</span>
+            <span class="span"> | </span>
+            <span class="about">Privacy Policy</span>
+            <span class="span"> | </span>
+            <span class="about">Terms of Service</span>
+            <span> </span>
+        </p>
+        <p>© 2025 MORT (My Online Resource Terminal). All Rights Reserved. Built by learners, for learners.</p>
+    </footer>
+    </div>
+    
+    <!-- Login/Register UI -->
+    <div id="authModal" class="modal hidden login-style">
+        <div class="modal-content">
+            <div class="form-toggle">
+            <button id="showLogin">Log In</button>
+            <button id="showRegister">Sign Up</button>
+        </div>
+
+        <!-- Login Form -->
+        <div class="form-container" id="loginForm">
+        <h2>Log In</h2>
+        <form id="login">
+            <input type="email" id="loginEmail" placeholder="Email" required />
+            <input type="password" id="loginPassword" placeholder="Password" required />
+            <div class="form-buttons">
+                <button type="button" class="cancel-button">Cancel</button>
+                <button type="submit" class="submit-button">Confirm</button>
+            </div>
+        </form>
+        <p id="loginMessage"></p>
+        </div>
+
+        <!-- Register Form -->
+        <div class="form-container hidden" id="registerForm">
+        <h2>Sign Up</h2>
+        <form id="register">
+            <input type="email" id="registerEmail" placeholder="Email" required />
+            <input type="password" id="registerPassword" placeholder="Password" required />
+            <div class="form-buttons">
+                <button type="button" class="cancel-button">Cancel</button>
+                <button type="submit" class="submit-button">Confirm</button>
+            </div>
+        </form>
+            <p id="registerMessage"></p>
+            </div>
+        </div>
+</div>
+
+  <!-- Load Firebase Auth from external script -->
+  <script type="module" src="firebaseAuth.js"></script>
+    
+</body>
+</html>
