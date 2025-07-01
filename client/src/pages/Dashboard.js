@@ -5,11 +5,8 @@ import PdfTab from '../components/PdfTab.js';
 import QuizMakerTab from '../components/QuizMakerTab.js';
 import '../styles/dashboard.css';
 import { signOut } from 'firebase/auth'; // logging out
-import { auth } from '../firestore-database/firebase'; //Firebase auth instance
+import { auth, onAuthStateChanged } from '../firestore-database/firebase'; //Firebase auth instance
 import { useNavigate } from 'react-router-dom'; // Required for navigate()
-
-const user = auth.currentUser;
-const userName = user ? user.displayName : ' ';
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -17,10 +14,30 @@ const Dashboard = () => {
   const [isDark, setIsDark] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [notes, setNotes] = useState([]);
+  const [userName, setUserName] = useState(() => {
+    // Get the name instantly if available from auth
+    const user = auth.currentUser;
+    return user ? (user.displayName || user.email || '') : '';
+  });
 
   useEffect(() => {
     document.body.classList.toggle('dark', isDark);
+
   }, [isDark]);
+
+  useEffect(() => {
+    // Listen for user auth changes
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        setUserName(user.displayName || user.email || 'User');
+        //Set userName to displayName or email
+      } else {
+        setUserName('');
+      }
+    });
+    // Cleanup on unmount
+    return () => unsubscribe();
+  }, []);
 
   const handleLogout = async () => {
   try {
@@ -29,6 +46,7 @@ const Dashboard = () => {
   } catch (error) {
     alert("Logout failed: " + error.message);
   }
+  
 };
 
   const handleNavClick = (tab) => {
