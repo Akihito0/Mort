@@ -7,6 +7,7 @@ import FlashcardGrid from './FlashcardGrid.js';
 import FlashcardViewer from './FlashcardViewer.js';
 import { marked } from 'marked';
 import '../styles/NotesTab.css';
+import {auth, db, collection, getDocs, addDoc, updateDoc, deleteDoc, doc} from '../firestore-database/firebase';
 
 function NotesTab({ notes, setNotes }) {
   const [viewingNote, setViewingNote] = useState(null);
@@ -64,13 +65,86 @@ function NotesTab({ notes, setNotes }) {
       alert('Flashcard generation failed.');
     }
   };
+  // arrange notes
+  const formatNoteContent = (text) => {
+  return text
+    .split('\n')                      
+    .map(line => line.trim())         
+    .filter(line => line.length > 0)  
+    .join('\n\n');                   
+};
+  // Load notes from Firestore on mount
+  useEffect(() => {
+  const fetchNotes = async () => {
+    const user = auth.currentUser;
+    if (!user) return;
 
-  const handleAddNote = () => {
+    const displayName = user.displayName || user.uid;
+    const snapshot = await getDocs(collection(db, 'Mort-Notes', displayName, 'Notes'));
+    
+    const notesData = snapshot.docs.map(doc => {
+      const data = doc.data();
+      return {
+        id: doc.id,
+        ...data,
+        content: formatNoteContent(data.content),
+      };
+    });
+
+    setNotes(notesData);
+  };
+
+  fetchNotes();
+}, []);
+
+  const handleAddNote = async() => {
     if (!newNote.title || !newNote.content) return alert('Title and content are required.');
-    const newEntry = { id: Date.now(), ...newNote };
-    setNotes(prev => [...prev, newEntry]);
+
+    const user = auth.currentUser;
+    if (!user) return;
+    const displayName = user.displayName || user.uid;
+
+    // const newEntry = { id: Date.now(), ...newNote };
+    // setNotes(prev => [...prev, newEntry]);
+    // setNewNote({ title: '', content: '' });
+    // setAddingNote(false);
+    try {
+    const createdAt = new Date(); // current timestamp
+    const docRef = await addDoc(collection(db, 'Mort-Notes', displayName, 'Notes'), {
+      title: newNote.title,
+      content: newNote.content,
+      created: createdAt
+    });
+
+    const addedNote = {
+      id: docRef.id,
+      title: newNote.title,
+      content: formatNoteContent(newNote.content),
+      created: createdAt.toISOString()
+    };
+
+    setNotes(prev => [...prev, addedNote]);
     setNewNote({ title: '', content: '' });
     setAddingNote(false);
+  } catch (error) {
+    console.error('Error adding note:', error);
+    alert('Failed to add note.');
+  }
+  };
+  //delete note
+   const handleDeleteNote = async (id) => {
+    const user = auth.currentUser;
+    if (!user) return;
+
+    const displayName = user.displayName || user.uid;
+
+    try {
+      await deleteDoc(doc(db, 'Mort-Notes', displayName, 'Notes', id));
+      setNotes(prev => prev.filter(note => note.id !== id));
+    } catch (error) {
+      console.error('Error deleting note:', error);
+      alert('Failed to delete note.');
+    }
   };
 
   return (
@@ -86,7 +160,7 @@ function NotesTab({ notes, setNotes }) {
           <NoteGrid
             notes={notes}
             onView={setViewingNote}
-            onDelete={(id) => setNotes(prev => prev.filter(note => note.id !== id))}
+            onDelete={handleDeleteNote}
             onReorder={setNotes}
             onUseAsContext={(note) => {
               setChatContext(note);
@@ -181,10 +255,27 @@ function NotesTab({ notes, setNotes }) {
               className="input full"
             />
             <div className="btn-group">
-              <button className="btn" onClick={() => {
-                setNotes(prev => prev.map(note => note.id === editingNote.id ? editingNote : note));
-                setEditingNote(null);
-              }}>✅ Save</button>
+              <button className="btn" onClick={async () => { const user = auth.currentUser;
+                  if (!user) return; const displayName = user.displayName || user.uid;
+                    try {
+                        await updateDoc(doc(db, 'Mort-Notes', displayName, 'Notes', editingNote.id), {
+                        title: editingNote.title,
+                        content: editingNote.content
+                    });
+                        setNotes(prev =>
+                          prev.map(note =>
+                            note.id === editingNote.id
+                              ? { ...editingNote, content: formatNoteContent(editingNote.content) }
+                              : note
+                          )
+                        );
+                        setEditingNote(null);
+                      } catch (error) {
+                        console.error('Error updating note:', error);
+                        alert('Failed to update note.');
+                      }
+                    }}
+                >✅ Save</button>
               <button className="btn danger" onClick={() => setEditingNote(null)}>❌ Cancel</button>
             </div>
           </div>

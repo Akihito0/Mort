@@ -3,6 +3,7 @@ import Summary from './Summary.js';
 import ChatbotWidget from './ChatbotWidget';
 import QuizPlayer from './QuizPlayer';
 import '../styles/NotesTab.css'; // Update the CSS file name if needed
+import { auth, db, collection, addDoc } from '../firestore-database/firebase'; // Firebase imports
 
 const PdfTab = ({ onSaveNote }) => {
   const [file, setFile] = useState(null);
@@ -54,14 +55,32 @@ const PdfTab = ({ onSaveNote }) => {
     }
   };
 
-  const handleSaveNote = (text) => {
-    if (onSaveNote && text.trim()) {
-      onSaveNote({
-        id: Date.now(),
-        title: `Note ${Date.now()}`,
+  const handleSaveNote = async (text) => {
+    const user = auth.currentUser;
+    if (!user) {
+      return alert('You must be logged in to save notes.');
+    }
+    const displayName = user.displayName || user.uid;
+    const noteData ={
+        title: `Note ${new Date().toLocaleString()}`,
         content: text,
-      });
+        createdAt: new Date(),
+    };
+    // if (onSaveNote && text.trim()) {
+    //   onSaveNote({
+    //     id: Date.now(),
+    //     title: `Note ${Date.now()}`,
+    //     content: text,
+    //   });
+    //   setExtractedText('');
+    // }
+    try{
+      await addDoc(collection(db, 'Mort-Notes', displayName, 'Notes'), noteData);
+      alert('Note saved successfully!');
       setExtractedText('');
+    }
+    catch(error){
+      alert("Failed to save note.");
     }
   };
 

@@ -45,7 +45,7 @@ const NoteGrid = ({ notes, onView, onDelete, onReorder, onUseAsContext, onAddNot
                         <NoteCard
                           note={note}
                           onView={onView}
-                          onDelete={onDelete}
+                          onDelete={onDelete} 
                           onUseAsContext={onUseAsContext}
                         />
                       </div>
