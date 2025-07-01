@@ -141,11 +141,6 @@ const Dashboard = () => {
               <div className="header">
                 <div className="left">
                   <h1>{getGreeting(userName)}</h1>
-                  <ul className="breadcrumb">
-                    <li><a href="#">Home</a></li>
-                    <li>/</li>
-                    <li><a href="#" className="active">Home</a></li>
-                  </ul>
                 </div>
               </div>
 
@@ -203,7 +198,7 @@ const Orders = () => (
   <div className="orders">
     <div className="header">
       <i className='bx bx-receipt'></i>
-      <h3>Recent Task</h3>
+      <h3>Unfinished Task</h3>
       <i className='bx bx-filter'></i>
       <i className='bx bx-search'></i>
     </div>
@@ -236,7 +231,7 @@ const Reminders = () => (
   <div className="reminders">
     <div className="header">
       <i className='bx bx-note'></i>
-      <h3>Reminders</h3>
+      <h3>Recent Activity</h3>
       <i className='bx bx-filter'></i>
       <i className='bx bx-plus'></i>
     </div>
