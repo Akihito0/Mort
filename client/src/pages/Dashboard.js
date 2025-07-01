@@ -5,11 +5,8 @@ import PdfTab from '../components/PdfTab.js';
 import QuizMakerTab from '../components/QuizMakerTab.js';
 import '../styles/dashboard.css';
 import { signOut } from 'firebase/auth'; // logging out
-import { auth } from '../firestore-database/firebase'; //Firebase auth instance
+import { auth, onAuthStateChanged } from '../firestore-database/firebase'; //Firebase auth instance
 import { useNavigate } from 'react-router-dom'; // Required for navigate()
-
-const user = auth.currentUser;
-const userName = user ? user.displayName : 'User';
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -17,10 +14,22 @@ const Dashboard = () => {
   const [isDark, setIsDark] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [notes, setNotes] = useState([]);
+  const [userName, setUserName] = useState('User');
 
   useEffect(() => {
     document.body.classList.toggle('dark', isDark);
   }, [isDark]);
+  useEffect(() => {
+  const unsubscribe = onAuthStateChanged(auth, (user) => {
+    if (user && user.displayName) {
+      setUserName(user.displayName);
+    } else {
+      setUserName('User');
+    }
+  });
+
+  return () => unsubscribe();
+}, []);
 
   const handleLogout = async () => {
   try {
@@ -122,7 +131,7 @@ const Dashboard = () => {
             <>
               <div className="header">
                 <div className="left">
-                  <h1>{getGreeting()}</h1>
+                  <h1>{getGreeting(userName)}</h1>
                   <ul className="breadcrumb">
                     <li><a href="#">Home</a></li>
                     <li>/</li>
@@ -170,17 +179,7 @@ const Dashboard = () => {
     </div>
   );
 };
-function getTimeofDay(){
-  const hours = new Date().getHours();
-  if (hours < 12) return 'morning';
-  if (hours < 18) return 'afternoon';
-  return 'evening';
-}
-function getGreeting() {
-  const timeOfDay = getTimeofDay();
-  const greeting = `Good ${timeOfDay}, ${userName}`;
-  return greeting;
-}
+
 const Orders = () => (
   <div className="orders">
     <div className="header">
@@ -191,7 +190,7 @@ const Orders = () => (
     </div>
     <table>
       <thead>
-        <tr><th>Task</th><th>Date</th><th>Status</th></tr>
+        <tr><th>User</th><th>Date</th><th>Status</th></tr>
       </thead>
       <tbody>
         <tr>
@@ -231,3 +230,9 @@ const Reminders = () => (
 );
 
 export default Dashboard;
+
+function getGreeting(name) {
+  const hour = new Date().getHours();
+  const time = hour < 12 ? 'morning' : hour < 18 ? 'afternoon' : 'evening';
+  return `Good ${time}, ${name}`;
+}

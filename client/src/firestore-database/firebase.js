@@ -8,7 +8,8 @@ import {
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
   updateProfile,
-  signInWithPopup
+  signInWithPopup,
+  onAuthStateChanged
 } from "firebase/auth";
 import {
   getFirestore,
@@ -47,6 +48,7 @@ export {
   updateProfile,
   signInWithPopup,
   setPersistence,
+  onAuthStateChanged,
   browserSessionPersistence,
   doc,
   setDoc,
