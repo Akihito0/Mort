@@ -9,7 +9,7 @@ import { auth } from '../firestore-database/firebase'; //Firebase auth instance
 import { useNavigate } from 'react-router-dom'; // Required for navigate()
 
 const user = auth.currentUser;
-const userName = user ? user.displayName : 'User';
+const userName = user ? user.displayName : ' ';
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -122,7 +122,7 @@ const Dashboard = () => {
             <>
               <div className="header">
                 <div className="left">
-                  <h1>{getGreeting()}</h1>
+                  <h1>{getGreeting(userName)}</h1>
                   <ul className="breadcrumb">
                     <li><a href="#">Home</a></li>
                     <li>/</li>
@@ -176,9 +176,9 @@ function getTimeofDay(){
   if (hours < 18) return 'afternoon';
   return 'evening';
 }
-function getGreeting() {
+function getGreeting(name) {
   const timeOfDay = getTimeofDay();
-  const greeting = `Good ${timeOfDay}, ${userName}`;
+  const greeting = `Good ${timeOfDay}, ${name}`;
   return greeting;
 }
 const Orders = () => (
