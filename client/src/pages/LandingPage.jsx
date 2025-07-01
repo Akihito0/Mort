@@ -17,7 +17,7 @@ const LandingPage = () => {
       <main>
         {/* Header */}
         <div id="top">
-          <div className="header">
+          <div className="landing-header">
             <a href="#" className="logo">
               <i className="bx bx-code-alt"></i>
               <div className="logo-name">
