@@ -6,28 +6,28 @@ body{
     margin: 0;
 }
 .main{
-    background: linear-gradient(180deg, white, #eee4ec 10%, #9ec9ef);
-  	width: 100%;
+	background: linear-gradient(180deg, white, #eee4ec 10%, #9ec9ef);
+	width: 100%;
 	margin: 0;
-    padding: 0;
-    min-height: 100vh;
-    background-repeat: no-repeat;
-    display: flex;
-    flex-direction: column;
+	padding: 0;
+	min-height: 100vh;
+	background-repeat: no-repeat;
+	display: flex;
+	flex-direction: column;
 }
 .header{
-    position: fixed;
-  	top: 0px;
-  	left: 0px;
-  	box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
-  	background-color: white;
-  	width: 100%;
-  	height: 50px;
-    margin: 0 auto;
-    align-items: center;
-    display: flex;
-    justify-content: space-between;
-    z-index: 1000;
+	position: fixed;
+	top: 0px;
+	left: 0px;
+	box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+	background-color: white;
+	width: 100%;
+	height: 60px;
+	margin: 0 auto;
+	align-items: center;
+	display: flex;
+	justify-content: space-between;
+	z-index: 1000;
 }
 
 a {
@@ -55,24 +55,24 @@ a {
     display: flex;
     justify-content: center;
     font-family: 'Poppins';
-    font-size: 1rem;
+    font-size: 2.2rem;
     color: #1d75d4;
 }
 
 .page1{
-    background-image: url('../assets/landing-background.jpg');
-    background-size: cover;
-    background-position: center;
-  	width: 100%;
-    height: 100vh;
+	background-image: url('../assets/landing-background.jpg');
+	background-size: cover;
+	background-position: center;
+	width: 100%;
+	height: 100vh;
 	margin: 0 auto;
-    background-repeat: no-repeat;
-    text-align: center;
-    position: relative;
-    z-index: 2;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+	background-repeat: no-repeat;
+	text-align: center;
+	position: relative;
+	z-index: 2;
+	display: flex;
+	justify-content: center;
+	align-items: center;
 }
 
 .blur-container {
@@ -80,7 +80,7 @@ a {
     box-shadow: 0px 0px 10px 9px rgba(0, 0, 0, 0.25);
     border-radius: 9999px; /* Full pill shape */
     background-color: rgba(0, 0, 0, 0.29);
-    padding: 0.5rem 2rem; 
+    padding: 2rem 4rem; 
     color: white;
     backdrop-filter: blur(2px);
 }
@@ -108,12 +108,13 @@ a {
 
 .text-content h4{
     font-family: Bebas Neue;
-    font-size: 1.75rem;
+    font-size: 3rem;
+    margin-bottom: 20px;
 }
 
 .text-content p{
     font-family: Inter;
-    font-size: 1rem;
+    font-size: 1.5rem;
     font-weight: 600;
 }
 
@@ -132,19 +133,20 @@ a {
 }
 
 .start-learning-with {
-    font-family: Bebas Neue;
-  	font-size: 30px;
-  	letter-spacing: 0.04em;
-  	display: inline-block;
+	font-family: Bebas Neue;
+	font-size: 30px;
+	letter-spacing: 0.04em;
+	display: inline-block;
+	margin-bottom: 20px;
 }
 button{
-    font-family: Bebas Neue;
-  	font-size: 18px;
-    color: white;
-    transition: all 0.1s ease;
-    display: inline-block;
-    white-space: nowrap;
-    cursor: pointer;
+	font-family: Bebas Neue;
+	font-size: 18px;
+	color: white;
+	transition: all 0.1s ease;
+	display: inline-block;
+	white-space: nowrap;
+	cursor: pointer;
 }
 .get-started-button {
     width: auto;
@@ -194,35 +196,36 @@ button:active {
     background-color: darkblue;
 }
 .log-in-button:active , .services-button:active, .about-us-button:active{
-    transform: scale(0.95);
-    background-color: white;
-    color: #1d75d4;
+	transform: scale(0.95);
+	background-color: white;
+	color: #1d75d4;
 }
 p.discover{
-    font-family: Bebas Neue;
-  	font-size: 30px;
-    font-weight: normal;
-  	letter-spacing: 0.04em;
-  	display: inline-block;
-    margin-bottom: 5vh;
+	font-family: Bebas Neue;
+	font-size: 30px;
+	font-weight: normal;
+	letter-spacing: 0.04em;
+	display: inline-block;
+	margin-bottom: 5vh;
 }
 footer{
-    margin: auto;
-    display: block;
-    text-align: center;
-    font-size: 0.5rem;
-  	font-weight: 300;
-  	font-family: 'Alumni Sans';
-    width: 100%;
-    background-color: white;
+	margin: auto;
+	display: block;
+	text-align: center;
+	font-size: 1rem;
+	font-weight: 300;
+	font-family: 'Alumni Sans';
+	width: 100%;
+	background-color: white;
+	padding: 20px;
 }
 .about{
 	color: blue;
 }
 .temp-display{
-    width: 80%;
-    height: auto;
-    display: block;
-    margin: auto;
-    margin-bottom: 200px;
+	width: 80%;
+	height: auto;
+	display: block;
+	margin: auto;
+	margin-bottom: 200px;
 }
