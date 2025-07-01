@@ -1,17 +1,16 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import "../styles/landing-page-styles.css";
 import "../styles/loginStyles.css";
-import logo from "../assets/logo.png";
-import FirebaseAuth from "../components/firebaseAuth";
 
 const LandingPage = () => {
-  const [showModal, setShowModal] = useState(false);
-  const [isLogin, setIsLogin] = useState(true);
 
   const scrollTo = (id) => {
     const el = document.getElementById(id);
     if (el) el.scrollIntoView({ behavior: "smooth" });
   };
+
+  const navigate = useNavigate();
 
   return (
     <div className="main">
@@ -32,15 +31,8 @@ const LandingPage = () => {
             </div>
             <div className="right-buttons">
 
-              <button className="log-in-button" onClick={() => {
-                setShowModal(true);
-                setIsLogin(true);
-              }}>LOG IN</button>
-
-              <button className="sign-up-button" onClick={() => {
-                setShowModal(true);
-                setIsLogin(false);
-              }}>SIGN UP</button>
+              <button className="log-in-button" onClick={() => navigate('/login?mode=login')}>Log In</button>
+              <button className="sign-up-button" onClick={() => navigate('/login?mode=register')}>Sign Up</button>
 
             </div>
           </div>
@@ -54,10 +46,7 @@ const LandingPage = () => {
               AI-driven tools.
             </p>
             
-            <button className="get-started-button" onClick={() => {
-              setShowModal(true);
-              setIsLogin(false);
-            }}>Get Started</button>
+            <button className="get-started-button" onClick={() => navigate('/login?mode=register')}>Get Started</button>
 
           </div>
         </div>
@@ -71,13 +60,13 @@ const LandingPage = () => {
               </p>
             </div>
             <div className="image-content">
-              <img src="assets/pen-and-book.png" alt="pen and book" />
+              <img src="/images/pen-and-book.png" alt="pen and book" />
             </div>
           </div>
 
           <div className="side-by-side">
             <div className="image-content">
-              <img src="assets/to-do-list.png" alt="To Do List" />
+              <img src="/images/to-do-list.png" alt="To Do List" />
             </div>
             <div className="text-content">
               <h4>To-Do List</h4>
@@ -100,7 +89,7 @@ const LandingPage = () => {
             </div>
             <div className="image-content">
               <img
-                src="assets/pdf-extraction.png"
+                src="/images/pdf-extraction.png"
                 alt="PDF Upload & Text Extraction"
               />
             </div>
@@ -108,7 +97,7 @@ const LandingPage = () => {
 
           <div className="side-by-side">
             <div className="image-content">
-              <img src="assets/quiz-maker.png" alt="Quiz Maker" />
+              <img src="/images/quiz-maker.png" alt="Quiz Maker" />
             </div>
             <div className="text-content">
               <h4>Quiz Maker</h4>
@@ -130,13 +119,13 @@ const LandingPage = () => {
               </p>
             </div>
             <div className="image-content">
-              <img src="assets/notes.png" alt="Notes" />
+              <img src="/images/notes.png" alt="Notes" />
             </div>
           </div>
 
           <div className="side-by-side">
             <div className="image-content">
-              <img src="assets/mort-helper.png" alt="MORT HELPER" />
+              <img src="/images/mort-helper.png" alt="MORT HELPER" />
             </div>
             <div className="text-content">
               <h4>Integrated with Gemini</h4>
@@ -166,9 +155,6 @@ const LandingPage = () => {
           by learners, for learners.
         </p>
       </footer>
-      {showModal && (
-        <FirebaseAuth isLogin={isLogin} onClose={() => setShowModal(false)} />
-      )}
 
     </div>
   );
