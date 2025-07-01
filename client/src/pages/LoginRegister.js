@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useEffect } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import '../styles/LoginRegister.css';
 
 // Firebase imports
@@ -18,9 +19,17 @@ import {
 } from '../firestore-database/firebase';
 
 const LoginRegister = () => {
-  const [isRegister, setIsRegister] = useState(false);
   const [showPassword, setShowPassword] = useState({ login: false, register: false });
   const navigate = useNavigate();
+  const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
+  const mode = queryParams.get('mode');
+
+  const [isRegister, setIsRegister] = useState(mode === 'register');
+
+  useEffect(() => {
+    setIsRegister(mode === 'register');
+  }, [mode]);
 
   const [formData, setFormData] = useState({
     name: '',
