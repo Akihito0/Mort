@@ -7,7 +7,7 @@ import FlashcardGrid from './FlashcardGrid.js';
 import FlashcardViewer from './FlashcardViewer.js';
 import { marked } from 'marked';
 import '../styles/NotesTab.css';
-import {auth, db, collection, getDocs, addDoc, updateDoc, deleteDoc, doc} from '../firestore-database/firebase';
+import { auth, db, collection, getDocs, addDoc, updateDoc, deleteDoc, doc, setDoc, getDoc } from '../firestore-database/firebase';
 
 function NotesTab({ notes, setNotes }) {
   const [viewingNote, setViewingNote] = useState(null);
@@ -41,6 +41,11 @@ function NotesTab({ notes, setNotes }) {
   };
 
   const generateFlashcards = async (textToUse, title) => {
+    const user = auth.currentUser;
+    if (!user) return alert('You must be logged in to generate flashcards.');
+
+    const displayName = user.displayName || user.uid;
+
     const res = await fetch('https://reactmort-server.onrender.com/generate-flashcards', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -48,23 +53,61 @@ function NotesTab({ notes, setNotes }) {
     });
     const data = await res.json();
     if (data.flashcards) {
-      const flashcardSet = {
-        id: Date.now(),
-        title,
-        cards: data.flashcards.map((card, index) => ({
-          id: Date.now() + index,
-          front: card.question,
-          back: card.answer
-        }))
-      };
-      const updated = [flashcardSet, ...flashcards];
-      setFlashcards(updated);
-      localStorage.setItem('flashcards', JSON.stringify(updated));
-      alert('Flashcards saved!');
-    } else {
-      alert('Flashcard generation failed.');
-    }
+      try {
+        const flashcardSet = {
+          title,
+          cards: data.flashcards.map((card, index) => ({
+            id: Date.now() + index,
+            front: card.question,
+            back: card.answer
+          })),
+          created: new Date()
+        };
+
+        const flashcardDocRef = doc(db, 'Mort-Notes', displayName, 'Flashcard', title);
+        await setDoc(flashcardDocRef, flashcardSet);
+
+        const newSet = {
+          id: title,
+          ...flashcardSet,
+          created: flashcardSet.created.toISOString()
+        };
+
+        setFlashcards(prev => [newSet, ...prev]);
+        alert('Flashcards saved!');
+      } catch (error) {
+        console.error('Error saving flashcards:', error);
+        alert('Failed to save flashcards.');
+      }
+      } else {
+        alert('Flashcard generation failed.');
+      }
   };
+  //Load flashcards from localStorage on mount
+  useEffect(() => {
+  const fetchFlashcards = async () => {
+    const user = auth.currentUser;
+    if (!user) return;
+
+    const displayName = user.displayName || user.uid;
+    const snapshot = await getDocs(collection(db, 'Mort-Notes', displayName, 'Flashcard'));
+
+    const flashcardData = snapshot.docs.map(doc => {
+      const data = doc.data();
+      return {
+        id: doc.id,
+        title: doc.id,
+        cards: data.cards || [],
+        created: data.created?.toDate().toISOString() || null
+      };
+    });
+
+    setFlashcards(flashcardData);
+  };
+
+  fetchFlashcards();
+}, []);
+  
   // arrange notes
   const formatNoteContent = (text) => {
   return text
@@ -193,18 +236,52 @@ function NotesTab({ notes, setNotes }) {
           <FlashcardGrid
             flashcards={flashcards}
             onOpen={setViewingFlashcardSet}
-            onDelete={(id) => {
-              const updated = flashcards.filter(card => card.id !== id);
-              setFlashcards(updated);
-              localStorage.setItem('flashcards', JSON.stringify(updated));
-            }}
-            onRename={(id, newTitle) => {
-              const updated = flashcards.map(set =>
-                set.id === id ? { ...set, title: newTitle } : set
-              );
-              setFlashcards(updated);
-              localStorage.setItem('flashcards', JSON.stringify(updated));
-            }}
+            onDelete={async (id) => {
+                const user = auth.currentUser;
+                if (!user) return;
+
+                const displayName = user.displayName || user.uid;
+
+                try {
+                  await deleteDoc(doc(db, 'Mort-Notes', displayName, 'Flashcard', id));
+                  const updated = flashcards.filter(card => card.id !== id);
+                  setFlashcards(updated);
+                } catch (error) {
+                  console.error('Error deleting flashcard set:', error);
+                  alert('Failed to delete flashcard set.');
+                }
+              }}
+            onRename={async (oldId, newTitle) => {
+                const user = auth.currentUser;
+                if (!user) return;
+
+                const displayName = user.displayName || user.uid;
+
+                try {
+                  const oldRef = doc(db, 'Mort-Notes', displayName, 'Flashcard', oldId);
+                  const newRef = doc(db, 'Mort-Notes', displayName, 'Flashcard', newTitle);
+
+                  const oldSnap = await getDoc(oldRef);
+                  if (!oldSnap.exists()) return alert('Original flashcard not found.');
+
+                  const oldData = oldSnap.data();
+
+                  await setDoc(newRef, {
+                    ...oldData,
+                    title: newTitle
+                  });
+
+                  await deleteDoc(oldRef);
+
+                  const updated = flashcards.map(set =>
+                    set.id === oldId ? { ...set, id: newTitle, title: newTitle } : set
+                  );
+                  setFlashcards(updated);
+                } catch (error) {
+                  console.error('Error renaming flashcard set:', error);
+                  alert('Failed to rename flashcard set.');
+                }
+              }}
           />
         </div>
       </div>
