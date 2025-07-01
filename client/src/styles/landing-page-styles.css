@@ -1,6 +1,3 @@
-html{
-    font-size: 30px;
-}
 body{
     padding: 0;
     margin: 0;
@@ -19,15 +16,15 @@ body{
 	position: fixed;
 	top: 0px;
 	left: 0px;
+    	right: 0px;
 	box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
 	background-color: white;
 	width: 100%;
 	height: 60px;
-	margin: 0 auto;
 	align-items: center;
 	display: flex;
 	justify-content: space-between;
-	z-index: 1000;
+	z-index: 10;
 }
 
 a {
@@ -65,7 +62,7 @@ a {
 	background-position: center;
 	width: 100%;
 	height: 100vh;
-	margin: 0 auto;
+	margin: 60px auto;
 	background-repeat: no-repeat;
 	text-align: center;
 	position: relative;
@@ -159,25 +156,27 @@ button{
     white-space: wrap;
     padding: 10px 20px;
 }
-.sign-up-button, .home-button{
-    width: auto;
-    border-radius: 60px;
-    border: 0;
-    background-color: #1d75d4;
-    height: 30px;
-    z-index: 1000;
-    padding: 0 20px;
+.sign-up-button, .home-button {
+    width: auto !important;
+    border-radius: 60px !important;
+    border: 0 !important;
+    background-color: #1d75d4 !important;
+    height: 30px !important;
+    z-index: 1000 !important;
+    padding: 0 20px !important;
 }
-.log-in-button, .services-button, .about-us-button{
-    width: auto;
-    border-radius: 60px;
-    border: 0;
-    background-color: white;
-    color: black;
-    height: 30px;
-    z-index: 1000;
-    padding: 0 20px;
+
+.log-in-button, .services-button, .about-us-button {
+    width: auto !important;
+    border-radius: 60px !important;
+    border: 0 !important;
+    background-color: white !important;
+    color: black !important;
+    height: 30px !important;
+    z-index: 1000 !important;
+    padding: 0 20px !important;
 }
+
 .center-buttons {
     display: flex;
     gap: 5%;
@@ -191,14 +190,14 @@ button{
     justify-content: center;
     margin: 0 10px;
 }
-button:active {
+.get-started-button:active, .home-button:active, .sign-up-button:active {
     transform: scale(0.95);
-    background-color: darkblue;
+    background-color: darkblue !important;
 }
 .log-in-button:active , .services-button:active, .about-us-button:active{
-	transform: scale(0.95);
-	background-color: white;
-	color: #1d75d4;
+	transform: scale(0.95) !important;
+	background-color: white !important;
+	color: #1d75d4 !important;
 }
 p.discover{
 	font-family: Bebas Neue;
