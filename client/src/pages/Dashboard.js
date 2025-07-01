@@ -8,6 +8,9 @@ import { signOut } from 'firebase/auth'; // logging out
 import { auth } from '../firestore-database/firebase'; //Firebase auth instance
 import { useNavigate } from 'react-router-dom'; // Required for navigate()
 
+const user = auth.currentUser;
+const userName = user ? user.displayName : 'User';
+
 const Dashboard = () => {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('home');
@@ -119,7 +122,7 @@ const Dashboard = () => {
             <>
               <div className="header">
                 <div className="left">
-                  <h1>Dashboard</h1>
+                  <h1>{getGreeting()}</h1>
                   <ul className="breadcrumb">
                     <li><a href="#">Home</a></li>
                     <li>/</li>
@@ -167,7 +170,17 @@ const Dashboard = () => {
     </div>
   );
 };
-
+function getTimeofDay(){
+  const hours = new Date().getHours();
+  if (hours < 12) return 'morning';
+  if (hours < 18) return 'afternoon';
+  return 'evening';
+}
+function getGreeting() {
+  const timeOfDay = getTimeofDay();
+  const greeting = `Good ${timeOfDay}, ${userName}`;
+  return greeting;
+}
 const Orders = () => (
   <div className="orders">
     <div className="header">
@@ -178,7 +191,7 @@ const Orders = () => (
     </div>
     <table>
       <thead>
-        <tr><th>User</th><th>Date</th><th>Status</th></tr>
+        <tr><th>Task</th><th>Date</th><th>Status</th></tr>
       </thead>
       <tbody>
         <tr>
