@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "../styles/landing-page-styles.css";
-import "../styles/loginStyles.css";
+// import "../styles/loginStyles.css";
 
 const LandingPage = () => {
 
@@ -17,7 +17,7 @@ const LandingPage = () => {
       <main>
         {/* Header */}
         <div id="top">
-          <div className="header">
+          <div className="landing-header">
             <a href="#" className="logo">
               <i className="bx bx-code-alt"></i>
               <div className="logo-name">
