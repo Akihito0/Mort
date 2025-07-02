@@ -1,5 +1,5 @@
 import React from 'react';
-import '../styles/Settings.css'; // Reuse or update your styles
+import '../styles/Settings.css';
 
 function Settings() {
   return (
@@ -11,12 +11,16 @@ function Settings() {
 
         <div className="card">
           <div className="settings-content">
-            <div className="settings-item vertical">
-              <div className="profile-picture-section">
-                <img src="images/default-profile.png" alt="Profile" id="profile-img" />
-                <input type="file" id="upload-profile" accept="image/*" />
+              <div className="settings-item vertical">
+                
+              <div class="settings-sidebar">
+              <div className="card">
+                     <button className="btn primary">Account</button> <br/>
+                     <button className="btn secondary">Appearance</button>   
+                </div>
               </div>
-              <div className="input-group">
+              <div className="settings-content"> 
+                <div className="input-group">
                 <label>First Name</label>
                 <input type="text" id="first-name" placeholder="First Name" />
               </div>
@@ -27,11 +31,19 @@ function Settings() {
               <div className="input-group">
                 <label>Email</label>
                 <input type="text" id="surname" placeholder="Email@email.com" />
-              </div>
+              </div></div>
               
-              <div className="card">   
-                     <button className="btn danger">Delete Account</button>
+              
+              <div className="setting-sidebar">
+                <div className="profile-picture-section">
+                <img src="images/default-profile.png" alt="Profile" id="profile-img" />
+                <input type="file" id="upload-profile" accept="image/*" />
+                <button className="btn primary">Change Password</button>
+                     <button className="btn secondary">Change Email</button>   
+                     <button className="btn">Delete Account</button>
                      <button className="btn">Update Info</button>
+              </div>
+                     
                 </div>
             </div>
           </div>
