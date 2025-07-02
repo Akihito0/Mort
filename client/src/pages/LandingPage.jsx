@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "../styles/landing-page-styles.css";
-// import "../styles/loginStyles.css";
 
 const LandingPage = () => {
 
