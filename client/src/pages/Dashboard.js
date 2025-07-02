@@ -3,6 +3,7 @@ import NotesTab from '../components/NotesTab.js';
 import TodoDashboard from '../components/TodoDashboard.js';
 import PdfTab from '../components/PdfTab.js';
 import QuizMakerTab from '../components/QuizMakerTab.js';
+import Settings from '../components/Settings.js';
 import '../styles/dashboard.css';
 import { signOut } from 'firebase/auth'; // logging out
 import { auth, onAuthStateChanged } from '../firestore-database/firebase'; //Firebase auth instance
@@ -40,6 +41,8 @@ const Dashboard = () => {
   }, []);
 
   const handleLogout = async () => {
+    const confirmLogout = window.confirm("Are you sure you want to log out?");
+    if (!confirmLogout) return;
   try {
     await signOut(auth); // 🔹 Firebase logout
     navigate('/');       // 🔹 Redirect to login
@@ -183,6 +186,11 @@ const Dashboard = () => {
               <QuizMakerTab notes={notes} />
             </div>
           )}
+          {activeTab === 'settings' && (
+            <div className="settings-tab-wrapper">
+              <Settings />
+            </div>
+          )}
         </main>
       </div>
     </div>
@@ -190,9 +198,9 @@ const Dashboard = () => {
 };
 function getTimeofDay(){
   const hours = new Date().getHours();
-  if (hours < 12) return 'morning';
-  if (hours < 18) return 'afternoon';
-  return 'evening';
+  if (hours < 12) return 'Morning';
+  if (hours < 18) return 'Afternoon';
+  return 'Evening';
 }
 function getGreeting(name) {
   const timeOfDay = getTimeofDay();

@@ -423,3 +423,28 @@ function loadCalendarTasks(tasks = []) {
     });
 }
 //end of calendar functionality
+
+// Handle Settings view toggle
+const settingsLink = document.getElementById("show-settings");
+const settingsView = document.getElementById("settings-view");
+
+settingsLink.addEventListener("click", (e) => {
+    e.preventDefault();
+    dashboardView.classList.add("hidden");
+    todoView.classList.add("hidden");
+    document.getElementById("calendar-view").classList.add("hidden");
+    settingsView.classList.remove("hidden");
+});
+
+
+
+document.getElementById("upload-profile").addEventListener("change", function () {
+  const file = this.files[0];
+  if (file) {
+    const reader = new FileReader();
+    reader.onload = function (e) {
+      document.getElementById("profile-img").src = e.target.result;
+    };
+    reader.readAsDataURL(file);
+  }
+});
