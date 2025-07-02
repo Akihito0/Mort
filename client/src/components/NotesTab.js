@@ -300,9 +300,14 @@ function NotesTab({ notes, setNotes }) {
               </button>
             </div>
             <div
-              dangerouslySetInnerHTML={{ __html: marked.parse(viewingNote.content) }}
               className="note-content"
+              dangerouslySetInnerHTML={{
+                __html: viewingNote.content.includes('<p>') || viewingNote.content.includes('<table>')
+                  ? viewingNote.content
+                  : marked.parse(viewingNote.content),
+              }}
             />
+
 
             <div className="btn-group">
               <button className="btn" onClick={() => {

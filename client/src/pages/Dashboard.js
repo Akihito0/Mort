@@ -82,7 +82,7 @@ const Dashboard = () => {
           </li>
           <li className={activeTab === 'pdf' ? 'active' : ''}>
             <a href="#" onClick={(e) => { e.preventDefault(); handleNavClick('pdf'); }}>
-              <i className='bx bx-file'></i>PDF Tools
+              <i className='bx bx-file'></i>Text Extractor
             </a>
           </li>
           <li className={activeTab === 'quiz' ? 'active' : ''}>

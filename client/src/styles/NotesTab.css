@@ -662,3 +662,165 @@ body.dark .close-btn:hover {
     width: 95%;
   }
 }
+.formatted-text table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1rem;
+}
+
+.formatted-text th,
+.formatted-text td {
+  border: 1px solid #ccc;
+  padding: 8px;
+}
+
+.formatted-text th {
+  background-color: #f0f0f0;
+}
+.note-content table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1rem;
+}
+
+.note-content th,
+.note-content td {
+  border: 1px solid #ccc;
+  padding: 8px;
+}
+
+.note-content th {
+  background-color: #f9f9f9;
+}
+.note-content {
+  max-width: 100%;
+  overflow-x: auto;
+  word-wrap: break-word;
+}
+
+.note-content table {
+  width: 100%;
+  border-collapse: collapse;
+  overflow-x: auto;
+  display: block; /* Makes table scrollable on small screens */
+}
+
+.note-content th,
+.note-content td {
+  border: 1px solid #ccc;
+  padding: 8px;
+  text-align: left;
+  word-break: break-word;
+}
+
+.note-content th {
+  background-color: #f4f4f4;
+}
+
+@media (max-width: 768px) {
+  .modal {
+    width: 95vw;
+    max-height: 90vh;
+    overflow-y: auto;
+    padding: 1rem;
+  }
+
+  .note-content {
+    font-size: 0.9rem;
+  }
+}
+.note-content::-webkit-scrollbar {
+  height: 6px;
+}
+.note-content::-webkit-scrollbar-thumb {
+  background-color: #aaa;
+  border-radius: 4px;
+}
+.formatted-text-wrapper {
+  overflow-x: auto;
+  width: 100%;
+  max-width: 100%;
+}
+
+.formatted-text {
+  padding: 0.5rem 0;
+  word-wrap: break-word;
+  line-height: 1.6;
+  overflow-x: auto;
+}
+
+.formatted-text table {
+  display: block;
+  width: 100%;
+  overflow-x: auto;
+  border-collapse: collapse;
+}
+
+.formatted-text th,
+.formatted-text td {
+  border: 1px solid #ccc;
+  padding: 6px;
+  word-break: break-word;
+  text-align: left;
+}
+
+@media (max-width: 768px) {
+  .summary-card {
+    padding: 1rem;
+    font-size: 0.95rem;
+  }
+
+  .formatted-text {
+    font-size: 0.9rem;
+  }
+}
+/* Base table styles */
+.formatted-text table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1rem;
+  overflow-x: auto;
+}
+
+.formatted-text th,
+.formatted-text td {
+  padding: 8px;
+  border: 1px solid var(--border-color, #ccc);
+  text-align: left;
+}
+
+/* Light mode (default) */
+:root {
+  --table-header-bg: #f0f0f0;
+  --table-header-color: #222;
+  --table-bg: #fff;
+  --border-color: #ccc;
+}
+
+/* Dark mode support */
+body.dark,
+[data-theme='dark'] {
+  --table-header-bg: #1e1e1e;
+  --table-header-color: #fff;
+  --table-bg: #121212;
+  --border-color: #555;
+}
+
+.formatted-text th {
+  background-color: var(--table-header-bg);
+  color: var(--table-header-color);
+}
+
+.formatted-text td {
+  background-color: var(--table-bg);
+}
+/* Fix table header visibility in dark mode for NotesTab */
+body.dark .note-content th {
+  background-color: var(--table-header-bg);
+  color: var(--table-header-color);
+}
+
+body.dark .note-content td {
+  background-color: var(--table-bg);
+  color: var(--text-color);
+}

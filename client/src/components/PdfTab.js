@@ -1,11 +1,11 @@
 import React, { useState, useRef } from 'react';
-import Summary from './Summary.js';
+import Summary from './Summary';
 import ChatbotWidget from './ChatbotWidget';
 import QuizPlayer from './QuizPlayer';
-import '../styles/NotesTab.css'; // Update the CSS file name if needed
-import { auth, db, collection, addDoc } from '../firestore-database/firebase'; // Firebase imports
+import '../styles/NotesTab.css'; // ✅ Correct path
+import { auth, db, collection, addDoc } from '../firestore-database/firebase'; // ✅ Firebase
 
-const PdfTab = ({ onSaveNote }) => {
+const PdfTab = () => {
   const [file, setFile] = useState(null);
   const [extractedText, setExtractedText] = useState('');
   const [chatContext, setChatContext] = useState(null);
@@ -14,17 +14,30 @@ const PdfTab = ({ onSaveNote }) => {
   const dropRef = useRef(null);
   const [showFullText, setShowFullText] = useState(false);
 
-
   const handleUpload = async (uploadFile = file) => {
-    if (!uploadFile || uploadFile.type !== 'application/pdf') {
-      return alert('Please upload a valid PDF file.');
-    }
+    if (!uploadFile) return alert('Please upload a file.');
 
     const formData = new FormData();
-    formData.append('pdf', uploadFile);
+
+    let endpoint = '';
+    if (uploadFile.type === 'application/pdf') {
+      formData.append('pdf', uploadFile);
+      endpoint = '/upload';
+    } else if (uploadFile.name.endsWith('.docx')) {
+      formData.append('file', uploadFile);
+      endpoint = '/upload-docx';
+    } else if (uploadFile.name.endsWith('.pptx')) {
+      formData.append('file', uploadFile);
+      endpoint = '/upload-pptx';
+    } else if (uploadFile.type.startsWith('image/')) {
+      formData.append('file', uploadFile);
+      endpoint = '/upload-image';
+    } else {
+      return alert('Unsupported file type.');
+    }
 
     try {
-      const res = await fetch('https://reactmort-server.onrender.com/upload', {
+      const res = await fetch(`https://reactmort-server.onrender.com${endpoint}`, {
         method: 'POST',
         body: formData,
       });
@@ -57,41 +70,31 @@ const PdfTab = ({ onSaveNote }) => {
 
   const handleSaveNote = async (text) => {
     const user = auth.currentUser;
-    if (!user) {
-      return alert('You must be logged in to save notes.');
-    }
+    if (!user) return alert('You must be logged in to save notes.');
+
     const displayName = user.displayName || user.uid;
-    const noteData ={
-        title: `Note ${new Date().toLocaleString()}`,
-        content: text,
-        createdAt: new Date(),
+    const noteData = {
+      title: `Note ${new Date().toLocaleString()}`,
+      content: text,
+      createdAt: new Date(),
     };
-    // if (onSaveNote && text.trim()) {
-    //   onSaveNote({
-    //     id: Date.now(),
-    //     title: `Note ${Date.now()}`,
-    //     content: text,
-    //   });
-    //   setExtractedText('');
-    // }
-    try{
+
+    try {
       await addDoc(collection(db, 'Mort-Notes', displayName, 'Notes'), noteData);
-      alert('Note saved successfully!');
+      alert('Note saved to Firebase!');
       setExtractedText('');
-    }
-    catch(error){
-      alert("Failed to save note.");
+    } catch (err) {
+      console.error(err);
+      alert('Failed to save note.');
     }
   };
 
   const handleDrop = (e) => {
     e.preventDefault();
     const droppedFile = e.dataTransfer.files[0];
-    if (droppedFile && droppedFile.type === 'application/pdf') {
+    if (droppedFile) {
       setFile(droppedFile);
       handleUpload(droppedFile);
-    } else {
-      alert('Only PDF files are supported.');
     }
   };
 
@@ -107,7 +110,7 @@ const PdfTab = ({ onSaveNote }) => {
   return (
     <div className="pdf-tab">
       <div className="header">
-        <h1>PDF Scanner</h1>
+        <h1>Text Extractor</h1>
       </div>
 
       <div
@@ -118,13 +121,15 @@ const PdfTab = ({ onSaveNote }) => {
         onDragLeave={handleDragLeave}
       >
         <label htmlFor="pdfInput" className="upload-btn">
-          Upload a PDF <span className="upload-icon">📤</span>
+          Upload a File <span className="upload-icon">📤</span>
         </label>
-        <p className="upload-hint">or<br />Drag and drop a PDF here</p>
+        <p className="upload-hint">
+          or<br />Drag & drop PDF, DOCX, PPTX, or Image
+        </p>
         <input
           id="pdfInput"
           type="file"
-          accept="application/pdf"
+          accept=".pdf,.docx,.pptx,image/*"
           onChange={(e) => {
             setFile(e.target.files[0]);
             handleUpload(e.target.files[0]);
@@ -136,21 +141,24 @@ const PdfTab = ({ onSaveNote }) => {
       {extractedText && (
         <div className="summary-card">
           <div className="summary-header">
-            <h3>PDF Summary</h3>
+            <h3>Extracted Summary</h3>
             <button className="btn btn-primary" onClick={() => handleSaveNote(extractedText)}>
               + Add to Notes
             </button>
           </div>
           <div className="summary-text">
             <strong>Summary Result</strong>
-            {extractedText
-              .split(/\n{2,}/)
-              .slice(0, showFullText ? undefined : 2) 
-              .map((para, i) => (
-                <p key={i}>{para.trim()}</p>
-              ))}
-
-            {extractedText.split(/\n{2,}/).length > 3 && (
+            <div className="formatted-text-wrapper">
+            <div
+              className="formatted-text"
+              dangerouslySetInnerHTML={{
+                __html: showFullText
+                  ? extractedText
+                  : extractedText.split('</p>').slice(0, 2).join('</p>') + '</p>',
+              }}
+            />
+          </div>
+            {extractedText.split('</p>').length > 3 && (
               <button
                 className="btn-secondary"
                 onClick={() => setShowFullText(!showFullText)}
@@ -160,29 +168,17 @@ const PdfTab = ({ onSaveNote }) => {
               </button>
             )}
           </div>
-
           <div className="btn-group" style={{ marginTop: '1rem' }}>
-            <button
-              className="btn"
-              disabled={!extractedText.trim()}
-              onClick={() => handleSaveNote(extractedText)}
-            >
+            <button className="btn" onClick={() => handleSaveNote(extractedText)}>
               💾 Save as Note
             </button>
-            <button
-              className="btn"
-              disabled={!extractedText.trim()}
-              onClick={() => generateQuiz(extractedText)}
-            >
+            <button className="btn" onClick={() => generateQuiz(extractedText)}>
               🧠 Generate Quiz
             </button>
           </div>
 
           <div style={{ marginTop: '2rem' }}>
-            <Summary
-              text={extractedText}
-              onSave={(summary) => handleSaveNote(summary)}
-            />
+            <Summary text={extractedText} onSave={(summary) => handleSaveNote(summary)} />
           </div>
         </div>
       )}

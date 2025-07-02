@@ -368,5 +368,15 @@ img {
   display: block;
 }
 
+.login,
+.login input,
+.login button,
+.login label,
+.login h1,
+.login p,
+.login a {
+  font-family: "Montserrat", sans-serif !important;
+}
+
 
 
