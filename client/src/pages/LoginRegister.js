@@ -31,6 +31,12 @@ const LoginRegister = () => {
     setIsRegister(mode === 'register');
   }, [mode]);
 
+  useEffect(() => {
+  // Forcefully remove dark mode AND prevent it from being added again
+  document.body.classList.remove('dark');
+  
+}, []);
+
   const [formData, setFormData] = useState({
     name: '',
     surname: '',

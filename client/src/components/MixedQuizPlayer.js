@@ -3,30 +3,47 @@ import '../styles/quizmaker.css';
 
 const MixedQuizPlayer = ({ quiz, onClose, showAnswers }) => {
   const [index, setIndex] = useState(0);
-  const [answer, setAnswer] = useState('');
+  const [answer, setAnswer] = useState(null); // index or string
   const [showExplanation, setShowExplanation] = useState(false);
-  const [score, setScore] = useState(0);
   const [finished, setFinished] = useState(false);
+
+  const [scores, setScores] = useState({
+    multipleChoice: 0,
+    trueFalse: 0,
+    identification: 0,
+  });
 
   const current = quiz[index];
 
-  const handleSubmit = () => {
+  const handleNext = () => {
+    if (index + 1 < quiz.length) {
+      setIndex(index + 1);
+      setAnswer(null);
+      setShowExplanation(false);
+    } else {
+      setFinished(true);
+    }
+  };
+
+  const handleOptionClick = (selected) => {
     let isCorrect = false;
 
-    if (current.type === 'multipleChoice') {
-      isCorrect = parseInt(answer) === current.correct;
-    } else if (current.type === 'trueFalse') {
-      const correct = String(current.options?.[current.correct] || current.correct).trim().toLowerCase();
-      const user = String(answer).trim().toLowerCase();
-      isCorrect = user === correct;
+    if (current.type === 'multipleChoice' || current.type === 'trueFalse') {
+      isCorrect = selected === current.correct;
     } else if (current.type === 'identification') {
       const correct = String(current.correct).trim().toLowerCase();
-      const user = String(answer).trim().toLowerCase();
+      const user = String(selected).trim().toLowerCase();
       isCorrect = user === correct;
     }
 
-    if (isCorrect) setScore((prev) => prev + 1);
+    if (isCorrect) {
+      setScores((prev) => ({
+        ...prev,
+        [current.type]: prev[current.type] + (current.type === 'identification' ? 2 : 1),
+      }));
+    }
 
+    setAnswer(selected);
     if (showAnswers === 'After each item') {
       setShowExplanation(true);
     } else {
@@ -34,58 +51,63 @@ const MixedQuizPlayer = ({ quiz, onClose, showAnswers }) => {
     }
   };
 
-  const handleNext = () => {
-    if (index + 1 < quiz.length) {
-      setIndex(index + 1);
-      setAnswer('');
-      setShowExplanation(false);
-    } else {
-      setFinished(true);
-    }
-  };
-
   const renderOptions = () => {
+    const getBtnClass = (i) => {
+      if (!showExplanation) return 'quiz-option-btn';
+      if (i === current.correct) return 'quiz-option-btn correct';
+      if (i === answer && i !== current.correct) return 'quiz-option-btn wrong';
+      return 'quiz-option-btn';
+    };
+
     if (current.type === 'multipleChoice') {
       return current.options.map((opt, i) => (
-        <label key={i} className="quiz-option">
-          <input
-            type="radio"
-            name="option"
-            value={i}
-            checked={parseInt(answer) === i}
-            onChange={() => setAnswer(i.toString())}
-            disabled={showExplanation}
-          />
+        <button
+          key={i}
+          className={getBtnClass(i)}
+          onClick={() => !showExplanation && handleOptionClick(i)}
+          disabled={showExplanation}
+        >
           {opt}
-        </label>
+        </button>
       ));
     } else if (current.type === 'trueFalse') {
-      return ['True', 'False'].map((opt) => (
-        <label key={opt} className="quiz-option">
-          <input
-            type="radio"
-            name="tf"
-            value={opt}
-            checked={answer === opt}
-            onChange={() => setAnswer(opt)}
-            disabled={showExplanation}
-          />
+      const tfOptions = ['True', 'False'];
+      return tfOptions.map((opt, i) => (
+        <button
+          key={i}
+          className={getBtnClass(i)}
+          onClick={() => !showExplanation && handleOptionClick(i)}
+          disabled={showExplanation}
+        >
           {opt}
-        </label>
+        </button>
       ));
     } else {
       return (
-        <input
-          type="text"
-          className="quiz-input"
-          value={answer}
-          onChange={(e) => setAnswer(e.target.value)}
-          disabled={showExplanation}
-          placeholder="Your answer"
-        />
+        <>
+          <input
+            type="text"
+            className="quiz-input"
+            value={typeof answer === 'string' ? answer : ''}
+            onChange={(e) => setAnswer(e.target.value)}
+            disabled={showExplanation}
+            placeholder="Your answer"
+          />
+          {!showExplanation && (
+            <button
+              className="quiz-submit"
+              onClick={() => handleOptionClick(answer)}
+              disabled={!answer || answer.trim() === ''}
+            >
+              Submit Answer
+            </button>
+          )}
+        </>
       );
     }
   };
+
+  const totalScore = scores.multipleChoice + scores.trueFalse + scores.identification;
 
   return (
     <div className="quiz-player-backdrop">
@@ -95,7 +117,12 @@ const MixedQuizPlayer = ({ quiz, onClose, showAnswers }) => {
         {finished ? (
           <div className="quiz-finish">
             <h2>Quiz Completed 🎉</h2>
-            <p>Your Score: {score}/{quiz.length}</p>
+            <p>Total Score: {totalScore}</p>
+            <ul className="score-breakdown">
+              <li>📘 Multiple Choice: {scores.multipleChoice}</li>
+              <li>🔍 True/False: {scores.trueFalse}</li>
+              <li>✏️ Identification: {scores.identification}</li>
+            </ul>
 
             {showAnswers === 'End of quiz' && (
               <div className="quiz-answer-key">
@@ -106,7 +133,7 @@ const MixedQuizPlayer = ({ quiz, onClose, showAnswers }) => {
                       <strong>Q{i + 1}:</strong> {q.question}<br />
                       <strong>Correct Answer:</strong>{' '}
                       {q.type === 'multipleChoice' || q.type === 'trueFalse'
-                        ? q.options?.[q.correct]
+                        ? (q.options?.[q.correct] ?? ['True', 'False'][q.correct])
                         : q.correct}
                       <br />
                       <strong>Explanation:</strong>{' '}
@@ -126,22 +153,19 @@ const MixedQuizPlayer = ({ quiz, onClose, showAnswers }) => {
 
             {renderOptions()}
 
-            {!showExplanation ? (
-              <button
-                className="quiz-submit"
-                onClick={handleSubmit}
-                disabled={answer === ''}
-              >
-                Submit Answer
-              </button>
-            ) : (
+            {showExplanation && (
               <>
-                {showAnswers === 'After each item' && (
-                  <div className="quiz-answer">
-                    <strong>Explanation:</strong>
-                    <p>{current.explanation || 'No explanation provided.'}</p>
-                  </div>
-                )}
+                <div className="quiz-answer">
+                  <strong>Correct Answer:</strong>
+                  <p>
+                    {current.type === 'multipleChoice' || current.type === 'trueFalse'
+                      ? (current.options?.[current.correct] ?? ['True', 'False'][current.correct])
+                      : current.correct}
+                  </p>
+                  <strong>Explanation:</strong>
+                  <p>{current.explanation || 'No explanation provided.'}</p>
+                </div>
+
                 <button className="quiz-next" onClick={handleNext}>
                   {index + 1 < quiz.length ? 'Next' : 'Finish'}
                 </button>
