@@ -8,6 +8,7 @@ import '../styles/dashboard.css';
 import { signOut } from 'firebase/auth'; // logging out
 import { auth, onAuthStateChanged } from '../firestore-database/firebase'; //Firebase auth instance
 import { useNavigate } from 'react-router-dom'; // Required for navigate()
+import NotificationPanel from '../components/NotificationPanel.js'; // Notification component
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -130,8 +131,9 @@ const Dashboard = () => {
           <label htmlFor="theme-toggle" className="theme-toggle"></label>
 
           <a href="#" className="notif">
-            <i className='bx bx-bell'></i>
-            <span className="count">12</span>
+            {/* <i className='bx bx-bell'></i>
+            <span className="count">12</span> */}
+            <NotificationPanel />
           </a>
           <a href="#" className="profile">
             <img src="/images/logo.png" alt="Profile" />
