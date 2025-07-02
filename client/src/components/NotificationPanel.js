@@ -4,7 +4,9 @@ import '../styles/NotificationPanel.css';
 
 const NotificationPanel = () => {
   const [notifications, setNotifications] = useState([]);
+  const [readStatus, setReadStatus] = useState({});
   const [showPanel, setShowPanel] = useState(false);
+  const [filter, setFilter] = useState('All');
 
   useEffect(() => {
     let unsubscribeSnapshot;
@@ -16,7 +18,7 @@ const NotificationPanel = () => {
       unsubscribeSnapshot = onSnapshot(taskRef, (snapshot) => {
         const now = new Date();
 
-        const newNotifications = snapshot.docs.flatMap((docSnap) => {
+        const newNotifs = snapshot.docs.flatMap((docSnap) => {
           const data = docSnap.data();
           const dueDate = data.dueDate ? new Date(data.dueDate) : null;
           const messages = [];
@@ -50,14 +52,15 @@ const NotificationPanel = () => {
           const formattedTime = formatTimeAgo(data.created ? new Date(data.created) : new Date());
 
           return messages.map((msg) => ({
-            id: docSnap.id + '-' + msg.slice(0, 10),
+            id: docSnap.id + '-' + msg.slice(0, 10), // unique ID
             message: msg,
             time: formattedTime,
             dot: statusDot,
+            taskId: docSnap.id,
           }));
         });
 
-        setNotifications(newNotifications);
+        setNotifications(newNotifs);
       });
     };
 
@@ -76,12 +79,10 @@ const NotificationPanel = () => {
   const formatTimeAgo = (date) => {
     const now = new Date();
     const diff = now - date;
-
     const minutes = Math.floor(diff / 60000);
     const hours = Math.floor(diff / 3600000);
     const days = Math.floor(diff / 86400000);
     const weeks = Math.floor(diff / (86400000 * 7));
-
     if (minutes < 60) return 'Now';
     if (hours < 24) return `${hours}h`;
     if (days < 7) return `${days}d`;
@@ -96,22 +97,47 @@ const NotificationPanel = () => {
     });
   };
 
+  const markAsRead = (notifId) => {
+    setReadStatus((prev) => ({
+      ...prev,
+      [notifId]: true,
+    }));
+  };
+
+  const isRead = (notifId) => readStatus[notifId] === true;
+
+  const filteredNotifications = filter === 'All'
+    ? notifications
+    : notifications.filter((n) => !isRead(n.id));
+
+  const unreadCount = notifications.filter((n) => !isRead(n.id)).length;
+
   return (
     <div className="notification-wrapper">
       <button className="notif-button" onClick={() => setShowPanel(!showPanel)}>
         <i className="bx bx-bell"></i>
-        {notifications.length > 0 && <span className="notif-count">{notifications.length}</span>}
+        {unreadCount > 0 && (
+          <span className="notif-count">{unreadCount}</span>
+        )}
       </button>
 
       {showPanel && (
         <div className="notification-panel">
-          <h4>Notifications</h4>
-          {notifications.length === 0 ? (
-            <p className="no-notif">No notifications</p>
+          <div className="notif-tabs">
+            <button className={filter === 'All' ? 'active' : ''} onClick={() => setFilter('All')}>All</button>
+            <button className={filter === 'Unread' ? 'active' : ''} onClick={() => setFilter('Unread')}>Unread</button>
+          </div>
+
+          {filteredNotifications.length === 0 ? (
+            <p className="no-notif">No {filter.toLowerCase()} notifications</p>
           ) : (
             <ul>
-              {notifications.map((notif, index) => (
-                <li key={index}>
+              {filteredNotifications.map((notif) => (
+                <li
+                  key={notif.id}
+                  className={`notif-item ${!isRead(notif.id) ? 'unread' : ''}`}
+                  onClick={() => markAsRead(notif.id)}
+                >
                   <div className="notif-header">
                     <span className={`dot ${notif.dot}`}></span>
                     <span className="notif-message">{notif.message}</span>
