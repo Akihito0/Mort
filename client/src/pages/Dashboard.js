@@ -208,7 +208,6 @@ const Orders = () => (
       <i className='bx bx-receipt'></i>
       <h3>Unfinished Task</h3>
       <i className='bx bx-filter'></i>
-      <i className='bx bx-search'></i>
     </div>
     <table>
       <thead>
@@ -241,7 +240,6 @@ const Reminders = () => (
       <i className='bx bx-note'></i>
       <h3>Recent Activity</h3>
       <i className='bx bx-filter'></i>
-      <i className='bx bx-plus'></i>
     </div>
     <ul className="task-list">
       <li className="completed"><div className="task-title"><i className='bx bx-check-circle'></i><p>WHEN MANI MAHUMAN</p></div><i className='bx bx-dots-vertical-rounded'></i></li>
