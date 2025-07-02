@@ -545,3 +545,36 @@ body.dark .quiz-submit:disabled {
     width: 100%;
   }
 }
+.quiz-option-btn {
+  display: block;
+  width: 100%;
+  padding: 0.75rem;
+  margin: 0.5rem 0;
+  border: 2px solid transparent;
+  background-color: #f0f0f0;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: 0.3s;
+  font-size: 16px;
+}
+
+.quiz-option-btn:hover:not(:disabled) {
+  background-color: #e0e0e0;
+}
+
+.quiz-option-btn.correct {
+  background-color: #4CAF50;
+  color: white;
+  border-color: #4CAF50;
+}
+
+.quiz-option-btn.wrong {
+  background-color: #F44336;
+  color: white;
+  border-color: #F44336;
+}
+
+.quiz-option-btn:disabled {
+  cursor: default;
+  opacity: 0.8;
+}

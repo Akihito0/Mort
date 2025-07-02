@@ -22,12 +22,13 @@
             <!-- <li><a href="#" id="show-todo"><i class='bx bx-message-square-dots'></i>TO-DO List</a></li> -->
             <li class="active"><a href="#"><i class='bx bx-home'></i>Home</a></li>
             <li><a href="#"><i class='bx bx-book'></i>Notes</a></li>
-            <li><a href="#" id="show-todo"><i class='bx bx-check'></i>TO-DO List</a></li>
+            <li><a id="show-todo"><i class='bx bx-check'></i>TO-DO List</a></li>
             <li><a href="#"><i class='bx bx-note'></i>PDF Extractor</a></li>
+            <li><a href="#"id="show-settings"><i class='bx bx-cog'></i>Settings</a></li>
         </ul>
         <ul class="side-menu">
             <li>
-                <a href="#" class="logout">
+                <a href="login.html" class="logout">
                     <i class='bx bx-log-out-circle'></i>
                     Logout
                 </a>
@@ -155,6 +156,40 @@
                 <!-- End of Recent Activity-->
             </div>
         </main>
+        <!-- settings tab -->
+            <div id="settings-view" class="hidden">
+                <div class="header">
+                    <div class="left">
+                         <h1>Settings</h1>
+                    </div>
+                </div>
+                                    
+                <div class="reminders">
+                    <div class="orders">
+                        <div class="settings-content">
+                            <!-- Account Details -->
+                            <div class="settings-item vertical">
+                                <h1> Account Details</h1>
+                                <div class="profile-picture-section">
+                                    <img src="images/default-profile.png" alt="Profile" id="profile-img" />
+                                    <input type="file" id="upload-profile" accept="image/*" />
+                                </div>
+                                <div class="input-group">
+                                    <label>First Name</label>
+                                    <input type="text" id="first-name" placeholder="First Name" />
+                                </div>
+                                    <div class="input-group">
+                                        <label>Last Name</label>
+                                        <input type="text" id="last-name" placeholder="Last Name" />
+                                    </div>
+                                <div class="input-group">
+                                    <label>Surname</label>
+                                    <input type="text" id="surname" placeholder="Surname" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+             </div>
 
         <!-- TO-DO Section -->
         <div id="todo-view" class="hidden">
@@ -268,6 +303,8 @@
                         </div>
                     </div>
                 </div>
+        <!-- End of TO-DO Section -->
+                
     </div>
     <!-- Scripts -->
     <script src="index.js"></script>

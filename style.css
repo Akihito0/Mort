@@ -621,3 +621,112 @@ body{
     }
 
 }
+/* Settings view styling */
+#settings-view .settings-content {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    margin-top: 1.5rem;
+}
+
+.settings-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: var(--grey);
+    padding: 1rem;
+    border-radius: 10px;
+    font-size: 1rem;
+    color: var(--dark);
+    transition: background 0.3s ease;
+}
+.settings-item:hover {
+    background: var(--light);
+}
+.settings-item span {
+    flex: 1 1 60%;
+   }   
+.settings-item input[type="checkbox"],
+.settings-item select {
+    flex: 1 1 30%;
+    max-width: 180px;
+    padding: 0.5rem;
+    font-size: 1rem;
+    transform: scale(1.2);
+}
+/* Responsive adjustments */
+@media screen and (max-width: 576px) {
+    .settings-item {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .settings-item span {
+        margin-bottom: 0.5rem;
+    }
+
+    .settings-item input,
+    .settings-item select {
+        width: 100%;
+        max-width: 100%;
+    }
+}
+.settings-item.vertical {
+    display: flex;
+    flex-direction: column;
+    background: var(--light);
+    padding: 1.5rem;
+    border-radius: 12px;
+    gap: 1rem;
+    color: var(--dark);
+}
+
+.profile-picture-section {
+    display: flex;
+    flex-direction: column;
+    align-items: start;
+    gap: 0.5rem;
+}
+
+.profile-picture-section img {
+    width: 205px;
+    height: 205px;
+    flex-shrink: 0;
+    border-radius: 50%;
+    top: 239px;
+    left: 1572xp;
+    object-fit: cover;
+    border: 2px solid var(--primary);
+}
+
+.profile-picture-section input[type="file"] {
+    margin-top: 0.5rem;
+}
+
+.input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    width: 721px;
+    height: 52px;
+    flex-shrink: 0;
+}
+
+.input-group label {
+    font-weight: 500;
+    color: var(--dark);
+}
+
+.input-group input {
+    padding: 0.5rem;
+    border-radius: 8px;
+    border: 1px solid var(--grey);
+    background-color: var(--light);
+    color: var(--dark);
+    outline: none;
+}
+
+.input-group input:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 2px var(--light-primary);
+}

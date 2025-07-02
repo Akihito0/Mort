@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "../styles/landing-page-styles.css";
-// import "../styles/loginStyles.css";
 
 const LandingPage = () => {
 
@@ -25,14 +24,14 @@ const LandingPage = () => {
               </div>
             </a>
             <div className="center-buttons">
-              <button className="home-button" onClick={() => scrollTo("top")}>HOME</button>
-              <button className="services-button" onClick={() => scrollTo("services")}>SERVICES</button>
-              <button className="about-us-button">ABOUT US</button>
+              <button className="landing-button home-button" onClick={() => scrollTo("top")}>HOME</button>
+              <button className="landing-button services-button" onClick={() => scrollTo("services")}>SERVICES</button>
+              <button className="landing-button about-us-button">ABOUT US</button>
             </div>
             <div className="right-buttons">
 
-              <button className="log-in-button" onClick={() => navigate('/login?mode=login')}>Log In</button>
-              <button className="sign-up-button" onClick={() => navigate('/login?mode=register')}>Sign Up</button>
+              <button className="landing-button log-in-button" onClick={() => navigate('/login?mode=login')}>Log In</button>
+              <button className="landing-button sign-up-button" onClick={() => navigate('/login?mode=register')}>Sign Up</button>
 
             </div>
           </div>
@@ -46,7 +45,7 @@ const LandingPage = () => {
               AI-driven tools.
             </p>
             
-            <button className="get-started-button" onClick={() => navigate('/login?mode=register')}>Get Started</button>
+            <button className="landing-button get-started-button" onClick={() => navigate('/login?mode=register')}>Get Started</button>
 
           </div>
         </div>
