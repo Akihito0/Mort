@@ -106,6 +106,7 @@ body{
     z-index: 1000 !important;
     padding: 0 20px !important;
     color: white !important;
+    cursor: pointer !important;
 }
 
 .log-in-button {
@@ -119,6 +120,7 @@ body{
     height: 30px !important;
     z-index: 1000 !important;
     padding: 0 20px !important;
+    cursor: pointer !important;
 }
 
 /* Keep your other CSS unchanged below this line */

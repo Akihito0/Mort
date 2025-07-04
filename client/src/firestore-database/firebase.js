@@ -9,7 +9,9 @@ import {
   createUserWithEmailAndPassword,
   updateProfile,
   signInWithPopup,
-  onAuthStateChanged
+  onAuthStateChanged,
+  sendPasswordResetEmail,
+  confirmPasswordReset
 } from "firebase/auth";
 import {
   getFirestore,
@@ -21,7 +23,9 @@ import {
   updateDoc,
   deleteDoc,
   collection,
-  onSnapshot
+  onSnapshot,
+  query,
+  where
 } from "firebase/firestore";
 
 const firebaseConfig = {
@@ -50,6 +54,8 @@ export {
   setPersistence,
   onAuthStateChanged,
   browserSessionPersistence,
+  sendPasswordResetEmail,
+  confirmPasswordReset,
   doc,
   setDoc,
   getDocs,
@@ -58,5 +64,7 @@ export {
   updateDoc,
   deleteDoc,
   collection,
-  onSnapshot
+  onSnapshot,
+  query,
+  where
 };

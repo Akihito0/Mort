@@ -158,7 +158,7 @@ const LoginRegister = () => {
                 ></i>
               </div>
             </div>
-            <a href="#" className="login__forgot">Forgot your password?</a>
+            <button type="button" className="login__forgot" onClick={() => navigate('/forgot-password')}>Forgot your password?</button>
             <button type="submit" className="login__button">Login</button>
           </form>
 
