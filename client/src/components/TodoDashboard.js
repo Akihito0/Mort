@@ -16,8 +16,10 @@ const TodoDashboard = () => {
   const [showCalendar, setShowCalendar] = useState(false);
 
   useEffect(() => {
+  requestAnimationFrame(() => {
     updateProgress();
-  }, [tasks]);
+  });
+  }, [tasks, showCalendar]);
 
   useEffect(() => {
   const fetchTasks = async () => {

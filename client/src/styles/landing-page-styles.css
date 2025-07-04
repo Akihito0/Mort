@@ -12,6 +12,117 @@ body{
 	display: flex;
 	flex-direction: column;
 }
+.center-buttons {
+    display: flex;
+    position: relative;
+    justify-content: center;
+    align-items: center;
+    height: 42px;
+    gap: 5%;
+}
+
+/* BLUE ELLIPSE INDICATOR */
+.active-ellipse {
+    position: absolute;
+    bottom: 0;
+    height: 6px;
+    border-radius: 6px;
+    background: #2196f3;
+    transition: left 0.3s, width 0.3s;
+    z-index: 1;
+}
+
+/* NAV BUTTONS: HOME, SERVICES, ABOUT US */
+.center-buttons .landing-button {
+    background: transparent !important; /* Remove default backgrounds */
+    color: #222 !important;             /* Text color */
+    font-family: Bebas Neue;
+    font-size: 23px;
+    border: none;
+    margin: 0 24px;
+    position: relative;
+    z-index: 2;
+    transition: color 0.2s, background 0.2s;
+    border-radius: 60px;
+    padding: 0 20px;
+    height: 30px;
+    cursor: pointer;
+    outline: none;
+    min-width: 120px; /* Add this line */
+    white-space: nowrap; /* Add this line too for safety */
+}
+
+/* Active tab text (optional, blue text for clarity) */
+.center-buttons .landing-button.active {
+    color: #2196f3 !important;
+}
+
+/* Remove gray/disabled look from About Us */
+.center-buttons .about-us-button {
+    color: #222 !important;
+    opacity: 1 !important;
+    background: transparent !important;
+}
+
+/* Remove backgrounds from nav buttons on active/focus */
+.center-buttons .landing-button:active,
+.center-buttons .landing-button:focus {
+    background: transparent !important;
+    color: #1d75d4 !important;
+}
+
+/* Right-side Auth buttons */
+.right-buttons {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    justify-content: center;
+    margin: 0 10px;
+}
+
+.get-started-button {
+    width: auto;
+    border-radius: 60px;
+    border: 0;
+    background-color: #1d75d4;
+    height: 50px;
+    margin: 0 auto;
+    display: block;
+    white-space: wrap;
+    padding: 10px 20px;
+    font-family: Bebas Neue;
+    font-size: 18px;
+    color: white;
+}
+
+.sign-up-button {
+    font-family: Bebas Neue;
+    font-size: 23px;
+    width: auto !important;
+    border-radius: 60px !important;
+    border: 0 !important;
+    background-color: #1d75d4 !important;
+    height: 30px !important;
+    z-index: 1000 !important;
+    padding: 0 20px !important;
+    color: white !important;
+}
+
+.log-in-button {
+    font-family: Bebas Neue;
+    font-size: 23px;
+    width: auto !important;
+    border-radius: 60px !important;
+    border: 0 !important;
+    background-color: white !important;
+    color: black !important;
+    height: 30px !important;
+    z-index: 1000 !important;
+    padding: 0 20px !important;
+}
+
+/* Keep your other CSS unchanged below this line */
+
 .landing-header{
 	position: fixed;
 	top: 0px;
@@ -71,7 +182,7 @@ body{
 .blur-container {
     display: inline-block;
     box-shadow: 0px 0px 10px 9px rgba(0, 0, 0, 0.25);
-    border-radius: 9999px; /* Full pill shape */
+    border-radius: 9999px;
     background-color: rgba(0, 0, 0, 0.29);
     padding: 2rem 4rem; 
     color: white;
@@ -132,69 +243,18 @@ body{
 	display: inline-block;
 	margin-bottom: 20px;
 }
-.landing-button{
-	font-family: Bebas Neue;
-	font-size: 18px;
-	color: white;
-	transition: all 0.1s ease;
-	display: inline-block;
-	white-space: nowrap;
-	cursor: pointer;
-}
-.get-started-button {
-    width: auto;
-    border-radius: 60px;
-    border: 0;
-    background-color: #1d75d4;
-    height: 50px;
-    margin: 0 auto;
-    display: block;
-    white-space: wrap;
-    padding: 10px 20px;
-}
-.sign-up-button, .home-button {
-    width: auto !important;
-    border-radius: 60px !important;
-    border: 0 !important;
-    background-color: #1d75d4 !important;
-    height: 30px !important;
-    z-index: 1000 !important;
-    padding: 0 20px !important;
-}
 
-.log-in-button, .services-button, .about-us-button {
-    width: auto !important;
-    border-radius: 60px !important;
-    border: 0 !important;
-    background-color: white !important;
-    color: black !important;
-    height: 30px !important;
-    z-index: 1000 !important;
-    padding: 0 20px !important;
-}
-
-.center-buttons {
-    display: flex;
-    gap: 5%;
-    justify-content: center; 
-    align-items: center;
-}
-.right-buttons {
-    display: flex;
-    gap: 10px;
-    align-items: center;
-    justify-content: center;
-    margin: 0 10px;
-}
-.get-started-button:active, .home-button:active, .sign-up-button:active {
+.get-started-button:active, .sign-up-button:active {
     transform: scale(0.95);
     background-color: darkblue !important;
 }
-.log-in-button:active , .services-button:active, .about-us-button:active{
+
+.log-in-button:active {
 	transform: scale(0.95) !important;
 	background-color: white !important;
 	color: #1d75d4 !important;
 }
+
 p.discover{
 	font-family: Bebas Neue;
 	font-size: 30px;

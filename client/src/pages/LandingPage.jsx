@@ -1,15 +1,63 @@
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "../styles/landing-page-styles.css";
 
+const HEADER_TABS = [
+  { id: "HOME", label: "HOME", scrollTo: "top" },
+  { id: "SERVICES", label: "SERVICES", scrollTo: "services" },
+  { id: "ABOUT", label: "ABOUT US", scrollTo: null }
+];
+
 const LandingPage = () => {
+  const [activeTab, setActiveTab] = useState("HOME");
+  const [indicatorStyle, setIndicatorStyle] = useState({});
+  const tabRefs = useRef({});
+  const navigate = useNavigate();
 
   const scrollTo = (id) => {
     const el = document.getElementById(id);
     if (el) el.scrollIntoView({ behavior: "smooth" });
   };
 
-  const navigate = useNavigate();
+  useEffect(() => {
+    // Update indicator position and width based on active tab
+    const node = tabRefs.current[activeTab];
+    if (node) {
+      setIndicatorStyle({
+        left: node.offsetLeft,
+        width: node.offsetWidth
+      });
+    }
+  }, [activeTab]);
+
+  // Add scroll listener to update active tab based on scroll position
+  useEffect(() => {
+    const handleScroll = () => {
+      const scrollPosition = window.scrollY;
+      const servicesSection = document.getElementById("services");
+      
+      // If at the very top (first 100px), activate HOME
+      if (scrollPosition < 100) {
+        setActiveTab("HOME");
+      }
+      // If services section is in view, activate SERVICES
+      else if (servicesSection && scrollPosition >= servicesSection.offsetTop - 200) {
+        setActiveTab("SERVICES");
+      }
+      // You can add more conditions for ABOUT section when you create it
+    };
+
+    // Add scroll event listener
+    window.addEventListener('scroll', handleScroll);
+    
+    // Call once on mount to set initial state
+    handleScroll();
+
+    // Cleanup
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, []);
 
   return (
     <div className="main">
@@ -23,16 +71,39 @@ const LandingPage = () => {
                 <span>MO</span>RT
               </div>
             </a>
-            <div className="center-buttons">
-              <button className="landing-button home-button" onClick={() => scrollTo("top")}>HOME</button>
-              <button className="landing-button services-button" onClick={() => scrollTo("services")}>SERVICES</button>
-              <button className="landing-button about-us-button">ABOUT US</button>
+            <div className="center-buttons" style={{ position: "relative" }}>
+              {/* Blue ellipse indicator */}
+              <div
+                className="active-ellipse"
+                style={{
+                  position: "absolute",
+                  bottom: 0,
+                  height: 6,
+                  borderRadius: 10,
+                  background: "#2196f3",
+                  transition: "left 0.3s ease, width 0.3s ease", // Enhanced transition
+                  ...indicatorStyle,
+                  zIndex: 1
+                }}
+              />
+              {HEADER_TABS.map((tab) => (
+                <button
+                  key={tab.id}
+                  className={`landing-button ${tab.id.toLowerCase()}-button ${activeTab === tab.id ? 'active' : ''}`}
+                  ref={el => (tabRefs.current[tab.id] = el)}
+                  onClick={() => {
+                    setActiveTab(tab.id);
+                    if (tab.scrollTo) scrollTo(tab.scrollTo);
+                  }}
+                  style={{ position: "relative", zIndex: 2 }}
+                >
+                  {tab.label}
+                </button>
+              ))}
             </div>
             <div className="right-buttons">
-
               <button className="landing-button log-in-button" onClick={() => navigate('/login?mode=login')}>Log In</button>
               <button className="landing-button sign-up-button" onClick={() => navigate('/login?mode=register')}>Sign Up</button>
-
             </div>
           </div>
         </div>
@@ -44,9 +115,7 @@ const LandingPage = () => {
               Start Learning with MORT Today. Empower your learning journey with
               AI-driven tools.
             </p>
-            
             <button className="landing-button get-started-button" onClick={() => navigate('/login?mode=register')}>Get Started</button>
-
           </div>
         </div>
 
@@ -140,21 +209,10 @@ const LandingPage = () => {
 
       <footer>
         <p>
-          <span className="about">About</span>
-          <span className="span"> | </span>
-          <span className="about">Contact</span>
-          <span className="span"> | </span>
-          <span className="about">Privacy Policy</span>
-          <span className="span"> | </span>
-          <span className="about">Terms of Service</span>
-          <span> </span>
-        </p>
-        <p>
           © 2025 MORT (My Online Resource Terminal). All Rights Reserved. Built
           by learners, for learners.
         </p>
       </footer>
-
     </div>
   );
 };
