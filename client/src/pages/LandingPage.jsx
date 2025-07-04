@@ -65,47 +65,57 @@ const LandingPage = () => {
         {/* Header */}
         <div id="top">
           <div className="landing-header">
-            <a href="#" className="logo">
-              <i className="bx bx-code-alt"></i>
-              <div className="logo-name">
-                <span>MO</span>RT
-              </div>
-            </a>
-            <div className="center-buttons" style={{ position: "relative" }}>
-              {/* Blue ellipse indicator */}
-              <div
-                className="active-ellipse"
-                style={{
-                  position: "absolute",
-                  bottom: 0,
-                  height: 6,
-                  borderRadius: 10,
-                  background: "#2196f3",
-                  transition: "left 0.3s ease, width 0.3s ease", // Enhanced transition
-                  ...indicatorStyle,
-                  zIndex: 1
-                }}
-              />
-              {HEADER_TABS.map((tab) => (
-                <button
-                  key={tab.id}
-                  className={`landing-button ${tab.id.toLowerCase()}-button ${activeTab === tab.id ? 'active' : ''}`}
-                  ref={el => (tabRefs.current[tab.id] = el)}
-                  onClick={() => {
-                    setActiveTab(tab.id);
-                    if (tab.scrollTo) scrollTo(tab.scrollTo);
-                  }}
-                  style={{ position: "relative", zIndex: 2 }}
-                >
-                  {tab.label}
-                </button>
-              ))}
-            </div>
-            <div className="right-buttons">
-              <button className="landing-button log-in-button" onClick={() => navigate('/login?mode=login')}>Log In</button>
-              <button className="landing-button sign-up-button" onClick={() => navigate('/login?mode=register')}>Sign Up</button>
-            </div>
-          </div>
+  <a href="#" className="logo">
+    <i className="bx bx-code-alt"></i>
+    <div className="logo-name">
+      <span>MO</span>RT
+    </div>
+  </a>
+
+  {/* Center Nav Buttons */}
+  <div className="center-buttons desktop-only" style={{ position: "relative" }}>
+    <div
+      className="active-ellipse"
+      style={{
+        position: "absolute",
+        bottom: 0,
+        height: 6,
+        borderRadius: 10,
+        background: "#2196f3",
+        transition: "left 0.3s ease, width 0.3s ease",
+        ...indicatorStyle,
+        zIndex: 1
+      }}
+    />
+    {HEADER_TABS.map((tab) => (
+      <button
+        key={tab.id}
+        className={`landing-button ${tab.id.toLowerCase()}-button ${activeTab === tab.id ? 'active' : ''}`}
+        ref={el => (tabRefs.current[tab.id] = el)}
+        onClick={() => {
+          setActiveTab(tab.id);
+          if (tab.scrollTo) scrollTo(tab.scrollTo);
+        }}
+        style={{ position: "relative", zIndex: 2 }}
+      >
+        {tab.label}
+      </button>
+    ))}
+  </div>
+
+  {/* Auth Buttons (Log In + Sign Up) */}
+  <div className="right-buttons desktop-only">
+    <button className="landing-button log-in-button" onClick={() => navigate('/login?mode=login')}>Log In</button>
+    <button className="landing-button sign-up-button" onClick={() => navigate('/login?mode=register')}>Sign Up</button>
+  </div>
+
+  {/* Mobile-only Auth Buttons beside logo */}
+  <div className="mobile-auth-buttons mobile-only">
+    <button className="landing-button log-in-button" onClick={() => navigate('/login?mode=login')}>Log In</button>
+    <button className="landing-button sign-up-button" onClick={() => navigate('/login?mode=register')}>Sign Up</button>
+  </div>
+</div>
+
         </div>
 
         {/* Get Started Section */}
