@@ -96,7 +96,7 @@ const Dashboard = () => {
 
           <li className={activeTab === 'settings' ? 'active' : ''}>
             <a href="#" onClick={(e) => { e.preventDefault(); handleNavClick('settings'); }}>
-              <i className='bx bx-cog'></i>Settings
+              <i className='bx bx-cog'></i>Account
             </a>
           </li>
         </ul>

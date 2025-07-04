@@ -31,6 +31,20 @@
     font-size: 1rem;
     transform: scale(1.2);
 }
+.settings-centering{
+  display: flex;
+  flex-direction: column;
+    justify-content: center;
+  align-items: center;  
+  gap: 0.6rem;
+}
+#upload-profile{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
 /* Responsive adjustments */
 @media screen and (max-width: 576px) {
     .settings-item {
@@ -58,7 +72,9 @@
     color: var(--dark);
     align-items: flex-start;
 }
-
+.setting-photoupload{
+    margin-left: 9rem;
+}
 .settings-sidebar{
     width: 200px;
     flex-direction:column;
@@ -76,7 +92,8 @@
 .profile-picture-section {
     display: flex;
     flex-direction: column;
-    align-items: start;
+    align-items: center;
+    justify-content: center;
     gap: 0.5rem;
 }
 
@@ -99,9 +116,10 @@
     display: flex;
     flex-direction: column;
     gap: 0.25rem;
-    width: 500px;
+    width: 550px;
     height: 52px;
     flex-shrink: 0;
+    padding-bottom: 5rem;
 }
 
 .input-group label {
