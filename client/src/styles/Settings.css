@@ -116,7 +116,7 @@
     display: flex;
     flex-direction: column;
     gap: 0.25rem;
-    width: 550px;
+    width: 500px;
     height: 52px;
     flex-shrink: 0;
     padding-bottom: 5rem;
