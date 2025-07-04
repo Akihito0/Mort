@@ -138,7 +138,7 @@ const handleSaveQuiz = async () => {
     return alert('❌ You must set a display name to save quizzes.');
   }
 
-  const displayName = user.displayName; // ✅ only use displayName — no fallback to UID
+  const displayName = user.displayName; 
 
   const title =
     prompt("Enter a title for this quiz:", "My Quiz") ||
