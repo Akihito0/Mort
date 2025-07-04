@@ -1,4 +1,3 @@
-// NotesTab.js
 import React, { useState, useEffect } from 'react';
 import ChatbotWidget from './ChatbotWidget.js';
 import NoteGrid from './NoteGrid.js';

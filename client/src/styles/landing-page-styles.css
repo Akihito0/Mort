@@ -286,3 +286,44 @@ footer{
 	margin: auto;
 	margin-bottom: 200px;
 }
+/* Hide center nav and right auth buttons on mobile */
+.desktop-only {
+  display: flex;
+}
+
+.mobile-only {
+  display: none;
+}
+
+/* Mobile View Adjustments */
+@media (max-width: 768px) {
+  .desktop-only {
+    display: none !important;
+  }
+
+  .mobile-only {
+    display: flex !important;
+    gap: 10px;
+    align-items: center;
+    margin-right: 15px;
+  }
+
+  .landing-header {
+    justify-content: space-between;
+    padding: 0 10px;
+  }
+
+  .logo {
+    font-size: 20px;
+  }
+
+  .logo .logo-name {
+    font-size: 18px;
+  }
+
+  .mobile-auth-buttons .landing-button {
+    font-size: 16px !important;
+    height: 28px !important;
+    padding: 0 12px !important;
+  }
+}

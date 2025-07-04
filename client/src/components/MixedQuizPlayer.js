@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { auth, db, collection, addDoc } from '../firestore-database/firebase'; // ← make sure this import exists
 import '../styles/quizmaker.css';
 
-const MixedQuizPlayer = ({ quiz, onClose, showAnswers }) => {
+const MixedQuizPlayer = ({ quiz, onClose, showAnswers, isReviewMode = false }) => {
   const [index, setIndex] = useState(0);
   const [answer, setAnswer] = useState(null); // index or string
   const [showExplanation, setShowExplanation] = useState(false);
@@ -14,18 +15,31 @@ const MixedQuizPlayer = ({ quiz, onClose, showAnswers }) => {
   });
 
   const current = quiz[index];
+  const totalScore = scores.multipleChoice + scores.trueFalse + scores.identification;
+
+  useEffect(() => {
+    if (isReviewMode) setShowExplanation(true);
+  }, [index, isReviewMode]);
+
+  useEffect(() => {
+    if (finished && isReviewMode) {
+      onClose(); // auto close review after finish
+    }
+  }, [finished, isReviewMode, onClose]);
 
   const handleNext = () => {
     if (index + 1 < quiz.length) {
       setIndex(index + 1);
       setAnswer(null);
-      setShowExplanation(false);
+      setShowExplanation(isReviewMode);
     } else {
       setFinished(true);
     }
   };
 
   const handleOptionClick = (selected) => {
+    if (isReviewMode) return;
+
     let isCorrect = false;
 
     if (current.type === 'multipleChoice' || current.type === 'trueFalse') {
@@ -52,10 +66,14 @@ const MixedQuizPlayer = ({ quiz, onClose, showAnswers }) => {
   };
 
   const renderOptions = () => {
+    const userAnswer = isReviewMode ? current.userAnswer : answer;
+
     const getBtnClass = (i) => {
-      if (!showExplanation) return 'quiz-option-btn';
+      if (!showExplanation && !isReviewMode) return 'quiz-option-btn';
       if (i === current.correct) return 'quiz-option-btn correct';
-      if (i === answer && i !== current.correct) return 'quiz-option-btn wrong';
+      if (userAnswer !== null && i === userAnswer && i !== current.correct) {
+        return 'quiz-option-btn wrong';
+      }
       return 'quiz-option-btn';
     };
 
@@ -64,8 +82,8 @@ const MixedQuizPlayer = ({ quiz, onClose, showAnswers }) => {
         <button
           key={i}
           className={getBtnClass(i)}
-          onClick={() => !showExplanation && handleOptionClick(i)}
-          disabled={showExplanation}
+          onClick={() => !showExplanation && !isReviewMode && handleOptionClick(i)}
+          disabled={showExplanation || isReviewMode}
         >
           {opt}
         </button>
@@ -76,24 +94,27 @@ const MixedQuizPlayer = ({ quiz, onClose, showAnswers }) => {
         <button
           key={i}
           className={getBtnClass(i)}
-          onClick={() => !showExplanation && handleOptionClick(i)}
-          disabled={showExplanation}
+          onClick={() => !showExplanation && !isReviewMode && handleOptionClick(i)}
+          disabled={showExplanation || isReviewMode}
         >
           {opt}
         </button>
       ));
     } else {
+      const inputValue = isReviewMode
+        ? (current.userAnswer || '')
+        : (typeof answer === 'string' ? answer : '');
       return (
         <>
           <input
             type="text"
             className="quiz-input"
-            value={typeof answer === 'string' ? answer : ''}
-            onChange={(e) => setAnswer(e.target.value)}
-            disabled={showExplanation}
+            value={inputValue}
+            disabled={showExplanation || isReviewMode}
             placeholder="Your answer"
+            onChange={(e) => setAnswer(e.target.value)}
           />
-          {!showExplanation && (
+          {!showExplanation && !isReviewMode && (
             <button
               className="quiz-submit"
               onClick={() => handleOptionClick(answer)}
@@ -107,45 +128,82 @@ const MixedQuizPlayer = ({ quiz, onClose, showAnswers }) => {
     }
   };
 
-  const totalScore = scores.multipleChoice + scores.trueFalse + scores.identification;
+  
 
+const handleSaveQuiz = async () => {
+  const user = auth.currentUser;
+  if (!user) return alert('You must be logged in to save quizzes.');
+
+  if (!user.displayName) {
+    return alert('❌ You must set a display name to save quizzes.');
+  }
+
+  const displayName = user.displayName; 
+
+  const title =
+    prompt("Enter a title for this quiz:", "My Quiz") ||
+    `Quiz taken on ${new Date().toLocaleString()}`;
+
+  const saved = {
+    title,
+    timestamp: Date.now(),
+    quiz: quiz.map((q, i) => ({
+      ...q,
+      userAnswer: q.userAnswer !== undefined ? q.userAnswer : (i === index ? answer : undefined),
+    })),
+    scores,
+    showAnswers,
+  };
+
+  try {
+    await addDoc(collection(db, 'Mort-Notes', displayName, 'Quizzes'), saved);
+    alert("✅ Quiz saved to Firestore!");
+  } catch (error) {
+    console.error("Error saving quiz:", error);
+    alert("❌ Failed to save quiz.");
+  }
+};
   return (
     <div className="quiz-player-backdrop">
       <div className="quiz-player-modal">
         <button className="close-btn" onClick={onClose}>❌</button>
 
         {finished ? (
-          <div className="quiz-finish">
-            <h2>Quiz Completed 🎉</h2>
-            <p>Total Score: {totalScore}</p>
-            <ul className="score-breakdown">
-              <li>📘 Multiple Choice: {scores.multipleChoice}</li>
-              <li>🔍 True/False: {scores.trueFalse}</li>
-              <li>✏️ Identification: {scores.identification}</li>
-            </ul>
+          !isReviewMode && (
+            <div className="quiz-finish">
+              <h2>Quiz Completed 🎉</h2>
+              <p>Total Score: {totalScore}</p>
+              <ul className="score-breakdown">
+                <li>📘 Multiple Choice: {scores.multipleChoice}</li>
+                <li>🔍 True/False: {scores.trueFalse}</li>
+                <li>✏️ Identification: {scores.identification}</li>
+              </ul>
 
-            {showAnswers === 'End of quiz' && (
-              <div className="quiz-answer-key">
-                <h4>📝 Answer Key:</h4>
-                <ul>
-                  {quiz.map((q, i) => (
-                    <li key={i}>
-                      <strong>Q{i + 1}:</strong> {q.question}<br />
-                      <strong>Correct Answer:</strong>{' '}
-                      {q.type === 'multipleChoice' || q.type === 'trueFalse'
-                        ? (q.options?.[q.correct] ?? ['True', 'False'][q.correct])
-                        : q.correct}
-                      <br />
-                      <strong>Explanation:</strong>{' '}
-                      {q.explanation || 'No explanation provided.'}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
-
-            <button className="quiz-next" onClick={onClose}>Close</button>
-          </div>
+              {showAnswers === 'End of quiz' && (
+                <div className="quiz-answer-key">
+                  <h4>📝 Answer Key:</h4>
+                  <ul>
+                    {quiz.map((q, i) => (
+                      <li key={i}>
+                        <strong>Q{i + 1}:</strong> {q.question}<br />
+                        <strong>Correct Answer:</strong>{' '}
+                        {q.type === 'multipleChoice'
+                          ? q.options?.[q.correct]
+                          : q.type === 'trueFalse'
+                          ? ['True', 'False'][q.correct]
+                          : q.correct}
+                        <br />
+                        <strong>Explanation:</strong>{' '}
+                        {q.explanation || 'No explanation provided.'}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+              <button className="quiz-save" onClick={handleSaveQuiz}>💾 Save Quiz</button>
+              <button className="quiz-next" onClick={onClose}>Close</button>
+            </div>
+          )
         ) : (
           <>
             <h3>Question {index + 1} of {quiz.length}</h3>
@@ -156,12 +214,22 @@ const MixedQuizPlayer = ({ quiz, onClose, showAnswers }) => {
             {showExplanation && (
               <>
                 <div className="quiz-answer">
-                  <strong>Correct Answer:</strong>
-                  <p>
-                    {current.type === 'multipleChoice' || current.type === 'trueFalse'
-                      ? (current.options?.[current.correct] ?? ['True', 'False'][current.correct])
-                      : current.correct}
-                  </p>
+                  {!isReviewMode && current.userAnswer !== undefined && (
+                    <>
+                      <strong>Your Answer:</strong>
+                      <p>
+                        {current.type === 'multipleChoice' || current.type === 'trueFalse'
+                          ? (current.options?.[current.userAnswer] ?? ['True', 'False'][current.userAnswer])
+                          : current.userAnswer}
+                      </p>
+                      <strong>Correct Answer:</strong>
+                      <p>
+                        {current.type === 'multipleChoice' || current.type === 'trueFalse'
+                          ? (current.options?.[current.correct] ?? ['True', 'False'][current.correct])
+                          : current.correct}
+                      </p>
+                    </>
+                  )}
                   <strong>Explanation:</strong>
                   <p>{current.explanation || 'No explanation provided.'}</p>
                 </div>
