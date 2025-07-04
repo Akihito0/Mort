@@ -578,3 +578,149 @@ body.dark .quiz-submit:disabled {
   cursor: default;
   opacity: 0.8;
 }
+.quiz-save {
+  background-color: #3b82f6; /* blue */
+  color: white;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 14px;
+  margin: 12px 0 0;
+  transition: background-color 0.2s ease;
+}
+
+.quiz-save:hover {
+  background-color: #2563eb;
+}
+
+.quiz-finish .quiz-save {
+  margin-top: 20px;
+}
+.quiz-finish button {
+  margin: 10px 8px 0;
+}
+.saved-quiz-list {
+  list-style: none;
+  padding: 0;
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.saved-quiz-item {
+  background: var(--card-bg, #f9f9f9);
+  padding: 12px;
+  margin-bottom: 12px;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+}
+.editable-title {
+  border-bottom: 1px dashed #aaa;
+  padding: 2px 4px;
+  cursor: text;
+}
+.editable-title:focus {
+  outline: none;
+  border-bottom: 1px solid #007bff;
+  background-color: #eef6ff;
+}
+.saved-quiz-list {
+  list-style: none;
+  padding: 0;
+  max-height: 400px;
+  overflow-y: auto;
+  margin-top: 1rem;
+}
+
+.saved-quiz-item {
+  background: #fdfdfd;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  border-radius: 10px;
+  border: 1px solid #ddd;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.04);
+  transition: box-shadow 0.2s ease;
+}
+
+.saved-quiz-item:hover {
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.saved-quiz-item p {
+  margin: 0.25rem 0;
+}
+
+.saved-quiz-item strong {
+  color: #333;
+}
+
+.quiz-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.6rem;
+  margin-top: 0.75rem;
+}
+
+.quiz-actions button {
+  padding: 6px 12px;
+  font-size: 0.9rem;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.quiz-actions button:first-child {
+  background: #4CAF50;
+  color: white;
+}
+
+.quiz-actions button:first-child:hover {
+  background: #43a047;
+}
+
+.quiz-actions button:last-child {
+  background: #F44336;
+  color: white;
+}
+
+.quiz-actions button:last-child:hover {
+  background: #d32f2f;
+}
+
+.editable-title {
+  border-bottom: 1px dashed #aaa;
+  padding: 2px 4px;
+  cursor: text;
+  display: inline-block;
+  min-width: 100px;
+}
+
+.editable-title:focus {
+  outline: none;
+  border-bottom: 1px solid #007bff;
+  background-color: #eef6ff;
+}
+body.dark .saved-quiz-item {
+  background: #2c2c3a;
+  border-color: #444;
+}
+
+body.dark .editable-title {
+  border-bottom: 1px dashed #aaa;
+  color: #f1f1f1;
+}
+
+body.dark .editable-title:focus {
+  border-bottom: 1px solid #4e9eff;
+  background-color: #3a3a3a;
+}
+
+body.dark .quiz-actions button:first-child {
+  background: #43a047;
+}
+
+body.dark .quiz-actions button:last-child {
+  background: #d32f2f;
+}

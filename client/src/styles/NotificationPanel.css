@@ -102,8 +102,16 @@
 .dot {
   width: 10px;
   height: 10px;
+  min-width: 10px;
+  min-height: 10px;
   border-radius: 50%;
+  background-color: gray;
+  flex-shrink: 0;       /* Prevent shrinking */
+  flex-grow: 0;         /* Prevent stretching */
+  display: inline-block;
+  margin-top: 2px;      /* Optional: vertical alignment tweak */
 }
+
 
 .dot.red {
   background-color: red;
@@ -203,4 +211,50 @@
 
 .dark .notif-item.unread {
   background-color: #2b3349;
+}
+@media (max-width: 768px) {
+  .notification-panel {
+    position: fixed;
+    top: 60px;
+    right: 10px;
+    left: 10px;
+    width: auto;
+    max-width: 90%;
+    padding: 16px;
+    border-radius: 12px;
+    z-index: 999;
+  }
+
+  .notification-panel ul {
+    max-height: 60vh;
+  }
+
+  .notif-message {
+    font-size: 13px;
+  }
+
+  .notif-time {
+    font-size: 11px;
+  }
+
+  .notif-button {
+    font-size: 20px;
+  }
+
+  .notif-count {
+    font-size: 11px;
+    padding: 1px 5px;
+    top: -5px;
+    right: -8px;
+  }
+
+  .notif-tabs {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .notif-tabs button {
+    font-size: 13px;
+    padding: 5px 10px;
+  }
 }

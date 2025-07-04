@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import '../styles/quizmaker.css';
 import axios from 'axios';
 import MixedQuizPlayer from './MixedQuizPlayer.js';
+import SavedQuizzesTab from './SavedQuizzesTab.js';
 
 const QuizMakerTab = ({ notes }) => {
   const [topics, setTopics] = useState([]);
@@ -14,9 +15,12 @@ const QuizMakerTab = ({ notes }) => {
     identification: false,
   });
   const [quiz, setQuiz] = useState(null);
+  const [reviewingQuiz, setReviewingQuiz] = useState(null); // ✅
 
   const [showNoteDropdown, setShowNoteDropdown] = useState(false);
   const [selectedNotesToAdd, setSelectedNotesToAdd] = useState([]);
+
+  const [viewingSavedTab, setViewingSavedTab] = useState(false);
 
   const toggleTopic = (topic) => {
     setSelectedTopics((prev) =>
@@ -178,10 +182,37 @@ const QuizMakerTab = ({ notes }) => {
         <div className="extra-buttons">
           <button onClick={handleAddFromNotes}>+ Add topic from Notes</button>
           <button onClick={handleAddFromPDF}>+ Add topic from PDF</button>
+          <button onClick={() => setViewingSavedTab(true)}>📚 View Saved Quizzes</button>
         </div>
       </div>
 
-      {quiz && <MixedQuizPlayer quiz={quiz} showAnswers={showAnswers} onClose={() => setQuiz(null)} />}
+      {quiz && !reviewingQuiz && (
+        <MixedQuizPlayer
+          quiz={quiz}
+          showAnswers={showAnswers}
+          onClose={() => setQuiz(null)}
+        />
+      )}
+
+      {reviewingQuiz && (
+        <MixedQuizPlayer
+          quiz={reviewingQuiz.quiz}
+          scores={reviewingQuiz.scores}
+          showAnswers={reviewingQuiz.showAnswers}
+          isReviewMode={true}
+          onClose={() => setReviewingQuiz(null)}
+        />
+      )}
+
+      {viewingSavedTab && (
+        <SavedQuizzesTab
+          onClose={() => setViewingSavedTab(false)}
+          onReview={(quizData) => {
+            setReviewingQuiz(quizData);
+            setViewingSavedTab(false);
+          }}
+        />
+      )}
 
       {showNoteDropdown && (
         <div className="modal-backdrop">
