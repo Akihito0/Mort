@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { auth, db, collection, getDocs, deleteDoc, doc, updateDoc } from '../firestore-database/firebase';
+import { auth, db, collection, getDocs, deleteDoc, doc, updateDoc, setDoc } from '../firestore-database/firebase';
 import '../styles/quizmaker.css';
 
 const SavedQuizzesTab = ({ onClose, onReview }) => {
@@ -49,23 +49,32 @@ const SavedQuizzesTab = ({ onClose, onReview }) => {
 
 
   const handleTitleChange = async (index, newTitle) => {
-  const user = auth.currentUser;
-  if (!user) return;
+    const user = auth.currentUser;
+    if (!user) return;
 
-  const displayName = user.displayName || user.uid;
-  const quiz = savedQuizzes[index];
+    const displayName = user.displayName || user.uid;
+    const quiz = savedQuizzes[index];
 
-  try {
-    await updateDoc(doc(db, 'Mort-Notes', displayName, 'Quizzes', quiz.id), { title: newTitle });
+    const safeNewTitle = newTitle.replace(/[.#$[\]/]/g, '-');
 
-    const updated = [...savedQuizzes];
-    updated[index].title = newTitle;
-    setSavedQuizzes(updated);
-  } catch (error) {
-    console.error("Error updating title:", error);
-    alert("Failed to update title.");
-  }
-};
+    try {
+      const oldRef = doc(db, 'Mort-Notes', displayName, 'Quizzes', quiz.id);
+      const newRef = doc(db, 'Mort-Notes', displayName, 'Quizzes', safeNewTitle);
+
+      const quizCopy = { ...quiz, title: newTitle };
+
+      await setDoc(newRef, quizCopy); 
+      await deleteDoc(oldRef);     
+
+      const updated = [...savedQuizzes];
+      updated[index] = { ...quizCopy, id: safeNewTitle };
+      setSavedQuizzes(updated);
+
+    } catch (error) {
+      console.error("Error updating title:", error);
+      alert("❌ Failed to update quiz title.");
+    }
+  };
 
 
   const handleTitleBlur = (index, e) => {

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { auth, db, collection, addDoc } from '../firestore-database/firebase'; // ← make sure this import exists
+import { auth, db, setDoc, doc } from '../firestore-database/firebase'; // ← make sure this import exists
 import '../styles/quizmaker.css';
 
 const MixedQuizPlayer = ({ quiz, onClose, showAnswers, isReviewMode = false }) => {
@@ -38,6 +38,7 @@ const MixedQuizPlayer = ({ quiz, onClose, showAnswers, isReviewMode = false }) =
   };
 
   const handleOptionClick = (selected) => {
+    quiz[index].userAnswer = selected;
     if (isReviewMode) return;
 
     let isCorrect = false;
@@ -56,6 +57,9 @@ const MixedQuizPlayer = ({ quiz, onClose, showAnswers, isReviewMode = false }) =
         [current.type]: prev[current.type] + (current.type === 'identification' ? 2 : 1),
       }));
     }
+
+    quiz[index].userAnswer = selected; //Store user answer
+    setAnswer(selected);
 
     setAnswer(selected);
     if (showAnswers === 'After each item') {
@@ -138,26 +142,40 @@ const handleSaveQuiz = async () => {
     return alert('❌ You must set a display name to save quizzes.');
   }
 
-  const displayName = user.displayName; 
+  const displayName = user.displayName;
 
-  const title =
-    prompt("Enter a title for this quiz:", "My Quiz") ||
-    `Quiz taken on ${new Date().toLocaleString()}`;
+  let title = prompt("Enter a title for this quiz:", "My Quiz");
+  if (!title) {
+    title = `Quiz taken on ${new Date().toLocaleString()}`;
+  }
+
+  // Sanitize title for Firestore key
+  const safeTitle = title.replace(/[.#$[\]/]/g, '-');
+
+  const completedQuiz = quiz.map((q, i) => ({
+    question: q.question,
+    userAnswer: q.userAnswer !== undefined ? q.userAnswer : (i === index ? answer : null),
+    correctAnswer: q.type === 'multipleChoice'
+      ? q.options?.[q.correct]
+      : q.type === 'trueFalse'
+      ? ['True', 'False'][q.correct]
+      : q.correct,
+    explanation: q.explanation || 'No explanation provided.',
+    type: q.type
+  }));
 
   const saved = {
     title,
     timestamp: Date.now(),
-    quiz: quiz.map((q, i) => ({
-      ...q,
-      userAnswer: q.userAnswer !== undefined ? q.userAnswer : (i === index ? answer : undefined),
-    })),
     scores,
     showAnswers,
+    quiz: completedQuiz
   };
 
   try {
-    await addDoc(collection(db, 'Mort-Notes', displayName, 'Quizzes'), saved);
-    alert("✅ Quiz saved to Firestore!");
+    await setDoc(doc(db, 'Mort-Notes', displayName, 'Quizzes', safeTitle), saved);
+    alert("✅ Quiz saved to Firestore under title: " + title);
+    onClose();
   } catch (error) {
     console.error("Error saving quiz:", error);
     alert("❌ Failed to save quiz.");
