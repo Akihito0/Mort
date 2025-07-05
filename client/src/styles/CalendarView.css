@@ -1,0 +1,290 @@
+#calendar-view {
+  padding: 24px;
+  background: #f4f4f4;
+  height: calc(100vh - 56px);
+  overflow-y: auto;
+}
+ 
+#calendar-view .header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #fff;
+  padding: 16px 24px;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  margin-bottom: 20px;
+}
+ 
+#calendar-view .header h2 {
+  font-size: 24px;
+  color: #333;
+}
+ 
+#calendar-view .header button {
+  background: #4e085f;
+  color: white;
+  padding: 8px 14px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+ 
+#calendar-view .header button:hover {
+  background: #3b0647;
+}
+ 
+.calendar-layout {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+ 
+.no-due-date-tasks,
+.calendar-container {
+  flex: 1;
+  min-width: 300px;
+  background: #fff;
+  padding: 20px;
+  border-radius: 14px;
+  box-shadow: 0 3px 10px rgba(0,0,0,0.05);
+}
+ 
+.no-due-date-tasks h3,
+.calendar-container h3 {
+  font-size: 20px;
+  margin-bottom: 16px;
+  color: #153677;
+}
+ 
+/* Placeholder message */
+#unscheduled-tasks p,
+#calendar-scheduled p {
+  color: #888;
+  font-style: italic;
+}
+ 
+/* 📅 Monthly Calendar Styles */
+.calendar-month {
+  font-size: 22px;
+  font-weight: 600;
+  text-align: center;
+  margin: 20px 0 10px;
+  color: #202124;
+  font-family: 'Roboto', sans-serif;
+}
+ 
+#calendar-scheduled {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 16px;
+  margin-top: 20px;
+  padding: 0;
+}
+ 
+/* Each Day Cell */
+.calendar-day {
+  background-color: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 12px;
+  min-height: 180px;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+  transition: box-shadow 0.2s ease;
+}
+ .calendar-day:hover {
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+}
+
+.day-label {
+  font-weight: 600;
+  font-size: 14px;
+  color: #334155;
+  margin-bottom: 8px;
+  text-align: left;
+  border-bottom: 1px solid #e5e7eb;
+  padding-bottom: 6px;
+}
+ 
+/* Drop Area */
+.drop-zone {
+  flex-grow: 1;
+  background: #f9fafb;
+  border: 2px dashed transparent;
+  border-radius: 8px;
+  padding: 6px;
+  transition: border 0.2s ease, background 0.2s ease;
+  min-height: 80px;
+}
+ 
+.drop-zone:hover {
+  border-color: #3b82f6;
+  background-color: #f0f9ff;
+}
+
+/* Task Card */
+.calendar-task {
+  background-color: #e0f2fe;
+  border-left: 4px solid #0284c7;
+  padding: 10px 12px;
+  border-radius: 8px;
+  margin-bottom: 8px;
+  cursor: grab;
+  font-size: 14px;
+  color: #0f172a;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  transition: transform 0.1s ease;
+}
+
+.calendar-task:active {
+  cursor: grabbing;
+  transform: scale(0.98);
+}
+
+.calendar-task strong {
+  display: block;
+  font-weight: 500;
+  margin-bottom: 4px;
+}
+ 
+.calendar-task small {
+  color: #475569;
+  font-size: 12px;
+}
+.calendar-task:hover {
+  background-color: #bae6fd;
+}
+ 
+/* buttons */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+ 
+.header-left {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+ 
+.header-buttons {
+  display: flex;
+  gap: 10px;
+}
+ 
+.header-buttons button {
+  padding: 8px 14px;
+  background-color: #153677;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+ 
+.header-buttons button:hover {
+  background-color: #102a5e;
+}
+/* Dark mode styles */
+body.dark #calendar-view {
+  background: #1e1e2f;
+  color: #f1f1f1;
+}
+body.dark .header {
+  background: #2a2a40;
+  color: #f1f1f1;
+}
+body.dark .calendar-container,
+body.dark .no-due-date-tasks {
+  background: #2a2a40;
+}
+body.dark .calendar-day {
+  background: #2c2c3a;
+  border-color: #444;
+}
+body.dark .day-label {
+  color: #ddd;
+  border-bottom: 1px solid #444;
+}
+body.dark .drop-zone {
+  background: #2f2f45;
+  border-color: #555;
+}
+body.dark .drop-zone:hover {
+  background: #3a3a55;
+  border-color: #7c3aed;
+}
+body.dark .calendar-task {
+  background-color: #3c3c5a;
+  border-left-color: #4f46e5;
+  color: #fff;
+}
+body.dark .calendar-task small {
+  color: #bbb;
+}
+body.dark #calendar-view {
+  background: #1e1e2f;
+}
+/* Header background fix */
+body.dark #calendar-view .header {
+  background: #2a2a40;
+  color: #f1f1f1;
+}
+
+/* Light buttons on dark header */
+body.dark #calendar-view .header button {
+  background: #6d28d9;
+  color: white;
+}
+body.dark #calendar-view .header button:hover {
+  background: #5b21b6;
+}
+
+/* Task and calendar containers */
+body.dark .calendar-container,
+body.dark .no-due-date-tasks {
+  background: #2a2a40;
+  color: #f1f1f1;
+}
+
+/* Optional: if you add weekday labels */
+body.dark .calendar-weekday {
+  color: #ddd;
+}
+body.dark #calendar-view .header h2 {
+  color: #f1f1f1;
+}
+
+
+/* Responsive layout */
+@media (max-width: 768px) {
+  .calendar-layout {
+    flex-direction: column;
+    gap: 12px;
+  }
+  .calendar-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .calendar-task {
+    font-size: 13px;
+    padding: 8px;
+  }
+  .day-label {
+    font-size: 13px;
+  }
+  .drop-zone {
+    min-height: 60px;
+  }
+  .calendar-day {
+    min-height: 140px;
+    padding: 10px;
+  }
+}
