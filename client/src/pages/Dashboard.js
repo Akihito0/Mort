@@ -9,6 +9,7 @@ import { signOut } from 'firebase/auth'; // logging out
 import { auth, onAuthStateChanged, db, doc, getDoc } from '../firestore-database/firebase'; //Firebase auth instance
 import { useNavigate } from 'react-router-dom'; // Required for navigate()
 import NotificationPanel from '../components/NotificationPanel.js'; // Notification panel component
+import GlobalSearch from '../components/GlobalSearch.js';
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -137,12 +138,15 @@ const Dashboard = () => {
       <div className="content">
         <nav>
           <i className='bx bx-menu' onClick={() => setSidebarOpen(prev => !prev)}></i>
-          <form>
-            <div className="form-input">
-              <input type="search" placeholder="Search..." />
-              <button className="search-btn" type="submit"><i className='bx bx-search'></i></button>
-            </div>
-          </form>
+          <GlobalSearch
+            onNavigate={(tab, item) => {
+              const normalizedTab =
+                tab === 'quizzes' ? 'quiz' :
+                tab === 'tasks' ? 'todo' :
+                tab;
+              setActiveTab(normalizedTab);
+            }}
+          />
 
           <input
             type="checkbox"
