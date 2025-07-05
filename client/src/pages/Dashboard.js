@@ -109,6 +109,8 @@ const setupRealtimeActivityListener = (user) => {
 
   const taskRef = collection(db, `Mort-Task/${userName}/Task`);
   const notesRef = collection(db, `Mort-Notes/${userName}/Notes`);
+  const quizzesRef = collection(db, `Mort-Notes/${userName}/Quizzes`);
+  const flashcardsRef = collection(db, `Mort-Notes/${userName}/Flashcard`);
 
   let activities = [];
 
@@ -117,7 +119,6 @@ const setupRealtimeActivityListener = (user) => {
       .filter(item => item.timestamp)
       .sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp))
       .slice(0, 5);
-
     setRecentActivities(sorted);
   };
 
@@ -131,7 +132,6 @@ const setupRealtimeActivityListener = (user) => {
         timestamp: data.updatedAt || data.dueDate || data.created || new Date().toISOString(),
       };
     });
-
     activities = [...activities.filter(a => a.type !== 'Task'), ...taskActivities];
     updateRecentActivities();
   });
@@ -146,16 +146,46 @@ const setupRealtimeActivityListener = (user) => {
         timestamp: data.created || new Date().toISOString(),
       };
     });
-
     activities = [...activities.filter(a => a.type !== 'Note'), ...noteActivities];
+    updateRecentActivities();
+  });
+
+  const unsubQuizzes = onSnapshot(quizzesRef, (quizSnap) => {
+    const quizActivities = quizSnap.docs.map(doc => {
+      const data = doc.data();
+      return {
+        type: 'Quiz',
+        action: 'Saved',
+        title: data.title || doc.id,
+        timestamp: data.updatedAt || data.createdAt || new Date().toISOString(),
+      };
+    });
+    activities = [...activities.filter(a => a.type !== 'Quiz'), ...quizActivities];
+    updateRecentActivities();
+  });
+
+  const unsubFlashcards = onSnapshot(flashcardsRef, (flashSnap) => {
+    const flashActivities = flashSnap.docs.map(doc => {
+      const data = doc.data();
+      return {
+        type: 'Flashcard',
+        action: 'Saved',
+        title: data.title || doc.id,
+        timestamp: data.updatedAt || data.createdAt || new Date().toISOString(),
+      };
+    });
+    activities = [...activities.filter(a => a.type !== 'Flashcard'), ...flashActivities];
     updateRecentActivities();
   });
 
   return () => {
     unsubTasks();
     unsubNotes();
+    unsubQuizzes();
+    unsubFlashcards();
   };
 };
+
 
 useEffect(() => {
   let activityUnsub = null;
