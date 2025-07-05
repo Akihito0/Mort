@@ -83,7 +83,7 @@ const ForgotPassword = () => {
             <form className="login__form" onSubmit={handleSendResetEmail}>
               <div className="login__content grid">
                 <div className="login__box">
-                  <input
+                  <input    
                     type="email"
                     name="email"
                     value={formData.email}
