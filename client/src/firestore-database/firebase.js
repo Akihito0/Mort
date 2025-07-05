@@ -11,7 +11,9 @@ import {
   signInWithPopup,
   onAuthStateChanged,
   sendPasswordResetEmail,
-  confirmPasswordReset
+  confirmPasswordReset,
+  fetchSignInMethodsForEmail,
+  linkWithCredential
 } from "firebase/auth";
 import {
   getFirestore,
@@ -56,6 +58,8 @@ export {
   browserSessionPersistence,
   sendPasswordResetEmail,
   confirmPasswordReset,
+  fetchSignInMethodsForEmail,
+  linkWithCredential,
   doc,
   setDoc,
   getDocs,
