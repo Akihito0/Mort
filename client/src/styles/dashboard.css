@@ -588,7 +588,8 @@ body{
 }
 
 .content main .home-side-panel .reminders .task-list li.not-completed{
-    border-left: 10px solid var(--danger);
+    /* border-left: 10px solid var(--danger); */
+    border-left: none;
 }
 
 .content main .home-side-panel .reminders .task-list li:last-child{

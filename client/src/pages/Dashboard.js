@@ -6,7 +6,7 @@ import QuizMakerTab from '../components/QuizMakerTab.js';
 import Settings from '../components/Settings.js';
 import '../styles/dashboard.css';
 import { signOut } from 'firebase/auth'; // logging out
-import { auth, onAuthStateChanged, db, doc, getDoc, collection, getDocs } from '../firestore-database/firebase'; //Firebase auth instance
+import { auth, onAuthStateChanged, db, doc, getDoc, collection, getDocs, onSnapshot } from '../firestore-database/firebase'; //Firebase auth instance
 import { useNavigate } from 'react-router-dom'; // Required for navigate()
 import NotificationPanel from '../components/NotificationPanel.js'; // Notification panel component
 import GlobalSearch from '../components/GlobalSearch.js';
@@ -24,6 +24,7 @@ const Dashboard = () => {
     const user = auth.currentUser;
     return user ? (user.displayName || user.email || '') : '';
   });
+  const [recentActivities, setRecentActivities] = useState([]);
 
   useEffect(() => {
     document.body.classList.toggle('dark', isDark);
@@ -70,8 +71,8 @@ const Dashboard = () => {
     const confirmLogout = window.confirm("Are you sure you want to log out?");
     if (!confirmLogout) return;
   try {
-    await signOut(auth); // 🔹 Firebase logout
-    navigate('/');       // 🔹 Redirect to login
+    await signOut(auth); 
+    navigate('/');       
   } catch (error) {
     alert("Logout failed: " + error.message);
   }
@@ -103,15 +104,73 @@ const Dashboard = () => {
   }));
   setTasks(fetchedTasks);
 };
+const setupRealtimeActivityListener = (user) => {
+  const userName = user.displayName || user.uid;
+
+  const taskRef = collection(db, `Mort-Task/${userName}/Task`);
+  const notesRef = collection(db, `Mort-Notes/${userName}/Notes`);
+
+  let activities = [];
+
+  const updateRecentActivities = () => {
+    const sorted = activities
+      .filter(item => item.timestamp)
+      .sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp))
+      .slice(0, 5);
+
+    setRecentActivities(sorted);
+  };
+
+  const unsubTasks = onSnapshot(taskRef, (taskSnap) => {
+    const taskActivities = taskSnap.docs.map(doc => {
+      const data = doc.data();
+      return {
+        type: 'Task',
+        action: data.status === 'Completed' ? 'Completed' : 'Updated',
+        title: data.title,
+        timestamp: data.updatedAt || data.dueDate || data.created || new Date().toISOString(),
+      };
+    });
+
+    activities = [...activities.filter(a => a.type !== 'Task'), ...taskActivities];
+    updateRecentActivities();
+  });
+
+  const unsubNotes = onSnapshot(notesRef, (noteSnap) => {
+    const noteActivities = noteSnap.docs.map(doc => {
+      const data = doc.data();
+      return {
+        type: 'Note',
+        action: 'Added',
+        title: data.title,
+        timestamp: data.created || new Date().toISOString(),
+      };
+    });
+
+    activities = [...activities.filter(a => a.type !== 'Note'), ...noteActivities];
+    updateRecentActivities();
+  });
+
+  return () => {
+    unsubTasks();
+    unsubNotes();
+  };
+};
 
 useEffect(() => {
+  let activityUnsub = null;
+
   const unsubscribe = onAuthStateChanged(auth, (user) => {
     if (user) {
       fetchTasks();
+      activityUnsub = setupRealtimeActivityListener(user);
     }
   });
 
-  return () => unsubscribe();
+  return () => {
+    unsubscribe();
+    if (activityUnsub) activityUnsub(); // cleanup Firestore listener
+  };
 }, []);
 
   return (
@@ -257,9 +316,24 @@ useEffect(() => {
                     <i className='bx bx-filter'></i>
                   </div>
                   <ul className="task-list">
-                    <li className="completed"><div className="task-title"><i className='bx bx-check-circle'></i><p>WHEN MANI MAHUMAN</p></div><i className='bx bx-dots-vertical-rounded'></i></li>
-                    <li className="completed"><div className="task-title"><i className='bx bx-check-circle'></i><p>I HAVE NO IDEA</p></div><i className='bx bx-dots-vertical-rounded'></i></li>
-                    <li className="not-completed"><div className="task-title"><i className='bx bx-x-circle'></i><p>SUBMIT FINAL REPORT</p></div><i className='bx bx-dots-vertical-rounded'></i></li>
+                    {recentActivities.length === 0 ? (
+                      <li className="not-completed">
+                        <div className="task-title">
+                          <i className='bx bx-info-circle'></i>
+                          <p style={{ fontStyle: 'italic', color: '#999' }}>No recent activity</p>
+                        </div>
+                      </li>
+                    ) : (
+                      recentActivities.map((activity, index) => (
+                        <li key={index} className={activity.action === 'Completed' ? 'completed' : 'not-completed'}>
+                          <div className="task-title">
+                            <i className={`bx ${activity.action === 'Completed' ? 'bx-check-circle' : 'bx-pencil'}`}></i>
+                            <p>{`${activity.action} ${activity.type}: ${activity.title}`}</p>
+                          </div>
+                          <span style={{ fontSize: '12px', color: '#777', marginLeft: '32px' }}>{formatTimestamp(activity.timestamp)}</span>
+                        </li>
+                      ))
+                    )}
                   </ul>
                 </div>
               </div>
@@ -342,6 +416,15 @@ function getGreeting(name) {
   const greeting = `Good ${timeOfDay}, ${name}`;
   return greeting;
 }
+function formatTimestamp(timestamp) {
+  if (!timestamp) return '';
+
+  const dateObj = timestamp.seconds
+    ? new Date(timestamp.seconds * 1000) 
+    : new Date(timestamp);               
+
+  return dateObj.toLocaleDateString(); 
+}
 const Orders = () => (
   <div className="orders">
     <div className="header">
@@ -373,21 +456,5 @@ const Orders = () => (
     </table>
   </div>
 );
-
-const Reminders = () => (
-  <div className="reminders">
-    <div className="header">
-      <i className='bx bx-note'></i>
-      <h3>Recent Activity</h3>
-      <i className='bx bx-filter'></i>
-    </div>
-    <ul className="task-list">
-      <li className="completed"><div className="task-title"><i className='bx bx-check-circle'></i><p>WHEN MANI MAHUMAN</p></div><i className='bx bx-dots-vertical-rounded'></i></li>
-      <li className="completed"><div className="task-title"><i className='bx bx-check-circle'></i><p>I HAVE NO IDEA</p></div><i className='bx bx-dots-vertical-rounded'></i></li>
-      <li className="not-completed"><div className="task-title"><i className='bx bx-x-circle'></i><p>SUBMIT FINAL REPORT</p></div><i className='bx bx-dots-vertical-rounded'></i></li>
-    </ul>
-  </div>
-);
-
 
 export default Dashboard;
