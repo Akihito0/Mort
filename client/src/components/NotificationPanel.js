@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { auth, db, collection, onSnapshot } from '../firestore-database/firebase';
+import { auth, db, collection, onSnapshot, getDoc, setDoc, doc  } from '../firestore-database/firebase';
 import '../styles/NotificationPanel.css';
 
 const NotificationPanel = () => {
@@ -60,7 +60,14 @@ const NotificationPanel = () => {
           }));
         });
 
-        setNotifications(newNotifs);
+        const statusDocRef = doc(db, 'Mort-Task', userName, 'NotificationReadStatus', 'status');
+          getDoc(statusDocRef).then((docSnap) => {
+            const readData = docSnap.exists() ? docSnap.data().readNotifs || [] : [];
+            const readMap = {};
+            readData.forEach(id => readMap[id] = true);
+            setReadStatus(readMap);
+            setNotifications(newNotifs);
+          });
       });
     };
 
@@ -97,11 +104,31 @@ const NotificationPanel = () => {
     });
   };
 
-  const markAsRead = (notifId) => {
+  const markAsRead = async (notifId) => {
+    if (isRead(notifId)) return;
+
     setReadStatus((prev) => ({
       ...prev,
       [notifId]: true,
     }));
+
+    const user = auth.currentUser;
+    if (!user) return;
+
+    const userName = user.displayName || user.uid;
+    const statusDocRef = doc(db, 'Mort-Task', userName, 'NotificationReadStatus', 'status');
+
+    try {
+      const statusSnap = await getDoc(statusDocRef);
+      let readNotifs = statusSnap.exists() ? statusSnap.data().readNotifs || [] : [];
+
+      if (!readNotifs.includes(notifId)) {
+        readNotifs.push(notifId);
+        await setDoc(statusDocRef, { readNotifs }, { merge: true });
+      }
+    } catch (error) {
+      console.error("Error marking notification as read:", error);
+    }
   };
 
   const isRead = (notifId) => readStatus[notifId] === true;
