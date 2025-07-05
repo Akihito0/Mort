@@ -51,8 +51,12 @@ const NotificationPanel = () => {
 
           const formattedTime = formatTimeAgo(data.created ? new Date(data.created) : new Date());
 
+          const dueKey = dueDate ? dueDate.toISOString().split('T')[0] : 'no-due';
+          const statusKey = data.status || 'no-status';
+          const notifIdBase = `${docSnap.id}-${statusKey}-${dueKey}`;
+
           return messages.map((msg) => ({
-            id: docSnap.id + '-' + msg.slice(0, 10), // unique ID
+            id: `${notifIdBase}-${msg.slice(0, 10)}`, // more unique and dynamic
             message: msg,
             time: formattedTime,
             dot: statusDot,
