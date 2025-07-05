@@ -1,6 +1,10 @@
 import React, { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "../styles/landing-page-styles.css";
+import AnimatedContent from "../styles/AnimatedContent/AnimatedContent";
+import Magnet from "../styles/Magnet/Magnet";
+import ShinyText from "../styles/ShinyText/ShinyText";
+
 
 const HEADER_TABS = [
   { id: "HOME", label: "HOME", scrollTo: "top" },
@@ -136,16 +140,17 @@ const LandingPage = () => {
         {/* Get Started Section */}
         <div className="page1">
           <div className="blur-container">
-            <p className="start-learning-with">
-              Start Learning with MORT Today. Empower your learning journey with
-              AI-driven tools.
-            </p>
+              <ShinyText text="Start Learning with MORT Today. Empower your learning journey with
+              AI-driven tools." disabled={false} speed={7} className='custom-class' />
+            <Magnet padding={100} disabled={false} magnetStrength={50}>
             <button className="landing-button get-started-button" onClick={() => navigate('/login?mode=register')}>Get Started</button>
+            </Magnet>
           </div>
         </div>
 
         {/* Discover Section */}
         <div id="services" className="page2">
+        <AnimatedContent distance={150} direction="vertical" reverse={false} duration={1.2} ease="" initialOpacity={0.2} animateOpacity scale={1.1} threshold={0.2} delay={0.3}>
           <div className="side-by-side">
             <div className="text-content">
               <p className="discover">
@@ -156,7 +161,8 @@ const LandingPage = () => {
               <img src="/images/pen-and-book.png" alt="pen and book" />
             </div>
           </div>
-
+          </AnimatedContent>
+          <AnimatedContent distance={150} direction="vertical" reverse={false} duration={1.2} ease="" initialOpacity={0.2} animateOpacity scale={1.1} threshold={0.2} delay={0.3}>
           <div className="side-by-side">
             <div className="image-content">
               <img src="/images/to-do-list.png" alt="To Do List" />
@@ -170,7 +176,8 @@ const LandingPage = () => {
               </p>
             </div>
           </div>
-
+          </AnimatedContent>
+          <AnimatedContent distance={150} direction="vertical" reverse={false} duration={1.2} ease="" initialOpacity={0.2} animateOpacity scale={1.1} threshold={0.2} delay={0.3}>
           <div className="side-by-side">
             <div className="text-content">
               <h4>PDF Upload & Text Extraction</h4>
@@ -187,7 +194,8 @@ const LandingPage = () => {
               />
             </div>
           </div>
-
+          </AnimatedContent>
+          <AnimatedContent distance={150} direction="vertical" reverse={false} duration={1.2} ease="" initialOpacity={0.2} animateOpacity scale={1.1} threshold={0.2} delay={0.3}>
           <div className="side-by-side">
             <div className="image-content">
               <img src="/images/quiz-maker.png" alt="Quiz Maker" />
@@ -201,7 +209,9 @@ const LandingPage = () => {
               </p>
             </div>
           </div>
+          </AnimatedContent>
 
+          <AnimatedContent distance={150} direction="vertical" reverse={false} duration={1.2} ease="" initialOpacity={0.2} animateOpacity scale={1.1} threshold={0.2} delay={0.3}>
           <div className="side-by-side">
             <div className="text-content">
               <h4>Notes</h4>
@@ -215,7 +225,9 @@ const LandingPage = () => {
               <img src="/images/notes.png" alt="Notes" />
             </div>
           </div>
+          </AnimatedContent>
 
+          <AnimatedContent distance={150} direction="vertical" reverse={false} duration={1.2} ease="" initialOpacity={0.2} animateOpacity scale={1.1} threshold={0.2} delay={0.3}>
           <div className="side-by-side">
             <div className="image-content">
               <img src="/images/mort-helper.png" alt="MORT HELPER" />
@@ -229,6 +241,7 @@ const LandingPage = () => {
               </p>
             </div>
           </div>
+          </AnimatedContent>
         </div>
       </main>
 

@@ -91,7 +91,7 @@ body{
     white-space: wrap;
     padding: 10px 20px;
     font-family: Bebas Neue;
-    font-size: 18px;
+    font-size: 30px;
     color: white;
 }
 
@@ -182,13 +182,16 @@ body{
 }
 
 .blur-container {
-    display: inline-block;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
     box-shadow: 0px 0px 10px 9px rgba(0, 0, 0, 0.25);
     border-radius: 9999px;
     background-color: rgba(0, 0, 0, 0.29);
     padding: 2rem 4rem; 
     color: white;
     backdrop-filter: blur(2px);
+    gap: 1rem;
 }
 
 .page2{
