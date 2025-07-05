@@ -724,3 +724,54 @@ body.dark .quiz-actions button:first-child {
 body.dark .quiz-actions button:last-child {
   background: #d32f2f;
 }
+/* Dark mode support */
+body.dark .quiz-player-modal {
+  background-color: #1e1e1e;
+  color: #f0f0f0;
+}
+
+body.dark .saved-quiz-list li {
+  background-color: #2a2a2a;
+  color: #f0f0f0;
+  border: 1px solid #444;
+}
+
+body.dark .editable-title {
+  color: #fff;
+}
+
+body.dark .quiz-actions button {
+  background-color: #333;
+  color: #fff;
+  border: 1px solid #555;
+}
+
+body.dark .quiz-actions button:hover {
+  background-color: #444;
+}
+.saved-quiz-list li {
+  padding: 10px;
+  border-radius: 8px;
+  margin-bottom: 10px;
+  background-color: #f8f8f8;
+  color: #222;
+}
+
+.quiz-actions button {
+  margin-right: 8px;
+  padding: 6px 10px;
+  border-radius: 4px;
+  background-color: #eee;
+  border: 1px solid #ccc;
+  cursor: pointer;
+}
+/* Dark mode: ensure text inside saved quiz items is visible */
+body.dark .saved-quiz-item p,
+body.dark .saved-quiz-item strong {
+  color: #f1f1f1;
+}
+body.dark .editable-title:focus {
+  background-color: #3a3a3a;
+  border-bottom: 1px solid #4e9eff;
+  color: #fff;
+}

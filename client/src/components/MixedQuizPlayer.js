@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { auth, db, setDoc, doc } from '../firestore-database/firebase'; // ← make sure this import exists
+import { auth, db, setDoc, doc } from '../firestore-database/firebase';
 import '../styles/quizmaker.css';
 
 const MixedQuizPlayer = ({ quiz, onClose, showAnswers, isReviewMode = false }) => {
   const [index, setIndex] = useState(0);
-  const [answer, setAnswer] = useState(null); // index or string
+  const [answer, setAnswer] = useState(null);
   const [showExplanation, setShowExplanation] = useState(false);
   const [finished, setFinished] = useState(false);
 
@@ -22,9 +22,7 @@ const MixedQuizPlayer = ({ quiz, onClose, showAnswers, isReviewMode = false }) =
   }, [index, isReviewMode]);
 
   useEffect(() => {
-    if (finished && isReviewMode) {
-      onClose(); // auto close review after finish
-    }
+    if (finished && isReviewMode) onClose();
   }, [finished, isReviewMode, onClose]);
 
   const handleNext = () => {
@@ -58,10 +56,8 @@ const MixedQuizPlayer = ({ quiz, onClose, showAnswers, isReviewMode = false }) =
       }));
     }
 
-    quiz[index].userAnswer = selected; //Store user answer
     setAnswer(selected);
 
-    setAnswer(selected);
     if (showAnswers === 'After each item') {
       setShowExplanation(true);
     } else {
@@ -73,16 +69,21 @@ const MixedQuizPlayer = ({ quiz, onClose, showAnswers, isReviewMode = false }) =
     const userAnswer = isReviewMode ? current.userAnswer : answer;
 
     const getBtnClass = (i) => {
+      const isCorrect = i === current.correct;
+
+      // Normalize string answer to index
+      const userAnswerIndex = typeof userAnswer === 'string'
+        ? current.options?.indexOf(userAnswer)
+        : userAnswer;
+
       if (!showExplanation && !isReviewMode) return 'quiz-option-btn';
       if (i === current.correct) return 'quiz-option-btn correct';
-      if (userAnswer !== null && i === userAnswer && i !== current.correct) {
-        return 'quiz-option-btn wrong';
-      }
+      if (userAnswerIndex === i && !isCorrect) return 'quiz-option-btn wrong';
       return 'quiz-option-btn';
     };
 
     if (current.type === 'multipleChoice') {
-      return current.options.map((opt, i) => (
+      return current.options?.map((opt, i) => (
         <button
           key={i}
           className={getBtnClass(i)}
@@ -108,6 +109,7 @@ const MixedQuizPlayer = ({ quiz, onClose, showAnswers, isReviewMode = false }) =
       const inputValue = isReviewMode
         ? (current.userAnswer || '')
         : (typeof answer === 'string' ? answer : '');
+
       return (
         <>
           <input
@@ -132,55 +134,44 @@ const MixedQuizPlayer = ({ quiz, onClose, showAnswers, isReviewMode = false }) =
     }
   };
 
-  
+  const handleSaveQuiz = async () => {
+    const user = auth.currentUser;
+    if (!user) return alert('❌ You must be logged in to save quizzes.');
+    if (!user.displayName) return alert('❌ You must set a display name to save quizzes.');
 
-const handleSaveQuiz = async () => {
-  const user = auth.currentUser;
-  if (!user) return alert('You must be logged in to save quizzes.');
+    const displayName = user.displayName;
 
-  if (!user.displayName) {
-    return alert('❌ You must set a display name to save quizzes.');
-  }
+    let title = prompt("Enter a title for this quiz:", "My Quiz");
+    if (!title) title = `Quiz taken on ${new Date().toLocaleString()}`;
+    const safeTitle = title.replace(/[.#$[\]/]/g, '-');
 
-  const displayName = user.displayName;
+    const completedQuiz = quiz.map((q, i) => ({
+      question: q.question,
+      userAnswer: q.userAnswer !== undefined ? q.userAnswer : (i === index ? answer : null),
+      correct: q.correct,
+      options: q.options || null,
+      explanation: q.explanation || 'No explanation provided.',
+      type: q.type,
+    }));
 
-  let title = prompt("Enter a title for this quiz:", "My Quiz");
-  if (!title) {
-    title = `Quiz taken on ${new Date().toLocaleString()}`;
-  }
+    const saved = {
+      title,
+      timestamp: Date.now(),
+      scores,
+      showAnswers,
+      quiz: completedQuiz,
+    };
 
-  // Sanitize title for Firestore key
-  const safeTitle = title.replace(/[.#$[\]/]/g, '-');
-
-  const completedQuiz = quiz.map((q, i) => ({
-    question: q.question,
-    userAnswer: q.userAnswer !== undefined ? q.userAnswer : (i === index ? answer : null),
-    correctAnswer: q.type === 'multipleChoice'
-      ? q.options?.[q.correct]
-      : q.type === 'trueFalse'
-      ? ['True', 'False'][q.correct]
-      : q.correct,
-    explanation: q.explanation || 'No explanation provided.',
-    type: q.type
-  }));
-
-  const saved = {
-    title,
-    timestamp: Date.now(),
-    scores,
-    showAnswers,
-    quiz: completedQuiz
+    try {
+      await setDoc(doc(db, 'Mort-Notes', displayName, 'Quizzes', safeTitle), saved);
+      alert("✅ Quiz saved to Firestore!");
+      onClose();
+    } catch (error) {
+      console.error("Error saving quiz:", error);
+      alert("❌ Failed to save quiz.");
+    }
   };
 
-  try {
-    await setDoc(doc(db, 'Mort-Notes', displayName, 'Quizzes', safeTitle), saved);
-    alert("✅ Quiz saved to Firestore under title: " + title);
-    onClose();
-  } catch (error) {
-    console.error("Error saving quiz:", error);
-    alert("❌ Failed to save quiz.");
-  }
-};
   return (
     <div className="quiz-player-backdrop">
       <div className="quiz-player-modal">
@@ -232,18 +223,26 @@ const handleSaveQuiz = async () => {
             {showExplanation && (
               <>
                 <div className="quiz-answer">
-                  {!isReviewMode && current.userAnswer !== undefined && (
+                  {current.userAnswer !== undefined && (
                     <>
                       <strong>Your Answer:</strong>
                       <p>
-                        {current.type === 'multipleChoice' || current.type === 'trueFalse'
-                          ? (current.options?.[current.userAnswer] ?? ['True', 'False'][current.userAnswer])
+                        {current.type === 'multipleChoice'
+                          ? (typeof current.userAnswer === 'number'
+                              ? current.options?.[current.userAnswer]
+                              : current.userAnswer)
+                          : current.type === 'trueFalse'
+                          ? (typeof current.userAnswer === 'number'
+                              ? ['True', 'False'][current.userAnswer]
+                              : current.userAnswer)
                           : current.userAnswer}
                       </p>
                       <strong>Correct Answer:</strong>
                       <p>
-                        {current.type === 'multipleChoice' || current.type === 'trueFalse'
-                          ? (current.options?.[current.correct] ?? ['True', 'False'][current.correct])
+                        {current.type === 'multipleChoice'
+                          ? current.options?.[current.correct]
+                          : current.type === 'trueFalse'
+                          ? ['True', 'False'][current.correct]
                           : current.correct}
                       </p>
                     </>
