@@ -6,10 +6,11 @@ import QuizMakerTab from '../components/QuizMakerTab.js';
 import Settings from '../components/Settings.js';
 import '../styles/dashboard.css';
 import { signOut } from 'firebase/auth'; // logging out
-import { auth, onAuthStateChanged, db, doc, getDoc } from '../firestore-database/firebase'; //Firebase auth instance
+import { auth, onAuthStateChanged, db, doc, getDoc, collection, getDocs } from '../firestore-database/firebase'; //Firebase auth instance
 import { useNavigate } from 'react-router-dom'; // Required for navigate()
 import NotificationPanel from '../components/NotificationPanel.js'; // Notification panel component
 import GlobalSearch from '../components/GlobalSearch.js';
+import CalendarView from '../components/HomePageCalendar.js';
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -79,10 +80,39 @@ const Dashboard = () => {
 
   const handleNavClick = (tab) => {
     setActiveTab(tab);
+
     if (window.innerWidth <= 768) {
       setSidebarOpen(false); 
     }
   };
+
+  /* For Home Page tasks fetching */
+  const [tasks, setTasks] = useState([]);
+
+  const fetchTasks = async () => {
+  const user = auth.currentUser;
+  if (!user) return;
+
+  const userName = user.displayName || user.uid;
+  const snapshot = await getDocs(collection(db, 'Mort-Task', userName, 'Task'));
+  const fetchedTasks = snapshot.docs.map(docSnap => ({
+    id: docSnap.id,
+    ...docSnap.data(),
+    dueDate: docSnap.data().dueDate || '',
+    created: docSnap.data().created || '',
+  }));
+  setTasks(fetchedTasks);
+};
+
+useEffect(() => {
+  const unsubscribe = onAuthStateChanged(auth, (user) => {
+    if (user) {
+      fetchTasks();
+    }
+  });
+
+  return () => unsubscribe();
+}, []);
 
   return (
     <div className="app-container">
@@ -173,21 +203,101 @@ const Dashboard = () => {
             <>
               <div className="header">
                 <div className="left">
-                  <h1>{getGreeting(userName)}</h1>
+                  <h1>{getGreeting(userName)}</h1>  
                 </div>
               </div>
 
-              <ul className="insights">
-                <li><i className='bx bx-calendar-check'></i><span className="info"><h3>Calendar</h3><p>------</p></span></li>
-                {/* <li><i className='bx bx-show-alt'></i><span className="info"><h3>Insights</h3><p>----</p></span></li>
-                <li><i className='bx bx-line-chart'></i><span className="info"><h3>Statistics</h3><p>----</p></span></li> */}
-                {/* <li><i className='bx bx-dollar-circle'></i><span className="info"><h3>Revenue</h3><p>----</p></span></li> */}
-              </ul>
+              <div className='home-container'>
+              <CalendarView tasks={tasks} setTasks={setTasks} onBack={() => {}} />
 
+              <div className="home-side-panel">
+
+                {/* Pending Tasks */}
+                <div className="orders">
+                  <div className="header">
+                    <i className='bx bx-receipt'></i>
+                    <h3>Pending Tasks</h3>
+                    <i className='bx bx-filter'></i>
+                  </div>
+                  <table>
+                    <thead>
+                      <tr><th>Task Title</th><th>Due Date</th><th>Status</th></tr>
+                    </thead>
+                    <tbody id='pending-tasks-table'>
+                      {tasks.filter(task => task.status !== "Completed").length === 0 ? (
+                          <tr>
+                            <td colSpan="3" style={{ textAlign: 'center', fontStyle: 'italic', color: '#888' }}>
+                              No pending tasks
+                            </td>
+                          </tr>
+                        ) : (
+                          tasks
+                            .filter(task => task.status !== "Completed")
+                            .map((task) => (
+                              <tr key={task.id}>
+                                <td>{task.title}</td>
+                                <td>{task.dueDate}</td>
+                                <td>
+                                  <span className={`status ${task.status.toLowerCase().replace(/\s+/g, '-')}`}>
+                                    {task.status}
+                                  </span>
+                                </td>
+                              </tr>
+                            ))
+                        )}
+                    </tbody>
+                  </table>
+                </div>
+
+                {/* Recent Activities */}
+                <div className="reminders">
+                  <div className="header">
+                    <i className='bx bx-note'></i>
+                    <h3>Recent Activity</h3>
+                    <i className='bx bx-filter'></i>
+                  </div>
+                  <ul className="task-list">
+                    <li className="completed"><div className="task-title"><i className='bx bx-check-circle'></i><p>WHEN MANI MAHUMAN</p></div><i className='bx bx-dots-vertical-rounded'></i></li>
+                    <li className="completed"><div className="task-title"><i className='bx bx-check-circle'></i><p>I HAVE NO IDEA</p></div><i className='bx bx-dots-vertical-rounded'></i></li>
+                    <li className="not-completed"><div className="task-title"><i className='bx bx-x-circle'></i><p>SUBMIT FINAL REPORT</p></div><i className='bx bx-dots-vertical-rounded'></i></li>
+                  </ul>
+                </div>
+              </div>
+              </div>
+              {/*
+              <ul className="insights">
+                <li>
+                  <CalendarView tasks={tasks} setTasks={setTasks} onBack={() => {}} />
+                  <li>
+                    <i className='bx bx-show-alt'></i>
+                    <span className="info">
+                      <h3>Insights</h3>
+                      <p>----</p>
+                    </span>
+                  </li>
+                  <li>
+                    <i className='bx bx-line-chart'></i>
+                    <span className="info">
+                      <h3>Statistics</h3>
+                      <p>----</p>
+                    </span>
+                  </li>
+                  <li>
+                    <i className='bx bx-dollar-circle'></i>
+                    <span className="info">
+                      <h3>Revenue</h3>
+                      <p>----</p>
+                    </span>
+                  </li>
+                </li>
+              </ul>
+              
               <div className="bottom-data">
                 <Orders />
                 <Reminders />
               </div>
+              */}
+
             </>
           )}
 
@@ -198,7 +308,7 @@ const Dashboard = () => {
           )}
           {activeTab === 'todo' && (
               <div className="todo-tab-wrapper">
-                <TodoDashboard />
+                <TodoDashboard reloadTaskList={() => fetchTasks(auth.currentUser)} />
               </div>
           )}
           {activeTab === 'pdf' && (
@@ -278,5 +388,6 @@ const Reminders = () => (
     </ul>
   </div>
 );
+
 
 export default Dashboard;

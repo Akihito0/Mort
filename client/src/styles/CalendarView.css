@@ -2,7 +2,6 @@
   padding: 24px;
   background: #f4f4f4;
   height: calc(100vh - 56px);
-  overflow-y: auto;
 }
  
 #calendar-view .header {
@@ -34,14 +33,39 @@
 #calendar-view .header button:hover {
   background: #3b0647;
 }
- 
+
+.calendar-layout .month-nav {
+  display: flex;
+  justify-content: center; 
+  align-items: center;
+  gap: 10px;    
+}
+
+.calendar-layout button {
+  background-color: var(--light);
+  border-radius: 10px;
+  padding: 5px;
+  margin: 0 15px;
+}
+
+.calendar-layout button:hover {
+  background-color: gray;
+  cursor: pointer;
+}
+
 .calendar-layout {
   display: flex;
   gap: 20px;
   flex-wrap: wrap;
 }
  
-.no-due-date-tasks,
+.no-due-date-tasks {
+  width: 30%;
+  background: #fff;
+  padding: 20px;
+  border-radius: 14px;
+  box-shadow: 0 3px 10px rgba(0,0,0,0.05);
+}
 .calendar-container {
   flex: 1;
   min-width: 300px;
@@ -83,6 +107,17 @@
   padding: 0;
 }
  
+#calendar-view .calendar-weekdays {
+  display: contents;
+  grid-template-columns: repeat(7, 1fr);
+  text-align: center;
+  font-weight: bold;
+  background-color: #f0f0f0;
+  border-bottom: 1px solid #ccc;
+  padding: 8px 0;
+
+}
+
 /* Each Day Cell */
 .calendar-day {
   background-color: #ffffff;
@@ -117,7 +152,7 @@
   border-radius: 8px;
   padding: 6px;
   transition: border 0.2s ease, background 0.2s ease;
-  min-height: 80px;
+  min-height: 40px;
 }
  
 .drop-zone:hover {
@@ -254,10 +289,6 @@ body.dark .no-due-date-tasks {
   color: #f1f1f1;
 }
 
-/* Optional: if you add weekday labels */
-body.dark .calendar-weekday {
-  color: #ddd;
-}
 body.dark #calendar-view .header h2 {
   color: #f1f1f1;
 }

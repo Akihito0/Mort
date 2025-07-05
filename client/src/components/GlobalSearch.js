@@ -4,6 +4,7 @@ import { auth, db, collection, getDocs } from '../firestore-database/firebase';
 function GlobalSearch({ onNavigate }) {
   const [query, setQuery] = useState('');
   const [searchResults, setSearchResults] = useState(null);
+  const [mobileSearchActive, setMobileSearchActive] = useState(false);
   const containerRef = useRef(null);
 
   const user = auth.currentUser;
@@ -20,7 +21,7 @@ function GlobalSearch({ onNavigate }) {
     const notes = notesSnap.docs.map(doc => ({
       id: doc.id,
       title: doc.data().title || doc.id,
-      content: doc.data().content || '', // ✅ include content
+      content: doc.data().content || '',
       type: 'notes',
     }));
 
@@ -59,7 +60,7 @@ function GlobalSearch({ onNavigate }) {
         if (item.type === 'notes') {
           return (
             item.title.toLowerCase().includes(lowerQuery) ||
-            item.content.toLowerCase().includes(lowerQuery) // ✅ include content in search
+            item.content.toLowerCase().includes(lowerQuery)
           );
         } else {
           return item.title.toLowerCase().includes(lowerQuery);
@@ -75,6 +76,7 @@ function GlobalSearch({ onNavigate }) {
   const handleResultClick = (item) => {
     setQuery('');
     setSearchResults(null);
+    setMobileSearchActive(false);
     onNavigate(item.type, item);
   };
 
@@ -87,6 +89,7 @@ function GlobalSearch({ onNavigate }) {
     const handleEscape = (e) => {
       if (e.key === 'Escape') {
         setSearchResults(null);
+        setMobileSearchActive(false);
       }
     };
     document.addEventListener('mousedown', handleClickOutside);
@@ -108,22 +111,45 @@ function GlobalSearch({ onNavigate }) {
   };
 
   return (
-    <div className="global-search-wrapper" ref={containerRef}>
+    <div
+      className={`global-search-wrapper ${mobileSearchActive ? 'active' : ''}`}
+      ref={containerRef}
+    >
       <form className="global-search-container" onSubmit={(e) => e.preventDefault()}>
-        <input
-          type="text"
-          placeholder="Search..."
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-        />
-        {searchResults && (
-          <button type="button" className="close-search-btn" onClick={() => setSearchResults(null)}>
-            <i className="bx bx-x"></i>
+        {/* Mobile toggle button */}
+        {!mobileSearchActive && (
+          <button
+            type="button"
+            className="mobile-search-toggle"
+            onClick={() => setMobileSearchActive(true)}
+          >
+            <i className="bx bx-search"></i>
           </button>
         )}
-        <button type="submit">
-          <i className="bx bx-search"></i>
-        </button>
+
+        {mobileSearchActive && (
+          <>
+            <input
+              type="text"
+              placeholder="Search..."
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              autoFocus
+            />
+            <button
+              type="button"
+              className="close-search-btn"
+              onClick={() => {
+                setQuery('');
+                setSearchResults(null);
+                setMobileSearchActive(false);
+              }}
+            >
+              <i className="bx bx-x"></i>
+            </button>
+          </>
+        )}
+
         {searchResults && (
           <div className="search-results-panel">
             {['notes', 'flashcards', 'quizzes', 'tasks'].map((type) => {

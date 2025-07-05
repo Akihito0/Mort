@@ -70,11 +70,37 @@ const CalendarView = ({ tasks, setTasks, onBack }) => {
     if (!container) return;
     container.innerHTML = '';
 
+    // Create weekday headers
+    const weekdays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+    const headerRow = document.createElement('div');
+    headerRow.className = 'calendar-weekdays';
+
+    weekdays.forEach(day => {
+      const dayHeader = document.createElement('div');
+      dayHeader.className = 'calendar-weekday';
+      dayHeader.textContent = day;
+      headerRow.appendChild(dayHeader);
+    });
+
+    container.appendChild(headerRow);
+
     const firstDay = new Date(currentYear, currentMonth, 1);
     const lastDay = new Date(currentYear, currentMonth + 1, 0);
     const todayStr = new Date().toLocaleDateString('en-CA');
 
-    for (let day = 1; day <= lastDay.getDate(); day++) {
+    // Start from the correct weekday index
+    const startIndex = firstDay.getDay();
+    const totalDays = lastDay.getDate();
+
+    // Add blank cells before the first day
+    for (let i = 0; i < startIndex; i++) {
+      const emptyCell = document.createElement('div');
+      emptyCell.className = 'calendar-day empty';
+      container.appendChild(emptyCell);
+    }
+
+    // Create cells for each day
+    for (let day = 1; day <= totalDays; day++) {
       const date = new Date(currentYear, currentMonth, day);
       const dateStr = date.toLocaleDateString('en-CA');
 
@@ -84,7 +110,7 @@ const CalendarView = ({ tasks, setTasks, onBack }) => {
 
       const label = document.createElement('div');
       label.className = 'day-label';
-      label.textContent = date.toDateString();
+      label.textContent = day; // Just the number
 
       const dropZone = document.createElement('div');
       dropZone.className = 'drop-zone';
@@ -113,7 +139,7 @@ const CalendarView = ({ tasks, setTasks, onBack }) => {
       div.className = 'calendar-task';
       div.draggable = true;
       div.ondragstart = (e) => dragStart(e, task.id);
-      div.innerHTML = `<strong>${task.title}</strong><small>${task.dueDate || 'No due date'}</small>`;
+      div.innerHTML = `<strong>${task.title}</strong>`;
 
       if (!task.dueDate || task.dueDate === 'None') {
         unscheduled.appendChild(div);
@@ -141,8 +167,8 @@ const CalendarView = ({ tasks, setTasks, onBack }) => {
           <div className="calendar-header">
             <h3>Scheduled Tasks</h3>
             <div className="month-nav">
-              <button onClick={prevMonth}>◀</button>
               <span>{new Date(currentYear, currentMonth).toLocaleString('default', { month: 'long', year: 'numeric' })}</span>
+              <button onClick={prevMonth}>◀</button>
               <button onClick={nextMonth}>▶</button>
             </div>
           </div>
