@@ -723,7 +723,7 @@ body.dark .content main .header {
 
 .global-search-container input[type="text"] {
   width: 100%;
-  padding: 0.5rem 2.25rem 0.5rem 1rem;
+   padding: 0.5rem 3.2rem 0.5rem 1rem;
   border: 1px solid #ccc;
   border-radius: 999px;
   outline: none;
@@ -746,7 +746,7 @@ body.dark .global-search-container input[type="text"] {
 .global-search-container button {
   position: absolute;
   top: 50%;
-  transform: translateY(-50%);
+  transform: translateY(-40%);
   background: transparent !important;
   border: none !important;
   color: var(--dark);
@@ -766,8 +766,23 @@ body.dark .global-search-container button {
 }
 
 .close-search-btn {
-  right: 2.2rem;
+  top: 50%;
+  right: 1rem;
+  transform: translateY(-55%)!important;
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 1.5rem;
+  width: 1.5rem;
+  padding: 0;
+  margin: 0;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: inherit;
 }
+
 
 .search-results-panel {
   position: absolute;
@@ -832,3 +847,63 @@ body.dark .search-results-panel li:hover {
   color: inherit;
   font-weight: 500;
 }
+@media screen and (max-width: 576px) {
+  .content nav {
+    flex-wrap: nowrap;
+    justify-content: space-between;
+  }
+
+  .content nav form {
+    flex: 1;
+    max-width: 100%;
+  }
+
+  .content nav form .form-input {
+    display: flex;
+    width: 100%;
+  }
+
+  .content nav form .form-input input {
+    display: block;
+    width: 100%;
+    padding: 0 1rem;
+    border-radius: 999px;
+    background: var(--grey);
+  }
+
+  .content nav form .form-input button {
+    background: transparent;
+    border: none;
+    color: var(--dark);
+  }
+
+  .content nav .notif,
+  .content nav .theme-toggle,
+  .content nav .profile {
+    flex-shrink: 0;
+    margin-left: 8px;
+  }
+
+  .global-search-wrapper {
+    max-width: none;
+    flex: 1;
+    margin-right: 0;
+  }
+
+  .global-search-wrapper.active {
+    position: relative;
+    top: auto;
+    left: auto;
+    right: auto;
+    background: transparent;
+    padding: 0;
+    box-shadow: none;
+  }
+
+  .global-search-wrapper.active ~ .notif,
+  .global-search-wrapper.active ~ .theme-toggle,
+  .global-search-wrapper.active ~ .profile {
+    display: none !important;
+  }
+}
+
