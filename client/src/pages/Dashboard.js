@@ -6,7 +6,7 @@ import QuizMakerTab from '../components/QuizMakerTab.js';
 import Settings from '../components/Settings.js';
 import '../styles/dashboard.css';
 import { signOut } from 'firebase/auth'; // logging out
-import { auth, onAuthStateChanged } from '../firestore-database/firebase'; //Firebase auth instance
+import { auth, onAuthStateChanged, db, doc, getDoc } from '../firestore-database/firebase'; //Firebase auth instance
 import { useNavigate } from 'react-router-dom'; // Required for navigate()
 import NotificationPanel from '../components/NotificationPanel.js'; // Notification panel component
 
@@ -16,6 +16,7 @@ const Dashboard = () => {
   const [isDark, setIsDark] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [notes, setNotes] = useState([]);
+  const [profileImage, setProfileImage] = useState('/images/logo.png');
   const [userName, setUserName] = useState(() => {
     // Get the name instantly if available from auth
     const user = auth.currentUser;
@@ -27,19 +28,41 @@ const Dashboard = () => {
 
   }, [isDark]);
 
-  useEffect(() => {
-    // Listen for user auth changes
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      if (user) {
-        setUserName(user.displayName || user.email || 'User');
-        //Set userName to displayName or email
-      } else {
-        setUserName('');
+ useEffect(() => {
+  const unsubscribe = onAuthStateChanged(auth, async (user) => {
+    if (user) {
+      setUserName(user.displayName || user.email || 'User');
+
+      try {
+        const docRef = doc(db, 'Morts-User', user.uid);
+        const docSnap = await getDoc(docRef);
+
+        const providerId = user.providerData[0]?.providerId;
+        const isGoogle = providerId === 'google.com';
+
+        const firestorePhoto = docSnap.exists() ? docSnap.data().photoData : null;
+        const googlePhoto = user.photoURL;
+
+        if (firestorePhoto) {
+          setProfileImage(firestorePhoto);
+        } else if (isGoogle && googlePhoto) {
+          setProfileImage(googlePhoto);
+        } else {
+          setProfileImage('/images/logo.png');
+        }
+      } catch (err) {
+        console.error("Error fetching profile image:", err);
+        setProfileImage('/images/logo.png');
       }
-    });
-    // Cleanup on unmount
-    return () => unsubscribe();
-  }, []);
+    } else {
+      setUserName('');
+      setProfileImage('/images/logo.png');
+    }
+  });
+
+  return () => unsubscribe();
+}, []);
+
 
   const handleLogout = async () => {
     const confirmLogout = window.confirm("Are you sure you want to log out?");
@@ -136,7 +159,8 @@ const Dashboard = () => {
             <NotificationPanel />
           </a>
           <a href="#" className="profile">
-            <img src="/images/logo.png" alt="Profile" />
+            {/* <img src="/images/logo.png" alt="Profile" /> */}
+            <img src={profileImage} alt="Profile" />
           </a>
         </nav>
 
@@ -185,7 +209,7 @@ const Dashboard = () => {
           )}
           {activeTab === 'settings' && (
             <div className="settings-tab-wrapper">
-              <Settings />
+              <Settings onPhotoUpdate={setProfileImage}/>
             </div>
           )}
         </main>
