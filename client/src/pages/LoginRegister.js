@@ -8,6 +8,7 @@ import {
   auth,
   db,
   GoogleAuthProvider,
+  fetchSignInMethodsForEmail,
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
   updateProfile,
@@ -61,60 +62,91 @@ const LoginRegister = () => {
 
   //Firebase Google login with Firestore user saving
   const handleGoogleLogin = async (e) => {
-    e.preventDefault();
-    const provider = new GoogleAuthProvider();
-    provider.setCustomParameters({ prompt: 'select_account' });
+  e.preventDefault();
+  const provider = new GoogleAuthProvider();
+  provider.setCustomParameters({ prompt: 'select_account' });
 
-    try {
-      await setPersistence(auth, browserSessionPersistence);
-      const result = await signInWithPopup(auth, provider);
-      const user = result.user;
+  try {
+    await setPersistence(auth, browserSessionPersistence);
 
-      await setDoc(doc(db, "Morts-User", user.uid), {
-        name: user.displayName?.split(" ")[0] || "",
-        surname: user.displayName?.split(" ")[1] || "",
+    const result = await signInWithPopup(auth, provider);
+    const user = result.user;
+
+    const existingMethods = await fetchSignInMethodsForEmail(auth, user.email);
+
+    if (
+      existingMethods.length > 0 &&
+      !existingMethods.includes('google.com')
+    ) {
+      alert(
+        `This email is already registered using another method (e.g., Email & Password). Please log in using that method.`
+      );
+      return;
+    }
+
+    await setDoc(
+      doc(db, 'Morts-User', user.uid),
+      {
+        name: user.displayName?.split(' ')[0] || '',
+        surname: user.displayName?.split(' ')[1] || '',
         email: user.email,
         uid: user.uid,
-        provider: "google",
-        createdAt: new Date().toISOString()
-      }, { merge: true });
+        provider: 'google',
+        createdAt: new Date().toISOString(),
+      },
+      { merge: true }
+    );
 
-      navigate('/dashboard');
-    } catch (error) {
-      if (error.code !== 'auth/popup-closed-by-user') {
-        alert("Google Login Failed: " + error.message);
-      }
+    navigate('/dashboard');
+  } catch (error) {
+    if (error.code !== 'auth/popup-closed-by-user') {
+      alert('Google Login Failed: ' + error.message);
     }
-  };
+  }
+};
 
-  // 🟩 Firebase register with Firestore user saving
+
   const handleRegister = async (e) => {
-    e.preventDefault();
-    try {
-      const userCredential = await createUserWithEmailAndPassword(auth, formData.email, formData.password);
-      const user = userCredential.user;
+  e.preventDefault();
+  const { email, password, name, surname } = formData;
 
-      await updateProfile(user, {
-        displayName: `${formData.name} ${formData.surname}`
-      });
+  try {
+    const existingMethods = await fetchSignInMethodsForEmail(auth, email);
 
-      await setDoc(doc(db, "Morts-User", user.uid), {
-        name: formData.name,
-        surname: formData.surname,
-        email: formData.email,
-        uid: user.uid,
-        provider: "email",
-        createdAt: new Date().toISOString()
-      });
+    if (existingMethods.length > 0) {
+      const message =
+        existingMethods.includes('google.com')
+          ? `This email is already registered using Google Sign-In. Please log in using Google.`
+          : `This email is already registered. Please log in instead.`;
 
-      alert("Account successfully created! Please log in.");
-      setIsRegister(false);
-      setFormData({ name: '', surname: '', email: '', password: '' });
-
-    } catch (error) {
-      alert("Registration Failed: " + error.message);
+      alert(message);
+      return;
     }
-  };
+
+    const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+    const user = userCredential.user;
+
+    await updateProfile(user, {
+      displayName: `${name} ${surname}`,
+    });
+
+    await setDoc(doc(db, 'Morts-User', user.uid), {
+      name,
+      surname,
+      email,
+      uid: user.uid,
+      provider: 'email',
+      createdAt: new Date().toISOString(),
+    });
+
+    alert('Account successfully created! Please log in.');
+    setIsRegister(false);
+    setFormData({ name: '', surname: '', email: '', password: '' });
+
+  } catch (error) {
+    alert('Registration Failed: ' + error.message);
+  }
+};
 
   return (
     <div className={`login container grid ${isRegister ? 'active' : ''}`}>
