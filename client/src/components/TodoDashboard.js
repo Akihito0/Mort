@@ -3,7 +3,7 @@ import CalendarView from './CalendarView.js';
 import '../styles/TodoDashboard.css';
 import { auth, db, collection, addDoc, getDocs, updateDoc, deleteDoc, doc } from '../firestore-database/firebase';
 
-const TodoDashboard = () => {
+const TodoDashboard = ({ reloadTaskList }) => {
   const [tasks, setTasks] = useState([]);
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
@@ -45,48 +45,49 @@ const TodoDashboard = () => {
   }, []);
 
   const saveTask = async () => {
-  if (!title || !description) return alert('Please fill out all required fields');
-  
-  const user = auth.currentUser;
-  if (!user) return;
-  const userName = user.displayName || user.uid;
+    if (!title || !description) return alert('Please fill out all required fields');
+    
+    const user = auth.currentUser;
+    if (!user) return;
+    const userName = user.displayName || user.uid;
 
-  const taskData = {
-    title,
-    description,
-    status,
-    priority,
-    dueDate: dueDate || null, // already a string like '2025-06-29'
-    created: new Date().toLocaleDateString('en-US', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-    }),
-  };
+    const taskData = {
+      title,
+      description,
+      status,
+      priority,
+      dueDate: dueDate || null, // already a string like '2025-06-29'
+      created: new Date().toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+      }),
+    };
 
-  try {
-    if (editId) {
-      const docRef = doc(db, 'Mort-Task', userName, 'Task', editId);
-      await updateDoc(docRef, taskData);
-      setTasks(tasks.map(t => (t.id === editId ? { ...taskData, id: editId } : t)));
-      setEditId(null);
-    } else {
-      const docRef = await addDoc(collection(db, 'Mort-Task', userName, 'Task'), taskData);
-      setTasks([...tasks, { ...taskData, id: docRef.id }]);
+    try {
+      if (editId) {
+        const docRef = doc(db, 'Mort-Task', userName, 'Task', editId);
+        await updateDoc(docRef, taskData);
+        setTasks(tasks.map(t => (t.id === editId ? { ...taskData, id: editId } : t)));
+        setEditId(null);
+      } else {
+        const docRef = await addDoc(collection(db, 'Mort-Task', userName, 'Task'), taskData);
+        setTasks([...tasks, { ...taskData, id: docRef.id }]);
+        reloadTaskList && reloadTaskList();
+      }
+
+      // Clear form
+      setTitle('');
+      setDescription('');
+      setStatus('Not Started');
+      setPriority('Low');
+      setDueDate('');
+      setShowForm(false);
+    } catch (error) {
+      console.error('Error saving task:', error);
+      alert('Failed to save task. Check console for details.');
     }
-
-    // Clear form
-    setTitle('');
-    setDescription('');
-    setStatus('Not Started');
-    setPriority('Low');
-    setDueDate('');
-    setShowForm(false);
-  } catch (error) {
-    console.error('Error saving task:', error);
-    alert('Failed to save task. Check console for details.');
-  }
-};
+  };
 
 
   const editTask = (id) => {
@@ -106,6 +107,7 @@ const TodoDashboard = () => {
   const userName = user.displayName || user.uid;
   await deleteDoc(doc(db, 'Mort-Task', userName, 'Task', id));
   setTasks(tasks.filter(t => t.id !== id));
+  reloadTaskList && reloadTaskList();
 };
 
   const updateProgress = () => {

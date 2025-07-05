@@ -1,0 +1,241 @@
+.home-calendar-view {
+  padding: 0;
+  border-radius: 20px;
+  background: var(--light);
+  width: 60%;
+  overflow: visible;
+  display: flex;
+  flex-direction: row;
+  margin-top: 5px;
+}
+
+.home-calendar-view .month-nav {
+  display: flex;
+  flex-direction: row;
+  font-size: 1rem;
+  max-width: 30%;
+}
+
+.home-calendar-view .calendar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+.home-calendar-view .calendar-buttons{
+  background-color: var(--light);
+  border-radius: 10px;
+  padding: 5px;
+  margin: 0 15px;
+}
+
+.home-calendar-view .calendar-buttons:hover{
+  background-color: gray;
+  cursor: pointer;
+}
+
+.home-calendar-view .calendar-label {
+  max-width: 30%;
+}
+
+.home-calendar-view .calendar-layout {
+  display: flex;
+  width: 100%;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.home-calendar-view .calendar-weekdays {
+  display: contents;
+  grid-template-columns: repeat(7, 1fr);
+  text-align: center;
+  font-weight: bold;
+  background-color: #f0f0f0;
+  border-bottom: 1px solid #ccc;
+  padding: 8px 0;
+
+}
+
+.home-calendar-view .calendar-container {
+  flex: 1;
+  min-width: 300px;
+  background: #fff;
+  padding: 20px;
+  border-radius: 14px;
+  box-shadow: 0 3px 10px rgba(0,0,0,0.05);
+}
+
+.home-container h3 {
+  font-size: 1.5rem;
+  margin-bottom: 16px;
+  color: #555;
+}
+ 
+/* 📅 Monthly Calendar Styles */
+.home-calendar-view .calendar-month {
+  font-size: 22px;
+  font-weight: 600;
+  text-align: center;
+  margin: 20px 0 10px;
+  color: #202124;
+  font-family: 'Roboto', sans-serif;
+}
+
+/* Each Day Cell */
+.home-calendar-view .calendar-day {
+  background-color: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 12px;
+  min-width: auto;
+  min-height: auto;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+  transition: box-shadow 0.2s ease;
+}
+ .home-calendar-view .calendar-day:hover {
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+}
+
+.home-calendar-view .day-label {
+  font-weight: 600;
+  font-size: 0.6rem;
+  color: #334155;
+  margin-bottom: 8px;
+  text-align: left;
+  border-bottom: 1px solid #e5e7eb;
+  padding-bottom: 6px;
+}
+ 
+/* Drop Area */
+.home-calendar-view .drop-zone {
+  flex-grow: 1;
+  background: #f9fafb;
+  border: 2px dashed transparent;
+  border-radius: 8px;
+  padding: 6px;
+  transition: border 0.2s ease, background 0.2s ease;
+  min-height: 20px;
+  height: auto;
+}
+ 
+.home-calendar-view .drop-zone:hover {
+  border-color: #3b82f6;
+  background-color: #f0f9ff;
+}
+
+/* Task Card */
+.home-calendar-view .calendar-task {
+  background-color: #e0f2fe;
+  border-left: 4px solid #0284c7;
+  padding: 10px 12px;
+  border-radius: 8px;
+  margin-bottom: 8px;
+  cursor: grab;
+  font-size: 0.6rem;
+  color: #0f172a;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  transition: transform 0.1s ease;
+}
+
+.home-calendar-view .calendar-task:active {
+  cursor: grabbing;
+  transform: scale(0.98);
+}
+
+.home-calendar-view .calendar-task strong {
+  display: block;
+  font-weight: 500;
+  margin-bottom: 4px;
+}
+ 
+.home-calendar-view .calendar-task small {
+  color: #475569;
+  font-size: 12px;
+}
+.home-calendar-view .calendar-task:hover {
+  background-color: #bae6fd;
+}
+ 
+/* Dark mode styles */
+body.dark .home-calendar-view {
+  background: #1e1e2f;
+  color: #f1f1f1;
+}
+body.dark .calendar-day {
+  background: #2c2c3a;
+  border-color: #444;
+}
+body.dark .day-label {
+  color: #ddd;
+  border-bottom: 1px solid #444;
+}
+body.dark .drop-zone {
+  background: #2f2f45;
+  border-color: #555;
+}
+body.dark .drop-zone:hover {
+  background: #3a3a55;
+  border-color: #7c3aed;
+}
+body.dark .calendar-task {
+  background-color: #3c3c5a;
+  border-left-color: #4f46e5;
+  color: #fff;
+}
+body.dark .calendar-task small {
+  color: #bbb;
+}
+
+
+/* Task and calendar containers */
+body.dark .calendar-container {
+  background: var(--light);
+  color: #f1f1f1;
+}
+
+
+
+/* Responsive layout */
+@media (max-width: 768px) {
+  .home-calendar-view .calendar-layout {
+    flex-direction: column;
+    gap: 12px;
+  }
+  .home-calendar-view .calendar-header {
+    flex-direction: row;
+  }
+  .home-calendar-view .calendar-task {
+    font-size: 0.5rem;
+    padding: 8px;
+  }
+  .home-calendar-view .day-label {
+    font-size: 0.6rem;
+  }
+  .home-calendar-view .drop-zone {
+    min-height: 60px;
+  }
+  .home-calendar-view .calendar-day {
+    min-height: auto;
+    padding: 10px;
+  }
+  .home-calendar-view {
+    width: 100%;
+  }
+  .home-container h3 {
+    font-size: 1.3rem;
+    margin-bottom: 16px;
+    color: #555;
+  }
+  .home-calendar-view .month-nav {
+    display: flex;
+    flex-direction: row;
+    font-size: 0.8rem;
+  }
+  .home-calendar-view .calendar-weekdays {
+    font-size: 0.6rem;
+    padding: 4px 0;
+  }
+}
