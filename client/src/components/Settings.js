@@ -1,17 +1,36 @@
 import React, { useState, useEffect } from 'react';
-import { auth, db, doc, getDoc, updateDoc } from '../firestore-database/firebase';
+import {
+  auth,
+  db,
+  doc,
+  getDoc,
+  updateDoc,
+  EmailAuthProvider,
+  reauthenticateWithCredential,
+  updatePassword,
+} from '../firestore-database/firebase';
 import '../styles/Settings.css';
 
 function Settings({ onPhotoUpdate }) {
   const [userData, setUserData] = useState({
-    name: '',
-    surname: '',
+    firstName: '',
+    lastName: '',
     email: '',
-    provider: '',
-    uid: '',
-    createdAt: '',
+    contact: '',
+    city: '',
+    country: '',
+    password: '********',
     photoData: '',
+    canChangePassword: false,
   });
+
+  const [isEditing, setIsEditing] = useState(false);
+  const [showModal, setShowModal] = useState(false);
+  const [showPassModal, setShowPassModal] = useState(false);
+  const [currentPassword, setCurrentPassword] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -21,21 +40,26 @@ function Settings({ onPhotoUpdate }) {
       try {
         const docRef = doc(db, 'Morts-User', currentUser.uid);
         const docSnap = await getDoc(docRef);
+        const isGoogle = currentUser.providerData.some(p => p.providerId === 'google.com');
+        const googlePhoto = currentUser.photoURL;
 
-        if (docSnap.exists()) {
-          const data = docSnap.data();
-          const isGoogle = currentUser.providerData.some(p => p.providerId === 'google.com');
-          const googlePhoto = currentUser.photoURL;
+        const displayName = currentUser.displayName || '';
+        const [firstName, lastName] = displayName.split(' ');
 
-          setUserData({
-            ...data,
-            email: maskEmail(data.email),
-            photoData: data.photoData || (isGoogle ? googlePhoto : ''),
-            provider: isGoogle ? 'google' : 'email',
-          });
-        } else {
-          console.log('No such document!');
-        }
+        const firestoreData = docSnap.exists() ? docSnap.data() : {};
+
+        setUserData(prev => ({
+          ...prev,
+          firstName: firestoreData.firstName || firstName || '',
+          lastName: firestoreData.lastName || lastName || '',
+          email: firestoreData.email || currentUser.email,
+          contact: firestoreData.contact || '',
+          city: firestoreData.city || '',
+          country: firestoreData.country || '',
+          photoData: firestoreData.photoData || (isGoogle ? googlePhoto : ''),
+          provider: isGoogle ? 'google' : 'email',
+          canChangePassword: !isGoogle,
+        }));
       } catch (error) {
         console.error('Error fetching user data:', error);
       }
@@ -59,24 +83,62 @@ function Settings({ onPhotoUpdate }) {
       try {
         await updateDoc(userDocRef, { photoData: base64String });
         setUserData(prev => ({ ...prev, photoData: base64String }));
-
-        // 🔥 Immediately update sidebar
         if (onPhotoUpdate) onPhotoUpdate(base64String);
       } catch (error) {
         console.error('Error saving photo to Firestore:', error);
       }
     };
-
     reader.readAsDataURL(file);
   };
 
-  // 📌 Function to partially mask email
-  const maskEmail = (email) => {
-    const [user, domain] = email.split('@');
-    const maskedUser = user.length > 2
-      ? user.slice(0, 2) + '*'.repeat(user.length - 4) + user.slice(-2)
-      : user[0] + '*';
-    return `${maskedUser}@${domain}`;
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setUserData(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handleSave = async () => {
+    try {
+      const currentUser = auth.currentUser;
+      if (!currentUser) return;
+
+      const userDocRef = doc(db, 'Morts-User', currentUser.uid);
+      await updateDoc(userDocRef, {
+        firstName: userData.firstName,
+        lastName: userData.lastName,
+        contact: userData.contact,
+        city: userData.city,
+        country: userData.country,
+      });
+
+      setIsEditing(false);
+    } catch (error) {
+      console.error('Error updating user data:', error);
+    }
+  };
+
+  const handlePasswordUpdate = async () => {
+    if (newPassword !== confirmPassword) {
+      alert('New passwords do not match.');
+      return;
+    }
+
+    try {
+      const currentUser = auth.currentUser;
+      if (!currentUser) return;
+
+      const credential = EmailAuthProvider.credential(currentUser.email, currentPassword);
+      await reauthenticateWithCredential(currentUser, credential);
+      await updatePassword(currentUser, newPassword);
+
+      alert('Password updated successfully!');
+      setShowPassModal(false);
+      setCurrentPassword('');
+      setNewPassword('');
+      setConfirmPassword('');
+    } catch (error) {
+      console.error('Error updating password:', error);
+      alert('Failed to update password: ' + error.message);
+    }
   };
 
   return (
@@ -89,46 +151,175 @@ function Settings({ onPhotoUpdate }) {
         <div className="card">
           <div className="settings-content">
             <div className="settings-item vertical">
-              <div className="settings-content">
-                <div className="input-group">
-                  <label>First Name</label>
-                  <input type="text" value={userData.name} readOnly />
+              <div className="settings-left-panel">
+                <div className="profile-picture-section">
+                  <img
+                    src={userData.photoData || "images/logo.png"}
+                    alt="Profile"
+                    id="profile-img"
+                    onClick={() => setShowModal(true)}
+                  />
+                  <label htmlFor="upload-profile" className="upload-label">Change Photo</label>
+                  <input
+                    type="file"
+                    id="upload-profile"
+                    accept="image/*"
+                    onChange={handleImageUpload}
+                    style={{ display: 'none' }}
+                  />
                 </div>
-                <div className="input-group">
-                  <label>Last Name</label>
-                  <input type="text" value={userData.surname} readOnly />
-                </div>
-                <div className="input-group">
-                  <label>Email</label>
-                  <input type="text" value={userData.email} readOnly />
-                </div>
-                <div className="input-group">
-                  <label>Password</label>
-                  <input type="password" placeholder="********" readOnly />
-                </div>
-              </div>
 
-              <div className="setting-sidebar">
-                <div className="settings-centering">
-                  <div className="profile-picture-section">
-                    <img
-                      src={userData.photoData || "images/logo.png"}
-                      alt="Profile"
-                      id="profile-img"
-                    />
-                    <div className="setting-photoupload">
-                      <input type="file" id="upload-profile" accept="image/*" onChange={handleImageUpload} />
-                    </div>
+                <div className="profile-header">
+                  <div className="profile-info">
+                    <h3>{userData.firstName} {userData.lastName}</h3>
+                    <p>{userData.email}</p>
+                  </div>
+                </div>
+
+                <div className="profile-actions">
+                  <button className="btn btn-edit" onClick={() => setIsEditing(!isEditing)}>
+                    {isEditing ? 'Cancel Editing' : 'Edit Profile'}
+                  </button>
+                </div>
+
+                <div className="account-details">
+                  <div className="input-group">
+                    <label>Email</label>
+                    <input type="text" name="email" value={userData.email} readOnly />
                   </div>
 
-                  <button className="btn">Delete Account</button>
-                  <button className="btn">Update Info</button>
+                  <div className="input-group">
+                    <label>Password</label>
+                    <div className="password-field">
+                      <input type="password" value="********" readOnly />
+                      {userData.canChangePassword ? (
+                        <button className="btn-change-password" onClick={() => setShowPassModal(true)}>
+                          Change
+                        </button>
+                      ) : (
+                        <span className="password-note">Signed in with Google</span>
+                      )}
+                    </div>
+                  </div>
                 </div>
               </div>
 
+              <div className="settings-right-panel">
+                <div className="address-info">
+                  <h4>Contact Information</h4>
+                  <div className="input-group">
+                    <label>Contact Number</label>
+                    <input
+                      type="text"
+                      name="contact"
+                      value={userData.contact}
+                      onChange={handleInputChange}
+                      readOnly={!isEditing}
+                    />
+                  </div>
+                  <div className="input-group">
+                    <label>City</label>
+                    <input
+                      type="text"
+                      name="city"
+                      value={userData.city}
+                      onChange={handleInputChange}
+                      readOnly={!isEditing}
+                    />
+                  </div>
+                  <div className="input-group">
+                    <label>Country</label>
+                    <input
+                      type="text"
+                      name="country"
+                      value={userData.country}
+                      onChange={handleInputChange}
+                      readOnly={!isEditing}
+                    />
+                  </div>
+                </div>
+
+                {isEditing && (
+                  <div className="edit-actions">
+                    <button className="btn btn-save" onClick={handleSave}>Save Changes</button>
+                    <button className="btn btn-cancel" onClick={() => setIsEditing(false)}>Cancel</button>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         </div>
+
+        {showModal && (
+          <div className="modal-overlay" onClick={() => setShowModal(false)}>
+            <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+              <img src={userData.photoData || "images/logo.png"} alt="Full Profile" />
+              <button onClick={() => setShowModal(false)} className="close-modal">×</button>
+            </div>
+          </div>
+        )}
+
+        {showPassModal && (
+            <div className="modal-overlay" onClick={() => setShowPassModal(false)}>
+              <div className="modal-content password-modal" onClick={(e) => e.stopPropagation()}>
+                <h3>Change Password</h3>
+                <form onSubmit={(e) => { e.preventDefault(); handlePasswordUpdate(); }}>
+                  <div className="input-group password-box">
+                    <label>Current Password</label>
+                    <div className="input-wrapper">
+                      <input
+                        type={showPassword ? 'text' : 'password'}
+                        value={currentPassword}
+                        onChange={(e) => setCurrentPassword(e.target.value)}
+                        required
+                      />
+                      <i
+                        className={`ri-eye${showPassword ? '' : '-off'}-fill eye-icon`}
+                        onClick={() => setShowPassword(!showPassword)}
+                      ></i>
+                    </div>
+                  </div>
+
+                  <div className="input-group password-box">
+                    <label>New Password</label>
+                    <div className="input-wrapper">
+                      <input
+                        type={showPassword ? 'text' : 'password'}
+                        value={newPassword}
+                        onChange={(e) => setNewPassword(e.target.value)}
+                        required
+                      />
+                      <i
+                        className={`ri-eye${showPassword ? '' : '-off'}-fill eye-icon`}
+                        onClick={() => setShowPassword(!showPassword)}
+                      ></i>
+                    </div>
+                  </div>
+
+                  <div className="input-group password-box">
+                    <label>Confirm New Password</label>
+                    <div className="input-wrapper">
+                      <input
+                        type={showPassword ? 'text' : 'password'}
+                        value={confirmPassword}
+                        onChange={(e) => setConfirmPassword(e.target.value)}
+                        required
+                      />
+                      <i
+                        className={`ri-eye${showPassword ? '' : '-off'}-fill eye-icon`}
+                        onClick={() => setShowPassword(!showPassword)}
+                      ></i>
+                    </div>
+                  </div>
+
+                  <div className="modal-actions">
+                    <button type="submit" className="btn btn-save">Save</button>
+                    <button type="button" className="btn btn-cancel" onClick={() => setShowPassModal(false)}>Cancel</button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          )}
       </div>
     </div>
   );

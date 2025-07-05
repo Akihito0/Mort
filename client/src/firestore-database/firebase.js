@@ -13,7 +13,10 @@ import {
   sendPasswordResetEmail,
   confirmPasswordReset,
   fetchSignInMethodsForEmail,
-  linkWithCredential
+  linkWithCredential,
+  updatePassword,
+  reauthenticateWithCredential,
+  EmailAuthProvider
 } from "firebase/auth";
 import {
   getFirestore,
@@ -60,6 +63,9 @@ export {
   confirmPasswordReset,
   fetchSignInMethodsForEmail,
   linkWithCredential,
+  updatePassword,
+  reauthenticateWithCredential,
+  EmailAuthProvider,
   doc,
   setDoc,
   getDocs,
