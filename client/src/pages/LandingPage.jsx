@@ -5,7 +5,7 @@ import "../styles/landing-page-styles.css";
 const HEADER_TABS = [
   { id: "HOME", label: "HOME", scrollTo: "top" },
   { id: "SERVICES", label: "SERVICES", scrollTo: "services" },
-  { id: "ABOUT", label: "ABOUT US", scrollTo: null }
+  { id: "ABOUT", label: "ABOUT US", scrollTo: null, externalLink: "/meettheteam/source/aboutus.html" }
 ];
 
 const LandingPage = () => {
@@ -88,18 +88,33 @@ const LandingPage = () => {
       }}
     />
     {HEADER_TABS.map((tab) => (
-      <button
-        key={tab.id}
-        className={`landing-button ${tab.id.toLowerCase()}-button ${activeTab === tab.id ? 'active' : ''}`}
-        ref={el => (tabRefs.current[tab.id] = el)}
-        onClick={() => {
-          setActiveTab(tab.id);
-          if (tab.scrollTo) scrollTo(tab.scrollTo);
-        }}
-        style={{ position: "relative", zIndex: 2 }}
-      >
-        {tab.label}
-      </button>
+      tab.externalLink ? (
+        <a
+          key={tab.id}
+          className={`landing-button ${tab.id.toLowerCase()}-button ${activeTab === tab.id ? 'active' : ''}`}
+          ref={el => (tabRefs.current[tab.id] = el)}
+          href={tab.externalLink}
+          target="_blank"
+          rel="noopener noreferrer"
+          style={{ position: "relative", zIndex: 2, textDecoration: 'none', display: 'inline-block' }}
+          onClick={() => setActiveTab(tab.id)}
+        >
+          {tab.label}
+        </a>
+      ) : (
+        <button
+          key={tab.id}
+          className={`landing-button ${tab.id.toLowerCase()}-button ${activeTab === tab.id ? 'active' : ''}`}
+          ref={el => (tabRefs.current[tab.id] = el)}
+          onClick={() => {
+            setActiveTab(tab.id);
+            if (tab.scrollTo) scrollTo(tab.scrollTo);
+          }}
+          style={{ position: "relative", zIndex: 2 }}
+        >
+          {tab.label}
+        </button>
+      )
     ))}
   </div>
 
