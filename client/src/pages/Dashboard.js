@@ -5,10 +5,10 @@ import PdfTab from '../components/PdfTab.js';
 import QuizMakerTab from '../components/QuizMakerTab.js';
 import Settings from '../components/Settings.js';
 import '../styles/dashboard.css';
-import { signOut } from 'firebase/auth'; // logging out
+import { signOut } from 'firebase/auth'; 
 import { auth, onAuthStateChanged, db, doc, getDoc, collection, getDocs, onSnapshot } from '../firestore-database/firebase'; //Firebase auth instance
-import { useNavigate } from 'react-router-dom'; // Required for navigate()
-import NotificationPanel from '../components/NotificationPanel.js'; // Notification panel component
+import { useNavigate } from 'react-router-dom'; 
+import NotificationPanel from '../components/NotificationPanel.js'; 
 import GlobalSearch from '../components/GlobalSearch.js';
 import CalendarView from '../components/HomePageCalendar.js';
 
@@ -308,34 +308,36 @@ useEffect(() => {
                     <h3>Pending Tasks</h3>
                     <i className='bx bx-filter'></i>
                   </div>
-                  <table>
-                    <thead>
-                      <tr><th>Task Title</th><th>Due Date</th><th>Status</th></tr>
-                    </thead>
-                    <tbody id='pending-tasks-table'>
-                      {tasks.filter(task => task.status !== "Completed").length === 0 ? (
-                          <tr>
-                            <td colSpan="3" style={{ textAlign: 'center', fontStyle: 'italic', color: '#888' }}>
-                              No pending tasks
-                            </td>
-                          </tr>
-                        ) : (
-                          tasks
-                            .filter(task => task.status !== "Completed")
-                            .map((task) => (
-                              <tr key={task.id}>
-                                <td>{task.title}</td>
-                                <td>{task.dueDate}</td>
-                                <td>
-                                  <span className={`status ${task.status.toLowerCase().replace(/\s+/g, '-')}`}>
-                                    {task.status}
-                                  </span>
-                                </td>
-                              </tr>
-                            ))
-                        )}
-                    </tbody>
-                  </table>
+                  <div className='scroll-container'>
+                    <table>
+                      <thead>
+                        <tr><th>Task Title</th><th>Due Date</th><th>Status</th></tr>
+                      </thead>
+                      <tbody id='pending-tasks-table'>
+                        {tasks.filter(task => task.status !== "Completed").length === 0 ? (
+                            <tr>
+                              <td colSpan="3" style={{ textAlign: 'center', fontStyle: 'italic', color: '#888' }}>
+                                No pending tasks
+                              </td>
+                            </tr>
+                          ) : (
+                            tasks
+                              .filter(task => task.status !== "Completed")
+                              .map((task) => (
+                                <tr key={task.id}>
+                                  <td>{task.title}</td>
+                                  <td>{task.dueDate}</td>
+                                  <td>
+                                    <span className={`status ${task.status.toLowerCase().replace(/\s+/g, '-')}`}>
+                                      {task.status}
+                                    </span>
+                                  </td>
+                                </tr>
+                              ))
+                          )}
+                      </tbody>
+                    </table>
+                  </div>
                 </div>
 
                 {/* Recent Activities */}
@@ -345,26 +347,28 @@ useEffect(() => {
                     <h3>Recent Activity</h3>
                     <i className='bx bx-filter'></i>
                   </div>
-                  <ul className="task-list">
-                    {recentActivities.length === 0 ? (
-                      <li className="not-completed">
-                        <div className="task-title">
-                          <i className='bx bx-info-circle'></i>
-                          <p style={{ fontStyle: 'italic', color: '#999' }}>No recent activity</p>
-                        </div>
-                      </li>
-                    ) : (
-                      recentActivities.map((activity, index) => (
-                        <li key={index} className={activity.action === 'Completed' ? 'completed' : 'not-completed'}>
+                  <div className='scroll-container'>
+                    <ul className="task-list">
+                      {recentActivities.length === 0 ? (
+                        <li className="not-completed">
                           <div className="task-title">
-                            <i className={`bx ${activity.action === 'Completed' ? 'bx-check-circle' : 'bx-pencil'}`}></i>
-                            <p>{`${activity.action} ${activity.type}: ${activity.title}`}</p>
+                            <i className='bx bx-info-circle'></i>
+                            <p style={{ fontStyle: 'italic', color: '#999' }}>No recent activity</p>
                           </div>
-                          <span style={{ fontSize: '12px', color: '#777', marginLeft: '32px' }}>{formatTimestamp(activity.timestamp)}</span>
                         </li>
-                      ))
-                    )}
-                  </ul>
+                      ) : (
+                        recentActivities.map((activity, index) => (
+                          <li key={index} className={activity.action === 'Completed' ? 'completed' : 'not-completed'}>
+                            <div className="task-title">
+                              <i className={`bx ${activity.action === 'Completed' ? 'bx-check-circle' : 'bx-pencil'}`}></i>
+                              <p>{`${activity.action} ${activity.type}: ${activity.title}`}</p>
+                            </div>
+                            <span style={{ fontSize: '12px', color: '#777', marginLeft: '32px' }}>{formatTimestamp(activity.timestamp)}</span>
+                          </li>
+                        ))
+                      )}
+                    </ul>
+                  </div>
                 </div>
               </div>
               </div>

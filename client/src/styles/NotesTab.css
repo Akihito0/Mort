@@ -425,17 +425,29 @@ body.dark .summary-text p {
   }
 
   .right-panel {
-    display: none;
+    display: block;
+    width: 100%;
+    order: 2;
   }
 
   .todo-app {
     width: 100%;
     flex: 1 1 100%;
     min-height: 80vh;
+    order: 1;
   }
 
   .note-grid {
     grid-template-columns: 1fr;
+    max-height: none;
+    overflow-y: visible;
+    padding-bottom: 1rem;
+  }
+
+  .note-card,
+  .note-card.add-card {
+    width: 100% !important;
+    height: auto;
   }
 
   .modal {
@@ -474,6 +486,108 @@ body.dark .summary-text p {
 
   .content nav .bx.bx-menu {
     z-index: 1001;
+  }
+}
+@media (max-width: 768px) {
+  .main-container {
+    
+    padding: 0 !important;
+    margin: 0 !important;
+    
+  }
+
+  .todo-app,
+  .right-panel {
+    width: 100% !important;
+    min-width: 0;
+    max-width: 100%;
+    box-sizing: border-box;
+    padding: 0 0 1rem 0;
+    padding-left: 1 !important;
+    margin: 0 !important;
+  }
+
+  .right-panel {
+    gap: 10px;
+    margin-top: 0.5rem;
+  }
+
+  .note-grid {
+    grid-template-columns: 1fr !important;
+    max-width: 100%;
+    width: 100%;
+    padding: 0;
+    gap: 10px;
+    overflow-x: hidden;
+  }
+
+  .note-card,
+  .note-card.add-card {
+    width: 100% !important;
+    min-width: 0;
+    max-width: 100%;
+    height: auto !important;
+    margin: 0 0 10px 0;
+    box-sizing: border-box;
+  }
+
+  .card,
+  .task-status,
+  .completed-tasks {
+    padding: 0 0 1rem 0;
+    margin-bottom: 10px;
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+
+  .modal {
+    width: 95vw !important;
+    max-width: 100vw !important;
+    padding: 0.5rem !important;
+    left: 50% !important;
+    transform: translate(-50%, -50%) !important;
+    box-sizing: border-box;
+    top: 58% !important;
+  }
+
+  .note-content {
+    font-size: 0.95rem;
+    overflow-x: auto;
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+
+  .btn,
+  .btn-group .btn {
+    font-size: 0.95rem;
+    padding: 8px 10px;
+  }
+
+  .header h2 {
+    font-size: 1.2rem;
+  }
+
+  .header span {
+    font-size: 0.9rem;
+  }
+
+  .note-card h3 {
+    font-size: 1rem;
+  }
+
+  .note-card p {
+    font-size: 0.9rem;
+  }
+
+  .close-btn {
+    font-size: 1.5rem;
+    padding: 0.2rem;
+  }
+
+  /* Prevent horizontal scroll */
+  html, body {
+    overflow-x: hidden !important;
+    max-width: 100%;
   }
 }
 
@@ -656,12 +770,7 @@ body.dark .close-btn {
 body.dark .close-btn:hover {
   color: #ff6b6b;
 }
-@media (max-width: 768px) {
-  .modal {
-    padding: 1rem;
-    width: 95%;
-  }
-}
+
 .formatted-text table {
   width: 100%;
   border-collapse: collapse;
@@ -722,11 +831,14 @@ body.dark .close-btn:hover {
     width: 95vw;
     max-height: 90vh;
     overflow-y: auto;
+    overflow-x: hidden;
     padding: 1rem;
+    box-sizing: border-box;
   }
 
   .note-content {
     font-size: 0.9rem;
+    overflow-x: auto;
   }
 }
 .note-content::-webkit-scrollbar {

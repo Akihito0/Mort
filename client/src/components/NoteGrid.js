@@ -22,11 +22,11 @@ const NoteGrid = ({ notes, onView, onDelete, onReorder, onUseAsContext, onAddNot
               ref={provided.innerRef}
               {...provided.droppableProps}
               style={{
-                display: 'flex',
-                flexWrap: 'wrap',
-                gap: '1rem',
-                alignItems: 'flex-start'
-              }}
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
+              gap: '1rem',
+              width: '100%',
+            }}
             >
               {notes.map((note, index) => {
                 if (!note || note.id === undefined || note.id === null) return null;

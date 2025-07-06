@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { auth, db, doc, updateDoc } from '../firestore-database/firebase';
 import '../styles/HomePageCalendarView.css';
-
+// add mobile
 const CalendarView = ({ tasks, setTasks, onBack }) => {
   const [currentMonth, setCurrentMonth] = React.useState(new Date().getMonth());
   const [currentYear, setCurrentYear] = React.useState(new Date().getFullYear());
@@ -132,6 +132,8 @@ const CalendarView = ({ tasks, setTasks, onBack }) => {
     const container = document.getElementById('calendar-scheduled');
 
     tasks.forEach(task => {
+      if (task.status === "Completed") return; // Skip completed tasks
+
       const div = document.createElement('div');
       div.className = 'calendar-task';
       div.draggable = true;

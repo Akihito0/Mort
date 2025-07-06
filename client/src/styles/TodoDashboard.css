@@ -74,8 +74,10 @@ body {
     align-self: flex-end;
   }
 
-  .task-status {
-    min-height: 220px;
+  .task-status,
+  .completed-tasks {
+    max-height: none !important;
+    overflow-y: visible !important;
   }
 }
 
