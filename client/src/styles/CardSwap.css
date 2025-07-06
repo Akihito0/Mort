@@ -182,6 +182,44 @@
   .card-icon {
     font-size: 2.5rem;
   }
+
+  /* Improve touch targets */
+  .indicator {
+    min-width: 12px;
+    min-height: 12px;
+  }
+}
+
+/* Landscape orientation for mobile */
+@media (max-width: 768px) and (orientation: landscape) {
+  .card-swap-container {
+    min-height: 200px;
+    padding: 0.5rem;
+  }
+  
+  .card-swap {
+    height: 180px;
+  }
+  
+  .card-swap-header {
+    margin-bottom: 1rem;
+  }
+  
+  .card-swap-header h2 {
+    font-size: 1.25rem;
+  }
+  
+  .card-title {
+    font-size: 1.125rem;
+  }
+  
+  .card-description {
+    font-size: 0.85rem;
+  }
+  
+  .card-icon {
+    font-size: 2rem;
+  }
 }
 
 @media (max-width: 480px) {
@@ -227,6 +265,8 @@
   .indicator {
     width: 8px;
     height: 8px;
+    min-width: 10px;
+    min-height: 10px;
   }
 }
 
@@ -273,10 +313,31 @@
   .indicator {
     width: 6px;
     height: 6px;
+    min-width: 8px;
+    min-height: 8px;
   }
   
   .card-swap-footer p {
     font-size: 0.8rem;
+  }
+}
+
+/* Ensure proper touch targets on all mobile devices */
+@media (max-width: 768px) {
+  .card-swap {
+    cursor: pointer;
+  }
+  
+  .indicator {
+    cursor: pointer;
+  }
+  
+  /* Prevent text selection on mobile */
+  .card-swap-container {
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
   }
 }
 
