@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import '../styles/LoginRegister.css';
+import CardSwap from '../components/CardSwap';
+
 
 // Firebase imports
 import {
@@ -150,144 +152,152 @@ const LoginRegister = () => {
 
   return (
     <div className={`login container grid ${isRegister ? 'active' : ''}`}>
-      {/* Login Form */}
-      <div className="login__access">
-        <h1 className="login__title">Log in to your account.</h1>
-        <div className="login__area">
-          <form className="login__form" onSubmit={handleLogin}>
-            <div className="login__content grid">
-              <div className="login__box">
-                {/* 🟩 Bind email to formData */}
-                <input
-                  type="email"
-                  name="email"
-                  value={formData.email}
-                  onChange={handleInput}
-                  required
-                  placeholder=" "
-                  className="login__input"
-                />
-                <label className="login__label">Email</label>
-                <i className="ri-mail-fill login__icon"></i>
+      {/* Left Side - Login/Register Forms */}
+      <div className="login__forms-container">
+        {/* Login Form */}
+        <div className={`login__access${!isRegister ? ' active' : ''}`}>
+          <h1 className="login__title">Log in to your account.</h1>
+          <div className="login__area">
+            <form className="login__form" onSubmit={handleLogin}>
+              <div className="login__content grid">
+                <div className="login__box">
+                  {/* 🟩 Bind email to formData */}
+                  <input
+                    type="email"
+                    name="email"
+                    value={formData.email}
+                    onChange={handleInput}
+                    required
+                    placeholder=" "
+                    className="login__input"
+                  />
+                  <label className="login__label">Email</label>
+                  <i className="ri-mail-fill login__icon"></i>
+                </div>
+                <div className="login__box">
+                  {/* 🟩 Bind password to formData */}
+                  <input
+                    type={showPassword.login ? 'text' : 'password'}
+                    name="password"
+                    value={formData.password}
+                    onChange={handleInput}
+                    required
+                    placeholder=" "
+                    className="login__input"
+                  />
+                  <label className="login__label">Password</label>
+                  <i
+                    className={`ri-eye${showPassword.login ? '' : '-off'}-fill login__icon login__password`}
+                    onClick={() =>
+                      setShowPassword((prev) => ({ ...prev, login: !prev.login }))
+                    }
+                  ></i>
+                </div>
               </div>
-              <div className="login__box">
-                {/* 🟩 Bind password to formData */}
-                <input
-                  type={showPassword.login ? 'text' : 'password'}
-                  name="password"
-                  value={formData.password}
-                  onChange={handleInput}
-                  required
-                  placeholder=" "
-                  className="login__input"
-                />
-                <label className="login__label">Password</label>
-                <i
-                  className={`ri-eye${showPassword.login ? '' : '-off'}-fill login__icon login__password`}
-                  onClick={() =>
-                    setShowPassword((prev) => ({ ...prev, login: !prev.login }))
-                  }
-                ></i>
-              </div>
-            </div>
-            <button type="button" className="login__forgot" onClick={() => navigate('/forgot-password')}>Forgot your password?</button>
-            <button type="submit" className="login__button">Login</button>
-          </form>
+              <button type="button" className="login__forgot" onClick={() => navigate('/forgot-password')}>Forgot your password?</button>
+              <button type="submit" className="login__button">Login</button>
+            </form>
 
-          <div className="login__social">
-            <p className="login__social-title">Or login with</p>
-            <div className="login__social-links">
-              {/* 🟩 Google sign in button */}
-              <button onClick={handleGoogleLogin} type="button" className="login__social-link">
-                <img src="/assets/icon-google.svg" className="login__social-img" alt="Google" />
-              </button>
-              <a href="#" className="login__social-link"><img src="/assets/icon-facebook.svg" className="login__social-img" alt="Facebook" /></a>
-              <a href="#" className="login__social-link"><img src="/assets/icon-apple.svg" className="login__social-img" alt="Apple" /></a>
+            <div className="login__social">
+              <p className="login__social-title">Or login with</p>
+              <div className="login__social-links">
+                {/* 🟩 Google sign in button */}
+                <button onClick={handleGoogleLogin} type="button" className="login__social-link">
+                  <img src="/assets/icon-google.svg" className="login__social-img" alt="Google" />
+                </button>
+                <a href="#" className="login__social-link"><img src="/assets/icon-facebook.svg" className="login__social-img" alt="Facebook" /></a>
+                <a href="#" className="login__social-link"><img src="/assets/icon-apple.svg" className="login__social-img" alt="Apple" /></a>
+              </div>
             </div>
+
+            <p className="login__switch">
+              Don't have an account? <button type="button" onClick={() => setIsRegister(true)}>Create Account</button>
+            </p>
           </div>
+        </div>
 
-          <p className="login__switch">
-            Don't have an account? <button type="button" onClick={() => setIsRegister(true)}>Create Account</button>
-          </p>
+        {/* Register Form */}
+        <div className={`login__register${isRegister ? ' active' : ''}`}>
+          <h1 className="login__title">Create new account.</h1>
+          <div className="login__area">
+            <form className="login__form" onSubmit={handleRegister}>
+              <div className="login__content grid">
+                <div className="login__group grid">
+                  <div className="login__box">
+                    {/* 🟩 Bind name to formData */}
+                    <input
+                      type="text"
+                      name="name"
+                      value={formData.name}
+                      onChange={handleInput}
+                      required
+                      placeholder=" "
+                      className="login__input"
+                    />
+                    <label className="login__label">Name</label>
+                    <i className="ri-id-card-fill login__icon"></i>
+                  </div>
+                  <div className="login__box">
+                    {/* 🟩 Bind surname to formData */}
+                    <input
+                      type="text"
+                      name="surname"
+                      value={formData.surname}
+                      onChange={handleInput}
+                      required
+                      placeholder=" "
+                      className="login__input"
+                    />
+                    <label className="login__label">Surname</label>
+                    <i className="ri-id-card-fill login__icon"></i>
+                  </div>
+                </div>
+                <div className="login__box">
+                  {/* 🟩 Bind email to formData */}
+                  <input
+                    type="email"
+                    name="email"
+                    value={formData.email}
+                    onChange={handleInput}
+                    required
+                    placeholder=" "
+                    className="login__input"
+                  />
+                  <label className="login__label">Email</label>
+                  <i className="ri-mail-fill login__icon"></i>
+                </div>
+                <div className="login__box">
+                  {/* 🟩 Bind password to formData */}
+                  <input
+                    type={showPassword.register ? 'text' : 'password'}
+                    name="password"
+                    value={formData.password}
+                    onChange={handleInput}
+                    required
+                    placeholder=" "
+                    className="login__input"
+                  />
+                  <label className="login__label">Password</label>
+                  <i
+                    className={`ri-eye${showPassword.register ? '' : '-off'}-fill login__icon login__password`}
+                    onClick={() =>
+                      setShowPassword((prev) => ({ ...prev, register: !prev.register }))
+                    }
+                  ></i>
+                </div>
+              </div>
+              <button type="submit" className="login__button">Create account</button>
+            </form>
+            <p className="login__switch">
+              Already have an account? <button type="button" onClick={() => setIsRegister(false)}>Log In</button>
+            </p>
+          </div>
         </div>
       </div>
 
-      {/* Register Form */}
-      <div className="login__register">
-        <h1 className="login__title">Create new account.</h1>
-        <div className="login__area">
-          <form className="login__form" onSubmit={handleRegister}>
-            <div className="login__content grid">
-              <div className="login__group grid">
-                <div className="login__box">
-                  {/* 🟩 Bind name to formData */}
-                  <input
-                    type="text"
-                    name="name"
-                    value={formData.name}
-                    onChange={handleInput}
-                    required
-                    placeholder=" "
-                    className="login__input"
-                  />
-                  <label className="login__label">Name</label>
-                  <i className="ri-id-card-fill login__icon"></i>
-                </div>
-                <div className="login__box">
-                  {/* 🟩 Bind surname to formData */}
-                  <input
-                    type="text"
-                    name="surname"
-                    value={formData.surname}
-                    onChange={handleInput}
-                    required
-                    placeholder=" "
-                    className="login__input"
-                  />
-                  <label className="login__label">Surname</label>
-                  <i className="ri-id-card-fill login__icon"></i>
-                </div>
-              </div>
-              <div className="login__box">
-                {/* 🟩 Bind email to formData */}
-                <input
-                  type="email"
-                  name="email"
-                  value={formData.email}
-                  onChange={handleInput}
-                  required
-                  placeholder=" "
-                  className="login__input"
-                />
-                <label className="login__label">Email</label>
-                <i className="ri-mail-fill login__icon"></i>
-              </div>
-              <div className="login__box">
-                {/* 🟩 Bind password to formData */}
-                <input
-                  type={showPassword.register ? 'text' : 'password'}
-                  name="password"
-                  value={formData.password}
-                  onChange={handleInput}
-                  required
-                  placeholder=" "
-                  className="login__input"
-                />
-                <label className="login__label">Password</label>
-                <i
-                  className={`ri-eye${showPassword.register ? '' : '-off'}-fill login__icon login__password`}
-                  onClick={() =>
-                    setShowPassword((prev) => ({ ...prev, register: !prev.register }))
-                  }
-                ></i>
-              </div>
-            </div>
-            <button type="submit" className="login__button">Create account</button>
-          </form>
-          <p className="login__switch">
-            Already have an account? <button type="button" onClick={() => setIsRegister(false)}>Log In</button>
-          </p>
-        </div>
+      {/* Right Side - CardSwap Component */}
+      <div className="login__card-swap">
+        <CardSwap />
       </div>
     </div>
   );
