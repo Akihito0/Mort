@@ -1,14 +1,12 @@
 import React, { useState, useRef } from 'react';
 import Summary from './Summary';
-import ChatbotWidget from './ChatbotWidget';
 import QuizPlayer from './QuizPlayer';
 import '../styles/NotesTab.css'; // ✅ Correct path
 import { auth, db, collection, addDoc } from '../firestore-database/firebase'; // ✅ Firebase
 
-const PdfTab = () => {
+const PdfTab = ({ onSaveNote, chatContext, setChatContext }) => {
   const [file, setFile] = useState(null);
   const [extractedText, setExtractedText] = useState('');
-  const [chatContext, setChatContext] = useState(null);
   const [quiz, setQuiz] = useState(null);
   const [quizScore, setQuizScore] = useState(null);
   const dropRef = useRef(null);
@@ -83,6 +81,9 @@ const PdfTab = () => {
       await addDoc(collection(db, 'Mort-Notes', displayName, 'Notes'), noteData);
       alert('Note saved to Firebase!');
       setExtractedText('');
+      if (onSaveNote) {
+        onSaveNote(noteData);
+      }
     } catch (err) {
       console.error(err);
       alert('Failed to save note.');
@@ -175,6 +176,15 @@ const PdfTab = () => {
             <button className="btn" onClick={() => generateQuiz(extractedText)}>
               🧠 Generate Quiz
             </button>
+            <button className="btn" onClick={() => {
+              setChatContext({
+                title: 'Extracted Text',
+                content: extractedText.replace(/<[^>]*>/g, '') // Remove HTML tags
+              });
+              alert('Extracted text set as chat context! You can now ask questions about it in the chatbot.');
+            }}>
+              📌 Use as Chat Context
+            </button>
           </div>
 
           <div style={{ marginTop: '2rem' }}>
@@ -203,9 +213,6 @@ const PdfTab = () => {
         </div>
       )}
 
-      <div className="chatbot-float">
-        <ChatbotWidget contextNote={chatContext} />
-      </div>
     </div>
   );
 };

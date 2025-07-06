@@ -548,6 +548,7 @@ body.dark .summary-text p {
     transform: translate(-50%, -50%) !important;
     box-sizing: border-box;
     top: 58% !important;
+    padding-bottom: 2.5rem !important;
   }
 
   .note-content {
@@ -555,6 +556,7 @@ body.dark .summary-text p {
     overflow-x: auto;
     max-width: 100%;
     box-sizing: border-box;
+    padding-bottom: 2rem !important;
   }
 
   .btn,
@@ -834,11 +836,13 @@ body.dark .close-btn:hover {
     overflow-x: hidden;
     padding: 1rem;
     box-sizing: border-box;
+    padding-bottom: 2.5rem !important;
   }
 
   .note-content {
     font-size: 0.9rem;
     overflow-x: auto;
+    padding-bottom: 2rem !important;
   }
 }
 .note-content::-webkit-scrollbar {

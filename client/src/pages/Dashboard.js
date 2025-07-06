@@ -26,6 +26,7 @@ const Dashboard = () => {
     return user ? (user.displayName || user.email || '') : '';
   });
   const [recentActivities, setRecentActivities] = useState([]);
+  const [chatContext, setChatContext] = useState(null);
 
   useEffect(() => {
     document.body.classList.toggle('dark', isDark);
@@ -412,7 +413,12 @@ useEffect(() => {
 
           {activeTab === 'notes' && (
             <div className="notes-tab-wrapper">
-               <NotesTab notes={notes} setNotes={setNotes} />
+               <NotesTab 
+                 notes={notes} 
+                 setNotes={setNotes} 
+                 chatContext={chatContext}
+                 setChatContext={setChatContext}
+               />
             </div>
           )}
           {activeTab === 'todo' && (
@@ -422,7 +428,11 @@ useEffect(() => {
           )}
           {activeTab === 'pdf' && (
               <div className="pdf-tab-wrapper">
-                <PdfTab onSaveNote={(newNote) => setNotes(prev => [newNote, ...prev])} />
+                <PdfTab 
+                  onSaveNote={(newNote) => setNotes(prev => [newNote, ...prev])}
+                  chatContext={chatContext}
+                  setChatContext={setChatContext}
+                />
               </div>
             )}
           {activeTab === 'quiz' && (
@@ -437,7 +447,10 @@ useEffect(() => {
           )}
         </main>
       </div>
-      <ChatbotWidget />
+      <ChatbotWidget 
+        contextNote={chatContext} 
+        onClearContext={() => setChatContext(null)}
+      />
     </div>
   );
 };

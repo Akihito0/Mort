@@ -3,7 +3,7 @@ import '../styles/quizmaker.css';
 import axios from 'axios';
 import MixedQuizPlayer from './MixedQuizPlayer.js';
 import SavedQuizzesTab from './SavedQuizzesTab.js';
-import ChatbotWidget from './ChatbotWidget.js';
+
 
 const QuizMakerTab = ({ notes }) => {
   const [topics, setTopics] = useState([]);
@@ -240,7 +240,6 @@ const QuizMakerTab = ({ notes }) => {
           </div>
         </div>
       )}
-      <ChatbotWidget />
     </div>
   );
 };

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import CalendarView from './CalendarView.js';
-import ChatbotWidget from './ChatbotWidget.js';
+
 import '../styles/TodoDashboard.css';
 import { auth, db, collection, addDoc, getDocs, updateDoc, deleteDoc, doc } from '../firestore-database/firebase';
 
@@ -276,7 +276,6 @@ const TodoDashboard = ({ reloadTaskList }) => {
         </div>
       </div>
     )}
-    <ChatbotWidget />
   </>
 );
 

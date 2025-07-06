@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import ChatbotWidget from './ChatbotWidget.js';
 import NoteGrid from './NoteGrid.js';
 import QuizPlayer from './QuizPlayer.js';
 import FlashcardGrid from './FlashcardGrid.js';
@@ -8,10 +7,9 @@ import { marked } from 'marked';
 import '../styles/NotesTab.css';
 import { auth, db, collection, getDocs, addDoc, updateDoc, deleteDoc, doc, setDoc, getDoc } from '../firestore-database/firebase';
 
-function NotesTab({ notes, setNotes }) {
+function NotesTab({ notes, setNotes, chatContext, setChatContext }) {
   const [viewingNote, setViewingNote] = useState(null);
   const [editingNote, setEditingNote] = useState(null);
-  const [chatContext, setChatContext] = useState(null);
   const [quiz, setQuiz] = useState(null);
   const [quizHistory, setQuizHistory] = useState(() => {
     const saved = localStorage.getItem('quizHistory');
@@ -206,7 +204,7 @@ function NotesTab({ notes, setNotes }) {
             onReorder={setNotes}
             onUseAsContext={(note) => {
               setChatContext(note);
-              alert(`Chat context set to "${note.title}"`);
+              alert(`Chat context set to "${note.title}". You can now ask questions about this note in the chatbot!`);
             }}
             onAddNote={() => setAddingNote(true)}
           />
@@ -410,7 +408,6 @@ function NotesTab({ notes, setNotes }) {
         />
       )}
 
-      <ChatbotWidget contextNote={chatContext} />
     </div>
   );
 }

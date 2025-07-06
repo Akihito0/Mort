@@ -3,7 +3,7 @@ import { FiMessageCircle, FiMic, FiSend } from 'react-icons/fi';
 import axios from 'axios';
 import ReactMarkdown from 'react-markdown';
 
-const ChatbotWidget = ({ contextNote }) => {
+const ChatbotWidget = ({ contextNote, onClearContext }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [chat, setChat] = useState([]);
   const [input, setInput] = useState('');
@@ -12,6 +12,9 @@ const ChatbotWidget = ({ contextNote }) => {
   const [isListening, setIsListening] = useState(false);
   const recognitionRef = useRef(null);
   const messagesEndRef = useRef(null);
+
+  // Strip HTML from note content
+  const stripHtml = (html) => html.replace(/<[^>]*>/g, '');
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -45,8 +48,7 @@ const ChatbotWidget = ({ contextNote }) => {
     
     recognition.onresult = (event) => {
       const transcript = event.results[0][0].transcript;
-      console.log('Speech transcript:', transcript, 'Type:', typeof transcript);
-      setInput(String(transcript));
+      setInput(transcript);
       // Automatically send after speech recognition
       handleSend(transcript);
     };
@@ -65,46 +67,30 @@ const ChatbotWidget = ({ contextNote }) => {
   };
 
   const handleSend = async (textToSend = null) => {
-    console.log('handleSend function called!');
-    let messageText;
-    if (textToSend !== null) {
-      messageText = textToSend;
-    } else {
-      messageText = input;
-    }
+    let messageText = textToSend !== null ? textToSend : input;
     
-    console.log('Input value:', messageText, 'Type:', typeof messageText);
-    console.log('Input state:', input, 'Type:', typeof input);
-    console.log('textToSend param:', textToSend, 'Type:', typeof textToSend);
-    
-    // Ensure we have a string
-    let finalText;
-    if (typeof messageText === 'string') {
-      finalText = messageText;
-    } else if (messageText && typeof messageText === 'object') {
-      finalText = JSON.stringify(messageText);
-    } else {
-      finalText = String(messageText || '');
-    }
-    
-    if (!finalText.trim()) return;
+    if (!messageText.trim()) return;
 
-    const userMsg = { role: 'user', text: finalText };
+    const userMsg = { role: 'user', text: messageText };
     setChat(prev => [...prev, userMsg]);
     setInput('');
     setLoading(true);
 
     try {
-      const promptText = contextNote && contextNote.content
-        ? `Using this note:\n"${contextNote.content}"\n\nUser asked: ${finalText}`
-        : finalText;
+      const contextText = contextNote ? stripHtml(contextNote.content) : '';
+      const promptText = contextNote
+        ? `Context: You are helping with a note titled "${contextNote.title}". Here is the note content:\n\n"${contextText}"\n\nBased on this note content, please answer the following question: ${messageText}`
+        : messageText;
+
+      console.log("📨 Prompt sent to /chat:", promptText); // DEBUG
 
       const res = await axios.post('https://reactmort-server.onrender.com/chat', { prompt: promptText });
       const botMsg = { role: 'bot', text: res.data.reply };
       setChat(prev => [...prev, botMsg]);
       speak(res.data.reply);
-    } catch {
+    } catch (err) {
       const errorMsg = '⚠️ Error from bot.';
+      console.error('❌ Chatbot error:', err.message || err);
       setChat(prev => [...prev, { role: 'bot', text: errorMsg }]);
       speak(errorMsg);
     }
@@ -201,15 +187,42 @@ const ChatbotWidget = ({ contextNote }) => {
             }}
           >
             {contextNote && (
-              <div style={{
-                background: isDarkMode ? '#2b3b55' : '#eef7ff',
-                padding: '5px 8px',
-                marginBottom: '10px',
-                fontSize: '12px',
-                borderRadius: '6px'
-              }}>
-                🔗 Using note: <strong>{contextNote.title}</strong>
-              </div>
+                              <div style={{
+                  background: isDarkMode ? '#2b3b55' : '#eef7ff',
+                  padding: '8px 12px',
+                  marginBottom: '10px',
+                  fontSize: '12px',
+                  borderRadius: '6px',
+                  border: `2px solid ${isDarkMode ? '#4a90e2' : '#007bff'}`,
+                  position: 'relative'
+                }}>
+                  📌 <strong>Context: {contextNote.title}</strong>
+                  <div style={{ fontSize: '11px', marginTop: '2px', opacity: 0.8 }}>
+                    Ask questions about this note
+                  </div>
+                  <div style={{ fontSize: '10px', marginTop: '4px', opacity: 0.7, maxHeight: '60px', overflow: 'hidden' }}>
+                    {contextNote.content?.substring(0, 100)}...
+                  </div>
+                  {onClearContext && (
+                    <button
+                      onClick={onClearContext}
+                      style={{
+                        position: 'absolute',
+                        top: '4px',
+                        right: '4px',
+                        background: 'transparent',
+                        border: 'none',
+                        color: isDarkMode ? '#ccc' : '#666',
+                        fontSize: '14px',
+                        cursor: 'pointer',
+                        padding: '2px'
+                      }}
+                      title="Clear context"
+                    >
+                      ×
+                    </button>
+                  )}
+                </div>
             )}
             {chat.map((msg, i) => (
               <div
@@ -256,11 +269,8 @@ const ChatbotWidget = ({ contextNote }) => {
               width: '100%',
             }}>
               <input
-                value={input || ''}
-                onChange={(e) => {
-                  console.log('Input onChange - value:', e.target.value, 'Type:', typeof e.target.value);
-                  setInput(String(e.target.value));
-                }}
+                value={input}
+                onChange={(e) => setInput(e.target.value)}
                 onKeyDown={(e) => e.key === 'Enter' && handleSend()}
                 placeholder="Ask something..."
                 style={{
@@ -271,38 +281,35 @@ const ChatbotWidget = ({ contextNote }) => {
                   borderRadius: '6px',
                   background: isDarkMode ? '#2e2e2e' : '#fff',
                   color: isDarkMode ? '#f5f5f5' : '#000',
-                  minWidth: '0', // prevent overflow
+                  minWidth: '0',
                   maxWidth: window.innerWidth < 420 ? '80%' : '100%',
                   marginRight: '2px',
                 }}
               />
 
-              <button
-                onClick={startListening}
-                title={isListening ? "Listening..." : "Voice input"}
-                style={{
-                  background: isListening ? '#ff4444' : (isDarkMode ? '#444' : '#f1f1f1'),
-                  border: 'none',
-                  borderRadius: '6px',
-                  padding: '6px',
-                  width: '36px',
-                  height: '36px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  cursor: 'pointer',
-                  animation: isListening ? 'pulse 1.5s infinite' : 'none',
-                }}
-              >
+                              <button
+                  onClick={startListening}
+                  title={isListening ? "Listening..." : "Voice input"}
+                  style={{
+                    background: isListening ? '#ff4444' : (isDarkMode ? '#444' : '#f1f1f1'),
+                    border: 'none',
+                    borderRadius: '6px',
+                    padding: '6px',
+                    width: '36px',
+                    height: '36px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    cursor: 'pointer',
+                    animation: isListening ? 'pulse 1.5s infinite' : 'none',
+                  }}
+                >
                 <FiMic size={16} style={{ transform: 'scaleX(1)' }} />
               </button>
 
-              <button
-                onClick={() => {
-                  console.log('Send button clicked!');
-                  handleSend();
-                }}
-                title="Send"
+                              <button
+                  onClick={() => handleSend()}
+                  title="Send"
                 style={{
                   background: '#007bff',
                   color: '#fff',
