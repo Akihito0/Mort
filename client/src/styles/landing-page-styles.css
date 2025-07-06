@@ -85,11 +85,11 @@ body{
     border-radius: 60px;
     border: 0;
     background-color: #1d75d4;
-    height: 50px;
+    height: auto;
     margin: 0 auto;
     display: block;
     white-space: wrap;
-    padding: 10px 20px;
+    padding: 5px 20px;
     font-family: Bebas Neue;
     font-size: 30px;
     color: white;
