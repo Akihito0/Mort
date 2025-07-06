@@ -403,6 +403,14 @@ body.dark .calendar-container {
     margin-right: 5%;
     text-align: left;
   }
+  .home-container h3 {
+    font-size: 0.95rem;
+    margin-bottom: 5px;
+    color: #555;
+  }
+  .content main .home-side-panel .reminders .task-list li .task-title {
+    font-size: 0.8rem;
+  }
 }
 
 /* Weekday header improvements */

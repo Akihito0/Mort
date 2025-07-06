@@ -84,7 +84,7 @@ body{
     width: auto;
     border-radius: 60px;
     border: 0;
-    background-color: #1d75d4;
+    background-color: #1d75d4 !important;
     height: auto;
     margin: 0 auto;
     display: block;
@@ -219,12 +219,14 @@ body{
     font-family: Bebas Neue;
     font-size: 3rem;
     margin-bottom: 20px;
+    color: black !important;
 }
 
 .text-content p{
     font-family: Inter;
     font-size: 1.5rem;
     font-weight: 600;
+    color: black !important;
 }
 
 .image-content img {
@@ -267,6 +269,7 @@ p.discover{
 	letter-spacing: 0.04em;
 	display: inline-block;
 	margin-bottom: 5vh;
+  color: black !important;
 }
 footer{
 	margin: auto;
@@ -279,6 +282,11 @@ footer{
 	background-color: white;
 	padding: 20px;
 }
+
+footer p {
+  color: black !important;
+}
+
 .about{
 	color: blue;
 }
