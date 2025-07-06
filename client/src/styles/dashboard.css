@@ -465,10 +465,15 @@ body{
     flex: 1 1 30%;
 }
 
-.content main .home-side-panel>div{
+.content main .home-side-panel > div {
     border-radius: 20px;
     background: var(--light);
     padding: 24px;
+}
+
+body.dark .content main .home-side-panel > div {
+  background: #23233a;
+  color: #f1f1f1;
 }
 
 .scroll-container {
@@ -552,6 +557,21 @@ body{
 
 .content main .home-side-panel .orders table tr td .status.not-started{
     background: var(--danger);
+}
+
+body.dark .content main .home-side-panel .orders table,
+body.dark .content main .home-side-panel .orders table tr,
+body.dark .content main .home-side-panel .orders table td,
+body.dark .content main .home-side-panel .orders table th {
+  background: #23233a;
+  color: #f1f1f1;
+  border-color: #444;
+}
+body.dark .content main .home-side-panel .orders table tr:hover {
+  background: #2c2c3a;
+}
+body.dark .content main .home-side-panel .orders table tr td .status {
+  color: #fff;
 }
 
 .content main .home-side-panel .reminders{
@@ -646,17 +666,83 @@ body{
         grid-template-columns: 1fr;
     }
 
-    .content main .home-side-panel .header{
-        min-width: 340px;
+    .content main .home-side-panel .header {
+        min-width: 0;
+        font-size: 1rem;
+        padding: 8px 4px;
     }
 
-    .content main .home-side-panel .orders table{
-        min-width: 340px;
+    .content main .home-side-panel .orders table {
+        min-width: 0;
+        width: 100%;
+        font-size: 0.8rem;
+        display: block;
+        overflow-x: auto;
+        border-spacing: 0;
     }
 
-    .content main .home-side-panel .reminders .task-list{
-        min-width: 340px;
+    .content main .home-side-panel .orders table thead, 
+    .content main .home-side-panel .orders table tbody, 
+    .content main .home-side-panel .orders table tr {
+        display: block;
+        width: 100%;
+        box-sizing: border-box;
     }
+
+    .content main .home-side-panel .orders table td, 
+    .content main .home-side-panel .orders table th {
+        padding: 4px 2px;
+        font-size: 0.8rem;
+        word-break: break-word;
+        text-align: left;
+        white-space: normal;
+    }
+
+    .content main .home-side-panel .orders table tr {
+        border-bottom: 1px solid #eee;
+        margin-bottom: 4px;
+        display: flex;
+        flex-direction: column;
+        background: #fff;
+        border-radius: 8px;
+        box-shadow: 0 1px 2px rgba(0,0,0,0.03);
+        padding: 4px 0;
+    }
+
+    .content main .home-side-panel .orders table tr td .status {
+        display: inline-block;
+        min-width: 0;
+        font-size: 0.7em;
+        padding: 4px 8px;
+        white-space: normal;
+        word-break: break-word;
+        line-height: 1.1;
+    }
+
+    .content main .home-side-panel .reminders .task-list {
+        min-width: 0;
+        width: 100%;
+        font-size: 0.8rem;
+        padding: 0;
+    }
+
+    .content main .home-side-panel .reminders .task-list li {
+        padding: 8px 4px 4px 4px;
+        font-size: 0.8rem;
+        margin-bottom: 8px;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .content main .home-side-panel .reminders .task-list li span {
+        font-size: 0.7em;
+        color: #888;
+        margin: 2px 0 0 0;
+        display: block;
+        margin-left: 0;
+    }
+
     .content nav .profile{
         width: 32px;
         height: 32px;

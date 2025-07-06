@@ -5,11 +5,18 @@ import '../styles/HomePageCalendarView.css';
 const CalendarView = ({ tasks, setTasks, onBack }) => {
   const [currentMonth, setCurrentMonth] = React.useState(new Date().getMonth());
   const [currentYear, setCurrentYear] = React.useState(new Date().getFullYear());
+  const [isMobile, setIsMobile] = React.useState(window.innerWidth <= 576);
+
+  React.useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth <= 576);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   useEffect(() => {
     generateCalendarGrid();
     loadCalendarTasks();
-  }, [currentMonth, currentYear, tasks]);
+  }, [currentMonth, currentYear, tasks, isMobile]);
 
   const prevMonth = () => {
     if (currentMonth === 0) {
@@ -70,19 +77,16 @@ const CalendarView = ({ tasks, setTasks, onBack }) => {
     if (!container) return;
     container.innerHTML = '';
 
-    // Create weekday headers
-    const weekdays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-    const headerRow = document.createElement('div');
-    headerRow.className = 'calendar-weekdays';
-
+    // Create weekday headers and day cells as siblings in the same grid
+    const weekdays = isMobile
+      ? ['S', 'M', 'T', 'W', 'T', 'F', 'S']
+      : ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
     weekdays.forEach(day => {
       const dayHeader = document.createElement('div');
-      dayHeader.className = 'calendar-weekday';
+      dayHeader.className = 'calendar-weekday' + (isMobile ? ' mobile' : '');
       dayHeader.textContent = day;
-      headerRow.appendChild(dayHeader);
+      container.appendChild(dayHeader);
     });
-
-    container.appendChild(headerRow);
 
     const firstDay = new Date(currentYear, currentMonth, 1);
     const lastDay = new Date(currentYear, currentMonth + 1, 0);
@@ -111,6 +115,14 @@ const CalendarView = ({ tasks, setTasks, onBack }) => {
       const label = document.createElement('div');
       label.className = 'day-label';
       label.textContent = day; // Just the number
+
+      // Add a blue dot if there is a task for this day
+      const hasTask = tasks.some(task => task.dueDate === dateStr && task.status !== 'Completed');
+      if (hasTask) {
+        const dot = document.createElement('div');
+        dot.className = 'calendar-dot';
+        label.appendChild(dot);
+      }
 
       const dropZone = document.createElement('div');
       dropZone.className = 'drop-zone';
@@ -154,7 +166,7 @@ const CalendarView = ({ tasks, setTasks, onBack }) => {
           <div className="calendar-header">
             <h3 className='calendar-label'>Calendar</h3>
             <div className="month-nav">
-              <span>{new Date(currentYear, currentMonth).toLocaleString('default', { month: 'long', year: 'numeric' })}</span>
+              <span>{new Date(currentYear, currentMonth).toLocaleString('default', { month: 'short', year: 'numeric' })}</span>
               <button className='calendar-buttons' onClick={prevMonth}>◀</button>
               <button className='calendar-buttons' onClick={nextMonth}>▶</button>
               
