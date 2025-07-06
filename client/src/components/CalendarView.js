@@ -135,6 +135,8 @@ const CalendarView = ({ tasks, setTasks, onBack }) => {
     unscheduled.innerHTML = '';
 
     tasks.forEach(task => {
+      if (task.status === "Completed") return; // Skip completed tasks
+      
       const div = document.createElement('div');
       div.className = 'calendar-task';
       div.draggable = true;
@@ -147,7 +149,7 @@ const CalendarView = ({ tasks, setTasks, onBack }) => {
         const target = container.querySelector(`[data-date='${task.dueDate}'] .drop-zone`);
         if (target) target.appendChild(div);
       }
-    });
+      });
   };
 
   return (
