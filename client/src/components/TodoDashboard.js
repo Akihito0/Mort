@@ -14,6 +14,8 @@ const TodoDashboard = ({ reloadTaskList }) => {
   const [showForm, setShowForm] = useState(false);
   const [filters, setFilters] = useState({ priority: '', status: '', date: '' });
   const [showCalendar, setShowCalendar] = useState(false);
+  const [selectedTask, setSelectedTask] = useState(null);
+
 
   useEffect(() => {
   requestAnimationFrame(() => {
@@ -148,6 +150,7 @@ const TodoDashboard = ({ reloadTaskList }) => {
   }
 
   return (
+  <>
     <div className="main-container">
       <div className="todo-app">
         <div className="header">
@@ -204,6 +207,8 @@ const TodoDashboard = ({ reloadTaskList }) => {
               <div
                 key={task.id}
                 className={`task-row ${task.status.replace(/\s+/g, '-').toLowerCase()} ${task.priority.toLowerCase()}-priority`}
+                onClick={() => setSelectedTask(task)}
+                style={{ cursor: 'pointer' }}
               >
                 <div>
                   <div className="task-title">{task.title}</div>
@@ -214,8 +219,8 @@ const TodoDashboard = ({ reloadTaskList }) => {
                   </div>
                 </div>
                 <div className="task-right">
-                  <button onClick={() => editTask(task.id)}>✏️</button>
-                  <button onClick={() => deleteTask(task.id)}>🗑️</button>
+                  <button onClick={(e) => { e.stopPropagation(); editTask(task.id); }}>✏️</button>
+                  <button onClick={(e) => { e.stopPropagation(); deleteTask(task.id); }}>🗑️</button>
                 </div>
               </div>
             ))}
@@ -257,7 +262,22 @@ const TodoDashboard = ({ reloadTaskList }) => {
         </div>
       </div>
     </div>
-  );
+
+    {selectedTask && (
+      <div className="modal-overlay" onClick={() => setSelectedTask(null)}>
+        <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+          <h2>{selectedTask.title}</h2>
+          <p><strong>Description:</strong> {selectedTask.description}</p>
+          <p><strong>Due Date:</strong> {selectedTask.dueDate || 'None'}</p>
+          <p><strong>Status:</strong> {selectedTask.status}</p>
+          <p><strong>Priority:</strong> {selectedTask.priority}</p>
+          <button onClick={() => setSelectedTask(null)}>Close</button>
+        </div>
+      </div>
+    )}
+  </>
+);
+
 };
 
 export default TodoDashboard;
