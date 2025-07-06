@@ -18,7 +18,8 @@ const NoteCard = ({ note, onView, onDelete, onUseAsContext }) => {
       onClick={() => onView(note)}
       style={{
         position: 'relative',
-        width: '240px',
+        width: '100%',
+        maxWidth: '240px',
         height: isMobile ? '120px' : '200px',
         overflow: 'hidden',
         cursor: 'pointer',
