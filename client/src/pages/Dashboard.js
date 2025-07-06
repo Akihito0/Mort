@@ -5,10 +5,10 @@ import PdfTab from '../components/PdfTab.js';
 import QuizMakerTab from '../components/QuizMakerTab.js';
 import Settings from '../components/Settings.js';
 import '../styles/dashboard.css';
-import { signOut } from 'firebase/auth'; // logging out
+import { signOut } from 'firebase/auth'; 
 import { auth, onAuthStateChanged, db, doc, getDoc, collection, getDocs, onSnapshot } from '../firestore-database/firebase'; //Firebase auth instance
-import { useNavigate } from 'react-router-dom'; // Required for navigate()
-import NotificationPanel from '../components/NotificationPanel.js'; // Notification panel component
+import { useNavigate } from 'react-router-dom'; 
+import NotificationPanel from '../components/NotificationPanel.js'; 
 import GlobalSearch from '../components/GlobalSearch.js';
 import CalendarView from '../components/HomePageCalendar.js';
 

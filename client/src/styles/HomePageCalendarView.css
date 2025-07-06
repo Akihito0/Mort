@@ -197,7 +197,7 @@ body.dark .calendar-container {
 }
 
 
-
+ /* add mobile */
 /* Responsive layout */
 @media (max-width: 768px) {
   .home-calendar-view .calendar-layout {
