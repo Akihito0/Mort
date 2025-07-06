@@ -6,6 +6,8 @@ const CalendarView = ({ tasks, setTasks, onBack }) => {
   const [currentMonth, setCurrentMonth] = React.useState(new Date().getMonth());
   const [currentYear, setCurrentYear] = React.useState(new Date().getFullYear());
   const [isMobile, setIsMobile] = React.useState(window.innerWidth <= 576);
+  const [selectedDateTasks, setSelectedDateTasks] = React.useState([]);
+  const [showModal, setShowModal] = React.useState(false);
 
   React.useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth <= 576);
@@ -136,6 +138,16 @@ const CalendarView = ({ tasks, setTasks, onBack }) => {
 
       dayDiv.appendChild(label);
       dayDiv.appendChild(dropZone);
+      // Add click handler to show modal with tasks for this date
+      dayDiv.onclick = () => {
+        const tasksForDate = tasks.filter(
+          t => t.dueDate === dateStr && t.status !== "Completed"
+        );
+        if (tasksForDate.length > 0) {
+          setSelectedDateTasks(tasksForDate);
+          setShowModal(true);
+        }
+      };
       container.appendChild(dayDiv);
     }
   };
@@ -175,6 +187,27 @@ const CalendarView = ({ tasks, setTasks, onBack }) => {
           <div id="calendar-scheduled" className="calendar-grid"></div>
         </div>
       </div>
+      {showModal && (
+        <div className="modal-overlay" onClick={() => setShowModal(false)}>
+          <div className="modal-content" onClick={e => e.stopPropagation()}>
+            <h2>Tasks for Selected Date</h2>
+            {selectedDateTasks.map(task => (
+              <div key={task.id} className="task-row">
+                <div>
+                  <div className="task-title">{task.title}</div>
+                  <div className="task-date">Due: {task.dueDate || 'None'}</div>
+                  <div className="task-desc">{task.description}</div>
+                  <div className="badges">
+                    <span className={`badge status-badge ${task.status.replace(/\s+/g, '-').toLowerCase()}`}>{task.status}</span>
+                    <span className={`badge priority-badge ${task.priority?.toLowerCase()}`}>{task.priority} Priority</span>
+                  </div>
+                </div>
+              </div>
+            ))}
+            <button onClick={() => setShowModal(false)}>Close</button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

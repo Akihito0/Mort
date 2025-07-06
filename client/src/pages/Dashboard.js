@@ -4,6 +4,7 @@ import TodoDashboard from '../components/TodoDashboard.js';
 import PdfTab from '../components/PdfTab.js';
 import QuizMakerTab from '../components/QuizMakerTab.js';
 import Settings from '../components/Settings.js';
+import ChatbotWidget from '../components/ChatbotWidget.js';
 import '../styles/dashboard.css';
 import { signOut } from 'firebase/auth'; 
 import { auth, onAuthStateChanged, db, doc, getDoc, collection, getDocs, onSnapshot } from '../firestore-database/firebase'; //Firebase auth instance
@@ -436,6 +437,7 @@ useEffect(() => {
           )}
         </main>
       </div>
+      <ChatbotWidget />
     </div>
   );
 };

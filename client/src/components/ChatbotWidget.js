@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { FiMessageCircle, FiMic, FiSend } from 'react-icons/fi';
 import axios from 'axios';
+import ReactMarkdown from 'react-markdown';
 
 const ChatbotWidget = ({ contextNote }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -8,6 +9,7 @@ const ChatbotWidget = ({ contextNote }) => {
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState(document.body.classList.contains('dark'));
+  const [isListening, setIsListening] = useState(false);
   const recognitionRef = useRef(null);
   const messagesEndRef = useRef(null);
 
@@ -35,27 +37,66 @@ const ChatbotWidget = ({ contextNote }) => {
     const recognition = new SpeechRecognition();
     recognition.lang = 'en-US';
     recognition.interimResults = false;
+    recognition.continuous = false;
+    
+    recognition.onstart = () => {
+      setIsListening(true);
+    };
+    
     recognition.onresult = (event) => {
       const transcript = event.results[0][0].transcript;
-      setInput(transcript);
+      console.log('Speech transcript:', transcript, 'Type:', typeof transcript);
+      setInput(String(transcript));
+      // Automatically send after speech recognition
+      handleSend(transcript);
     };
-    recognition.onerror = (e) => console.error('Speech error:', e);
+    
+    recognition.onerror = (e) => {
+      console.error('Speech error:', e);
+      setIsListening(false);
+    };
+    
+    recognition.onend = () => {
+      setIsListening(false);
+    };
+    
     recognition.start();
     recognitionRef.current = recognition;
   };
 
-  const handleSend = async () => {
-    if (!input.trim()) return;
+  const handleSend = async (textToSend = null) => {
+    let messageText;
+    if (textToSend !== null) {
+      messageText = textToSend;
+    } else {
+      messageText = input;
+    }
+    
+    console.log('Input value:', messageText, 'Type:', typeof messageText);
+    console.log('Input state:', input, 'Type:', typeof input);
+    console.log('textToSend param:', textToSend, 'Type:', typeof textToSend);
+    
+    // Ensure we have a string
+    let finalText;
+    if (typeof messageText === 'string') {
+      finalText = messageText;
+    } else if (messageText && typeof messageText === 'object') {
+      finalText = JSON.stringify(messageText);
+    } else {
+      finalText = String(messageText || '');
+    }
+    
+    if (!finalText.trim()) return;
 
-    const userMsg = { role: 'user', text: input };
+    const userMsg = { role: 'user', text: finalText };
     setChat(prev => [...prev, userMsg]);
     setInput('');
     setLoading(true);
 
     try {
-      const promptText = contextNote
-        ? `Using this note:\n"${contextNote.content}"\n\nUser asked: ${input}`
-        : input;
+      const promptText = contextNote && contextNote.content
+        ? `Using this note:\n"${contextNote.content}"\n\nUser asked: ${finalText}`
+        : finalText;
 
       const res = await axios.post('https://reactmort-server.onrender.com/chat', { prompt: promptText });
       const botMsg = { role: 'bot', text: res.data.reply };
@@ -72,6 +113,15 @@ const ChatbotWidget = ({ contextNote }) => {
 
   return (
     <div style={{ position: 'fixed', bottom: isOpen ? '0' : '20px', right: '20px', zIndex: 1000 }}>
+      <style>
+        {`
+          @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+          }
+        `}
+      </style>
       {!isOpen && (
         <button
           onClick={() => setIsOpen(true)}
@@ -180,7 +230,11 @@ const ChatbotWidget = ({ contextNote }) => {
                     color: isDarkMode ? '#f0f0f0' : '#000',
                   }}
                 >
-                  {msg.text}
+                  {msg.role === 'bot' ? (
+                    <ReactMarkdown>{msg.text}</ReactMarkdown>
+                  ) : (
+                    msg.text
+                  )}
                 </div>
               </div>
             ))}
@@ -201,8 +255,11 @@ const ChatbotWidget = ({ contextNote }) => {
               width: '100%',
             }}>
               <input
-                value={input}
-                onChange={(e) => setInput(e.target.value)}
+                value={input || ''}
+                onChange={(e) => {
+                  console.log('Input onChange - value:', e.target.value, 'Type:', typeof e.target.value);
+                  setInput(String(e.target.value));
+                }}
                 onKeyDown={(e) => e.key === 'Enter' && handleSend()}
                 placeholder="Ask something..."
                 style={{
@@ -221,9 +278,9 @@ const ChatbotWidget = ({ contextNote }) => {
 
               <button
                 onClick={startListening}
-                title="Voice input"
+                title={isListening ? "Listening..." : "Voice input"}
                 style={{
-                  background: isDarkMode ? '#444' : '#f1f1f1',
+                  background: isListening ? '#ff4444' : (isDarkMode ? '#444' : '#f1f1f1'),
                   border: 'none',
                   borderRadius: '6px',
                   padding: '6px',
@@ -233,6 +290,7 @@ const ChatbotWidget = ({ contextNote }) => {
                   alignItems: 'center',
                   justifyContent: 'center',
                   cursor: 'pointer',
+                  animation: isListening ? 'pulse 1.5s infinite' : 'none',
                 }}
               >
                 <FiMic size={16} style={{ transform: 'scaleX(1)' }} />

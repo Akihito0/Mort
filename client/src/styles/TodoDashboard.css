@@ -79,6 +79,10 @@ body {
     max-height: none !important;
     overflow-y: visible !important;
   }
+
+  .view-calendar-btn {
+    display: none !important;
+  }
 }
 
 .todo-app, .task-status, .completed-tasks {

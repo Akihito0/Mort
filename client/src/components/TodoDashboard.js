@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import CalendarView from './CalendarView.js';
+import ChatbotWidget from './ChatbotWidget.js';
 import '../styles/TodoDashboard.css';
 import { auth, db, collection, addDoc, getDocs, updateDoc, deleteDoc, doc } from '../firestore-database/firebase';
 
@@ -158,7 +159,7 @@ const TodoDashboard = ({ reloadTaskList }) => {
           <span>{new Date().toLocaleDateString()}</span>
           <div className="header-buttons">
             <button onClick={() => setShowForm(!showForm)}>+ Add Task</button>
-            <button onClick={() => setShowCalendar(true)}>📅 View Calendar</button>
+            <button className="view-calendar-btn" onClick={() => setShowCalendar(true)}>📅 View Calendar</button>
           </div>
         </div>
 
@@ -275,6 +276,7 @@ const TodoDashboard = ({ reloadTaskList }) => {
         </div>
       </div>
     )}
+    <ChatbotWidget />
   </>
 );
 
