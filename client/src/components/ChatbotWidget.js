@@ -65,6 +65,7 @@ const ChatbotWidget = ({ contextNote }) => {
   };
 
   const handleSend = async (textToSend = null) => {
+    console.log('handleSend function called!');
     let messageText;
     if (textToSend !== null) {
       messageText = textToSend;
@@ -297,7 +298,10 @@ const ChatbotWidget = ({ contextNote }) => {
               </button>
 
               <button
-                onClick={handleSend}
+                onClick={() => {
+                  console.log('Send button clicked!');
+                  handleSend();
+                }}
                 title="Send"
                 style={{
                   background: '#007bff',
