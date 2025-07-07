@@ -107,10 +107,20 @@ const TodoDashboard = ({ reloadTaskList }) => {
   const deleteTask = async (id) => {
   const user = auth.currentUser;
   if (!user) return;
+
+  const confirmDelete = window.confirm('Are you sure you want to delete this task?');
+  if (!confirmDelete) return;
+
   const userName = user.displayName || user.uid;
-  await deleteDoc(doc(db, 'Mort-Task', userName, 'Task', id));
-  setTasks(tasks.filter(t => t.id !== id));
-  reloadTaskList && reloadTaskList();
+
+  try {
+    await deleteDoc(doc(db, 'Mort-Task', userName, 'Task', id));
+    setTasks(tasks.filter(t => t.id !== id));
+    reloadTaskList && reloadTaskList();
+  } catch (error) {
+    console.error('Failed to delete task:', error);
+    alert('Failed to delete the task. Please try again later.');
+  }
 };
 
 const markTaskAsDone = async (task) => {
@@ -185,8 +195,8 @@ const markTaskAsDone = async (task) => {
 
         {showForm && (
           <div className="form">
-            <input type="text" value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Task Title" />
-            <textarea value={description} onChange={(e) => setDescription(e.target.value)} placeholder="Description" />
+            <input type="text" value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Task Title  *" />
+            <textarea value={description} onChange={(e) => setDescription(e.target.value)} placeholder="Description  *" />
             <input type="date" value={dueDate} min={new Date().toISOString().split("T")[0]} onChange={(e) => setDueDate(e.target.value)} />
             <select value={status} onChange={(e) => setStatus(e.target.value)}>
               <option value="Not Started">Not Started</option>

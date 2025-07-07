@@ -34,6 +34,9 @@ const SavedQuizzesTab = ({ onClose, onReview }) => {
   const user = auth.currentUser;
   if (!user) return;
 
+  const confirmDelete = window.confirm('Are you sure you want to delete this quiz?');
+  if (!confirmDelete) return;
+
   const displayName = user.displayName || user.uid;
   const quizToDelete = savedQuizzes[indexToDelete];
 

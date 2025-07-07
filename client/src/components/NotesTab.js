@@ -173,6 +173,9 @@ function NotesTab({ notes, setNotes, chatContext, setChatContext }) {
   };
   //delete note
    const handleDeleteNote = async (id) => {
+    const confirmDelete = window.confirm('Are you sure you want to delete this note?');
+    if (!confirmDelete) return;
+
     const user = auth.currentUser;
     if (!user) return;
 
@@ -234,6 +237,9 @@ function NotesTab({ notes, setNotes, chatContext, setChatContext }) {
             flashcards={flashcards}
             onOpen={setViewingFlashcardSet}
             onDelete={async (id) => {
+                const confirmDelete = window.confirm('Are you sure you want to delete this flashcard set?');
+                if (!confirmDelete) return;
+                
                 const user = auth.currentUser;
                 if (!user) return;
 
