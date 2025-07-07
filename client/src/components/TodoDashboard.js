@@ -191,7 +191,7 @@ const markTaskAsDone = async (task) => {
             <select value={status} onChange={(e) => setStatus(e.target.value)}>
               <option value="Not Started">Not Started</option>
               <option value="In Progress">In Progress</option>
-              <option value="Completed">Completed</option>
+               {editId && <option value="Completed">Completed</option>}
             </select>
             <select value={priority} onChange={(e) => setPriority(e.target.value)}>
               <option value="Low">Low Priority</option>
