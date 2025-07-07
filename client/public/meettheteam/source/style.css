@@ -1,5 +1,5 @@
 body{
-    background: radial-gradient(circle at center, #002f41 0%, #012440 70%, #002357 100%);
+    background: radial-gradient(circle at center, #87ceeb 0%, #2196f3 70%, #0d47a1 100%);
     color: #1a237e;
     padding:3rem;
     position: relative;
@@ -62,21 +62,10 @@ main h1 {
     font-weight: 900;
     letter-spacing: 5px;
     line-height: 1;
-    background-image: linear-gradient(rgb(209, 205, 151), rgb(169, 169, 169));
+    background-image: linear-gradient(rgb(133, 133, 133), rgb(255, 255, 255));
     color: transparent;
     background-clip: text;
 }
-
-.profile-img {
-    width: 120px;
-    height: 120px;
-    border-radius: 50%;
-    object-fit: cover;
-    margin: 10px auto;
-    display: block;
-    border: 4px solid #fff;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    }
 
 main h2 {
     text-align: center;
@@ -217,7 +206,6 @@ main h2 {
                 box-shadow 0.3s ease;
     position: relative;
     overflow: hidden;
-   
 }
 
 
@@ -630,8 +618,6 @@ footer {
     footer h3 {
         font-size: 1rem;
     }
-
-    
 }
 
 

@@ -208,7 +208,7 @@ const markTaskAsDone = async (task) => {
               <option value="Medium">Medium Priority</option>
               <option value="High">High Priority</option>
             </select>
-            <button onClick={saveTask}>Save Task</button>
+            <button className="save-btn" onClick={saveTask}>Save Task</button>
           </div>
         )}
 
