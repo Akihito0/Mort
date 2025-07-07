@@ -1024,3 +1024,8 @@ body.dark .search-results-panel li:hover {
   }
 }
 /* add mobile */
+/* Dark mode syles for the icon in recent activities */
+body.dark .home-side-panel .bx,
+body.dark .home-side-panel i {
+  color: #fff;
+}
