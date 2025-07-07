@@ -430,3 +430,7 @@ body.dark .modal-content {
 body.dark .modal-content button {
   background: #4e085f;
 }
+
+.modal-content button:last-of-type {
+  float: right;
+}

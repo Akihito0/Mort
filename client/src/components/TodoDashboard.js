@@ -113,6 +113,26 @@ const TodoDashboard = ({ reloadTaskList }) => {
   reloadTaskList && reloadTaskList();
 };
 
+const markTaskAsDone = async (task) => {
+  const user = auth.currentUser;
+  if (!user || !task) return;
+  const userName = user.displayName || user.uid;
+
+  try {
+    const docRef = doc(db, 'Mort-Task', userName, 'Task', task.id);
+    await updateDoc(docRef, { ...task, status: 'Completed' });
+
+    setTasks(prev =>
+      prev.map(t => (t.id === task.id ? { ...t, status: 'Completed' } : t))
+    );
+    setSelectedTask(null);
+    reloadTaskList && reloadTaskList();
+  } catch (err) {
+    console.error('Failed to mark task as done:', err);
+    alert('Something went wrong. Try again.');
+  }
+};
+
   const updateProgress = () => {
     const total = tasks.length || 1;
     const completed = tasks.filter(t => t.status === 'Completed').length;
@@ -273,6 +293,9 @@ const TodoDashboard = ({ reloadTaskList }) => {
           <p><strong>Status:</strong> {selectedTask.status}</p>
           <p><strong>Priority:</strong> {selectedTask.priority}</p>
           <button onClick={() => setSelectedTask(null)}>Close</button>
+          {selectedTask.status !== 'Completed' && (
+            <button onClick={() => markTaskAsDone(selectedTask)}>Mark as Done ✅</button>
+          )}
         </div>
       </div>
     )}
