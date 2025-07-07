@@ -241,6 +241,10 @@ body{
     flex-direction: column;
     text-align: center;
   }
+
+  .side-by-side.reverse {
+    flex-direction: column-reverse;
+  }
 }
 
 .start-learning-with {

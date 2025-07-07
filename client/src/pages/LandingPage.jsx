@@ -163,7 +163,7 @@ const LandingPage = () => {
           </div>
           </AnimatedContent>
           <AnimatedContent distance={150} direction="vertical" reverse={false} duration={1.2} ease="" initialOpacity={0.2} animateOpacity scale={1.1} threshold={0.2} delay={0.3}>
-          <div className="side-by-side">
+          <div className="side-by-side reverse">
             <div className="image-content">
               <img src="/images/to-do-list.png" alt="To Do List" />
             </div>
@@ -196,7 +196,7 @@ const LandingPage = () => {
           </div>
           </AnimatedContent>
           <AnimatedContent distance={150} direction="vertical" reverse={false} duration={1.2} ease="" initialOpacity={0.2} animateOpacity scale={1.1} threshold={0.2} delay={0.3}>
-          <div className="side-by-side">
+          <div className="side-by-side reverse">
             <div className="image-content">
               <img src="/images/quiz-maker.png" alt="Quiz Maker" />
             </div>
@@ -228,7 +228,7 @@ const LandingPage = () => {
           </AnimatedContent>
 
           <AnimatedContent distance={150} direction="vertical" reverse={false} duration={1.2} ease="" initialOpacity={0.2} animateOpacity scale={1.1} threshold={0.2} delay={0.3}>
-          <div className="side-by-side">
+          <div className="side-by-side reverse">
             <div className="image-content">
               <img src="/images/mort-helper.png" alt="MORT HELPER" />
             </div>
