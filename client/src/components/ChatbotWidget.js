@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { FiMessageCircle, FiMic, FiSend } from 'react-icons/fi';
+import { FiMessageCircle, FiMic, FiSend, FiVolume2, FiVolumeX } from 'react-icons/fi';
 import axios from 'axios';
 import ReactMarkdown from 'react-markdown';
 
@@ -10,6 +10,7 @@ const ChatbotWidget = ({ contextNote, onClearContext }) => {
   const [loading, setLoading] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState(document.body.classList.contains('dark'));
   const [isListening, setIsListening] = useState(false);
+  const [isMuted, setIsMuted] = useState(false);
   const recognitionRef = useRef(null);
   const messagesEndRef = useRef(null);
 
@@ -29,6 +30,7 @@ const ChatbotWidget = ({ contextNote, onClearContext }) => {
   }, []);
 
   const speak = (text) => {
+    if (isMuted) return;
     const utterance = new SpeechSynthesisUtterance(text);
     speechSynthesis.speak(utterance);
   };
@@ -160,20 +162,43 @@ const ChatbotWidget = ({ contextNote, onClearContext }) => {
             }}
           >
             <strong>M.O.R.T. Helper</strong>
-            <button
-              onClick={() => setIsOpen(false)}
-              style={{
-                background: 'transparent',
-                border: 'none',
-                color: '#fff',
-                fontSize: '20px',
-                fontWeight: 'bold',
-                cursor: 'pointer',
-                lineHeight: 1,
-              }}
-            >
-              X
-            </button>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <button
+                onClick={() => setIsMuted((m) => !m)}
+                style={{
+                  background: 'transparent',
+                  border: 'none',
+                  color: '#fff',
+                  fontSize: '18px',
+                  cursor: 'pointer',
+                  lineHeight: 1,
+                  marginRight: '4px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  padding: 0,
+                  height: '28px',
+                  width: '28px',
+                  justifyContent: 'center',
+                }}
+                title={isMuted ? 'Unmute TTS' : 'Mute TTS'}
+              >
+                {isMuted ? <FiVolumeX size={20} style={{ transform: 'none' }} /> : <FiVolume2 size={20} style={{ transform: 'none' }} />}
+              </button>
+              <button
+                onClick={() => setIsOpen(false)}
+                style={{
+                  background: 'transparent',
+                  border: 'none',
+                  color: '#fff',
+                  fontSize: '20px',
+                  fontWeight: 'bold',
+                  cursor: 'pointer',
+                  lineHeight: 1,
+                }}
+              >
+                X
+              </button>
+            </div>
           </div>
 
           {/* Messages */}
