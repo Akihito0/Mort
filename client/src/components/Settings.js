@@ -5,9 +5,11 @@ import {
   doc,
   getDoc,
   updateDoc,
+  deleteDoc,
   EmailAuthProvider,
   reauthenticateWithCredential,
   updatePassword,
+  deleteUser,
 } from '../firestore-database/firebase';
 import '../styles/Settings.css';
 
@@ -27,10 +29,12 @@ function Settings({ onPhotoUpdate }) {
   const [isEditing, setIsEditing] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [showPassModal, setShowPassModal] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const [deleteConfirmText, setDeleteConfirmText] = useState('');
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -141,6 +145,48 @@ function Settings({ onPhotoUpdate }) {
     }
   };
 
+  const handleDeleteAccount = async () => {
+    if (deleteConfirmText !== 'DELETE') {
+      alert('Please type DELETE to confirm account deletion.');
+      return;
+    }
+
+    try {
+      const currentUser = auth.currentUser;
+      if (!currentUser) return;
+
+      // For Google users, we can't reauthenticate with password, so we'll just delete the Firestore data
+      if (userData.provider === 'google') {
+        // Delete user data from Firestore
+        const userDocRef = doc(db, 'Morts-User', currentUser.uid);
+        await deleteDoc(userDocRef);
+        
+        // Sign out the user
+        await auth.signOut();
+        alert('Account deleted successfully. You will be redirected to the login page.');
+        window.location.href = '/';
+        return;
+      }
+
+      // For email users, reauthenticate first
+      const credential = EmailAuthProvider.credential(currentUser.email, currentPassword);
+      await reauthenticateWithCredential(currentUser, credential);
+      
+      // Delete user data from Firestore
+      const userDocRef = doc(db, 'Morts-User', currentUser.uid);
+      await deleteDoc(userDocRef);
+      
+      // Delete the user account
+      await deleteUser(currentUser);
+      
+      alert('Account deleted successfully. You will be redirected to the login page.');
+      window.location.href = '/';
+    } catch (error) {
+      console.error('Error deleting account:', error);
+      alert('Failed to delete account: ' + error.message);
+    }
+  };
+
   return (
     <div className="main-container">
       <div className="todo-app">
@@ -179,6 +225,9 @@ function Settings({ onPhotoUpdate }) {
                 <div className="profile-actions">
                   <button className="btn btn-edit" onClick={() => setIsEditing(!isEditing)}>
                     {isEditing ? 'Cancel Editing' : 'Edit Profile'}
+                  </button>
+                  <button className="btn btn-delete" onClick={() => setShowDeleteModal(true)}>
+                    Delete Account
                   </button>
                 </div>
 
@@ -320,6 +369,76 @@ function Settings({ onPhotoUpdate }) {
               </div>
             </div>
           )}
+
+        {showDeleteModal && (
+          <div className="modal-overlay" onClick={() => setShowDeleteModal(false)}>
+            <div className="modal-content delete-modal" onClick={(e) => e.stopPropagation()}>
+              <h3>Delete Account</h3>
+              <div className="delete-warning">
+                <p><strong>Warning:</strong> This action cannot be undone. All your data will be permanently deleted.</p>
+                <p>This includes:</p>
+                <ul>
+                  <li>Your profile information</li>
+                  <li>All your notes and documents</li>
+                  <li>Quiz history and saved quizzes</li>
+                  <li>Todo lists and calendar events</li>
+                  <li>All other personal data</li>
+                </ul>
+              </div>
+              
+              {userData.provider !== 'google' && (
+                <div className="input-group password-box">
+                  <label>Current Password (Required)</label>
+                  <div className="input-wrapper">
+                    <input
+                      type={showPassword ? 'text' : 'password'}
+                      value={currentPassword}
+                      onChange={(e) => setCurrentPassword(e.target.value)}
+                      required
+                    />
+                    <i
+                      className={`ri-eye${showPassword ? '' : '-off'}-fill eye-icon`}
+                      onClick={() => setShowPassword(!showPassword)}
+                    ></i>
+                  </div>
+                </div>
+              )}
+
+              <div className="input-group">
+                <label>Type "DELETE" to confirm</label>
+                <input
+                  type="text"
+                  value={deleteConfirmText}
+                  onChange={(e) => setDeleteConfirmText(e.target.value)}
+                  placeholder="Type DELETE to confirm"
+                  required
+                />
+              </div>
+
+              <div className="modal-actions">
+                <button 
+                  type="button" 
+                  className="btn btn-delete-confirm" 
+                  onClick={handleDeleteAccount}
+                  disabled={deleteConfirmText !== 'DELETE'}
+                >
+                  Delete Account
+                </button>
+                <button 
+                  type="button" 
+                  className="btn btn-cancel" 
+                  onClick={() => {
+                    setShowDeleteModal(false);
+                    setDeleteConfirmText('');
+                    setCurrentPassword('');
+                  }}
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

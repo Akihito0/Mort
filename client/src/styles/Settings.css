@@ -96,6 +96,16 @@
   background-color: #3a5a8a;
 }
 
+.btn-delete {
+  background-color: #dc3545;
+  color: white;
+  margin-left: 10px;
+}
+
+.btn-delete:hover {
+  background-color: #c82333;
+}
+
 .account-details,
 .address-info {
   margin-bottom: 30px;
@@ -310,6 +320,7 @@
   font-size: 20px;
   color: #666;
   cursor: pointer;
+  z-index: 2;
 }
 
 .password-note {
@@ -408,4 +419,122 @@ body.dark .input-group input:focus {
   border-color: #4a6fa5;
   box-shadow: 0 0 0 2px rgba(74, 111, 165, 0.4);
   outline: none;
+}
+
+/* Delete Account Modal Styles */
+.delete-modal {
+  max-width: 500px;
+  width: 90%;
+}
+
+.delete-modal h3 {
+  color: #dc3545;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.delete-warning {
+  background-color: #fff3cd;
+  border: 1px solid #ffeaa7;
+  border-radius: 6px;
+  padding: 15px;
+  margin-bottom: 20px;
+}
+
+.delete-warning p {
+  margin: 0 0 10px 0;
+  color: #856404;
+}
+
+.delete-warning ul {
+  margin: 10px 0;
+  padding-left: 20px;
+  color: #856404;
+}
+
+.delete-warning li {
+  margin-bottom: 5px;
+}
+
+.delete-modal .input-group {
+  margin-bottom: 20px;
+}
+
+.delete-modal .input-group input {
+  border: 2px solid #ddd;
+  transition: border-color 0.2s;
+}
+
+.delete-modal .input-group input:focus {
+  border-color: #dc3545;
+}
+
+.btn-delete-confirm {
+  background-color: #dc3545;
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 500;
+  transition: all 0.2s;
+}
+
+.btn-delete-confirm:hover:not(:disabled) {
+  background-color: #c82333;
+}
+
+.btn-delete-confirm:disabled {
+  background-color: #6c757d;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+/* Dark mode styles for delete modal */
+body.dark .delete-modal {
+  background-color: #2d3748;
+  color: #e2e8f0;
+}
+
+body.dark .delete-warning {
+  background-color: #744210;
+  border-color: #d69e2e;
+}
+
+body.dark .delete-warning p,
+body.dark .delete-warning li {
+  color: #fbd38d;
+}
+
+body.dark .delete-modal .input-group input {
+  background-color: #4a5568;
+  border-color: #718096;
+  color: #e2e8f0;
+}
+
+body.dark .delete-modal .input-group input:focus {
+  border-color: #fc8181;
+}
+
+/* Ensure input-wrapper is relative */
+.input-wrapper {
+  position: relative;
+}
+
+/* Add right padding to input so icon doesn't overlap text */
+.input-wrapper input {
+  padding-right: 40px;
+}
+
+/* Style the eye icon */
+.eye-icon {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 20px;
+  color: #666;
+  cursor: pointer;
+  z-index: 2;
 }
