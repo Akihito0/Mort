@@ -49,7 +49,13 @@ const NotificationPanel = () => {
             }
           }
 
-          const formattedTime = formatTimeAgo(data.created ? new Date(data.created) : new Date());
+          const formattedTime = formatTimeAgo(
+            data.created
+              ? (typeof data.created.toDate === 'function'
+                  ? data.created.toDate()
+                  : new Date(data.created))
+              : new Date()
+          );
 
           const dueKey = dueDate ? dueDate.toISOString().split('T')[0] : 'no-due';
           const statusKey = data.status || 'no-status';

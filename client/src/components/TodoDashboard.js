@@ -60,11 +60,7 @@ const TodoDashboard = ({ reloadTaskList }) => {
       status,
       priority,
       dueDate: dueDate || null, // already a string like '2025-06-29'
-      created: new Date().toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-      }),
+      created: new Date().toISOString(),
     };
 
     try {
