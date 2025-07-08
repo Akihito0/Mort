@@ -92,20 +92,37 @@ const Dashboard = () => {
   /* For Home Page tasks fetching */
   const [tasks, setTasks] = useState([]);
 
-  const fetchTasks = async () => {
-  const user = auth.currentUser;
-  if (!user) return;
+  // Real-time listener for tasks
+  useEffect(() => {
+    let unsubscribe = null;
+    const listenForTasks = (user) => {
+      if (!user) return;
+      const userName = user.displayName || user.uid;
+      const taskRef = collection(db, 'Mort-Task', userName, 'Task');
+      unsubscribe = onSnapshot(taskRef, (snapshot) => {
+        const fetchedTasks = snapshot.docs.map(docSnap => ({
+          id: docSnap.id,
+          ...docSnap.data(),
+          dueDate: docSnap.data().dueDate || '',
+          created: docSnap.data().created || '',
+        }));
+        setTasks(fetchedTasks);
+      });
+    };
+    const authUnsub = onAuthStateChanged(auth, (user) => {
+      if (unsubscribe) unsubscribe();
+      if (user) {
+        listenForTasks(user);
+      } else {
+        setTasks([]);
+      }
+    });
+    return () => {
+      if (unsubscribe) unsubscribe();
+      authUnsub();
+    };
+  }, []);
 
-  const userName = user.displayName || user.uid;
-  const snapshot = await getDocs(collection(db, 'Mort-Task', userName, 'Task'));
-  const fetchedTasks = snapshot.docs.map(docSnap => ({
-    id: docSnap.id,
-    ...docSnap.data(),
-    dueDate: docSnap.data().dueDate || '',
-    created: docSnap.data().created || '',
-  }));
-  setTasks(fetchedTasks);
-};
 const setupRealtimeActivityListener = (user) => {
   const userName = user.displayName || user.uid;
 
@@ -194,7 +211,6 @@ useEffect(() => {
 
   const unsubscribe = onAuthStateChanged(auth, (user) => {
     if (user) {
-      fetchTasks();
       activityUnsub = setupRealtimeActivityListener(user);
     }
   });
@@ -423,7 +439,7 @@ useEffect(() => {
           )}
           {activeTab === 'todo' && (
               <div className="todo-tab-wrapper">
-                <TodoDashboard reloadTaskList={() => fetchTasks(auth.currentUser)} />
+                <TodoDashboard />
               </div>
           )}
           {activeTab === 'pdf' && (
