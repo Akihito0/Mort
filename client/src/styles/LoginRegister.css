@@ -658,4 +658,62 @@ img {
 }
 
 
+.forgot-password-container {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 2rem;
+  background-color: var(--body-color);
+}
+
+.forgot-password-form {
+  width: 100%;
+  max-width: 600px;
+  padding: 3rem;
+  background-color: var(--white-color);
+  border-radius: 1.5rem;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
+.forgot-password-form .login__area {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
+.forgot-password-form .login__form {
+  width: 100%;
+  max-width: 400px;
+}
+
+.forgot-password-form .login__content {
+  width: 100%;
+}
+
+.forgot-password-form .login__title {
+  text-align: center;
+}
+
+.forgot-password-form .login__subtitle {
+  text-align: center;
+}
+
+.forgot-password-form .login__switch {
+  text-align: center;
+}
+
+/* Responsive design for forgot password */
+@media screen and (max-width: 768px) {
+  .forgot-password-container {
+    padding: 1rem;
+  }
+  
+  .forgot-password-form {
+    max-width: 100%;
+    padding: 2rem;
+  }
+}
 
