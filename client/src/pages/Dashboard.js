@@ -310,7 +310,21 @@ useEffect(() => {
             checked={isDark}
             onChange={() => setIsDark(prev => !prev)}
           />
-          <label htmlFor="theme-toggle" className="theme-toggle"></label>
+          <label htmlFor="theme-toggle" className="theme-toggle">
+            {/* Sun Image (Light Mode) */}
+              <img
+                src="/images/sun-icon.png"
+                alt="Sun"
+                className={`icon-sun ${isDark ? 'hidden' : ''}`}
+              />
+
+              {/* Moon Image (Dark Mode) */}
+              <img
+                src="/images/moon-icon.png"
+                alt="Moon"
+                className={`icon-moon ${isDark ? '' : 'hidden'}`}
+              />
+          </label>
 
           <a href="#" className="notif">
             {/* <i className='bx bx-bell'></i>

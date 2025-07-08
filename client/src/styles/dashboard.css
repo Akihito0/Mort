@@ -306,6 +306,30 @@ body{
     border-radius: 25px;
 }
 
+.theme-toggle .hidden {
+  opacity: 0;
+}
+
+/* Sun Image */
+.icon-sun {
+  width: 15px;
+  height: 15px;
+  position: absolute;
+  left: 5px;
+  top: 5px;
+  transition: opacity 0.3s ease;
+}
+
+/* Moon Image */
+.icon-moon {
+  width: 20px;
+  height: 20px;
+  position: absolute;
+  right: 2px;
+  top: 2px;
+  transition: opacity 0.3s ease;
+}
+
 .content nav .theme-toggle::before{
     content: "";
     position: absolute;
