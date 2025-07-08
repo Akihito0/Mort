@@ -283,7 +283,7 @@ useEffect(() => {
             <span className="count">12</span> */}
             <NotificationPanel />
           </a>
-          <a href="#" className="profile">
+          <a href="#" className="profile" onClick={(e) => { e.preventDefault(); handleNavClick('settings'); }}>
             {/* <img src="/images/logo.png" alt="Profile" /> */}
             <img src={profileImage} alt="Profile" />
           </a>
