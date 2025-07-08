@@ -48,6 +48,46 @@ const NoteCard = ({ note, onView, onDelete, onUseAsContext }) => {
         />
       )}
 
+      {/* Tags Display */}
+      {note.tags && note.tags.length > 0 && (
+        <div className="note-tags" style={{ marginTop: '8px' }}>
+          {note.tags.slice(0, 3).map((tag, index) => (
+            <span
+              key={index}
+              className="tag"
+              style={{
+                display: 'inline-block',
+                backgroundColor: '#e3f2fd',
+                color: '#1976d2',
+                fontSize: '10px',
+                padding: '2px 6px',
+                borderRadius: '12px',
+                marginRight: '4px',
+                marginBottom: '2px',
+                fontWeight: '500'
+              }}
+            >
+              {tag}
+            </span>
+          ))}
+          {note.tags.length > 3 && (
+            <span
+              style={{
+                display: 'inline-block',
+                backgroundColor: '#f5f5f5',
+                color: '#666',
+                fontSize: '10px',
+                padding: '2px 6px',
+                borderRadius: '12px',
+                fontWeight: '500'
+              }}
+            >
+              +{note.tags.length - 3}
+            </span>
+          )}
+        </div>
+      )}
+
       <button
         onClick={(e) => {
           e.stopPropagation();

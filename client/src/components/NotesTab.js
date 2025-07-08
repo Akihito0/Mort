@@ -16,16 +16,38 @@ function NotesTab({ notes, setNotes, chatContext, setChatContext }) {
     return saved ? JSON.parse(saved) : [];
   });
   const [addingNote, setAddingNote] = useState(false);
-  const [newNote, setNewNote] = useState({ title: '', content: '' });
+  const [newNote, setNewNote] = useState({ title: '', content: '', tags: [] });
+  const [newNoteTagInput, setNewNoteTagInput] = useState('');
+  const [editingNoteTagInput, setEditingNoteTagInput] = useState('');
   const [flashcards, setFlashcards] = useState(() => {
     const saved = localStorage.getItem('flashcards');
     return saved ? JSON.parse(saved) : [];
   });
   const [viewingFlashcardSet, setViewingFlashcardSet] = useState(null);
 
+  // Tag filtering state
+  const [selectedTag, setSelectedTag] = useState('all');
+  const [allTags, setAllTags] = useState([]);
+
   // Spotify embed state
   const [spotifyUrl, setSpotifyUrl] = useState('');
   const [embedUrl, setEmbedUrl] = useState('https://open.spotify.com/embed/playlist/37i9dQZF1DX3PFzdbtx1Us?utm_source=generator');
+
+  // Extract all unique tags from notes
+  useEffect(() => {
+    const tags = new Set();
+    notes.forEach(note => {
+      if (note.tags && Array.isArray(note.tags)) {
+        note.tags.forEach(tag => tags.add(tag));
+      }
+    });
+    setAllTags(Array.from(tags).sort());
+  }, [notes]);
+
+  // Filter notes based on selected tag
+  const filteredNotes = selectedTag === 'all' 
+    ? notes 
+    : notes.filter(note => note.tags && note.tags.includes(selectedTag));
 
   const generateQuiz = async (textToUse) => {
     const res = await fetch('https://reactmort-server.onrender.com/generate-quiz', {
@@ -117,6 +139,40 @@ function NotesTab({ notes, setNotes, chatContext, setChatContext }) {
     .filter(line => line.length > 0)  
     .join('\n\n');                   
 };
+
+  // Parse tags from string input
+  const parseTags = (tagString) => {
+    if (!tagString) return [];
+    return tagString
+      .split(',')
+      .map(tag => tag.trim())
+      .filter(tag => tag.length > 0)
+      .map(tag => tag.toLowerCase());
+  };
+
+  // Handle tag input change
+  const handleTagInputChange = (value, isNewNote = true) => {
+    if (isNewNote) {
+      setNewNoteTagInput(value);
+    } else {
+      setEditingNoteTagInput(value);
+    }
+  };
+
+  // Parse tags when saving
+  const parseAndSaveTags = (isNewNote = true) => {
+    const tagInput = isNewNote ? newNoteTagInput : editingNoteTagInput;
+    const tags = tagInput ? parseTags(tagInput) : [];
+    
+    if (isNewNote) {
+      setNewNote({ ...newNote, tags });
+    } else {
+      setEditingNote({ ...editingNote, tags });
+    }
+    
+    return tags; // Return the parsed tags
+  };
+
   // Load notes from Firestore on mount
   useEffect(() => {
   const fetchNotes = async () => {
@@ -132,6 +188,7 @@ function NotesTab({ notes, setNotes, chatContext, setChatContext }) {
         id: doc.id,
         ...data,
         content: formatNoteContent(data.content),
+        tags: data.tags || []
       };
     });
 
@@ -144,19 +201,19 @@ function NotesTab({ notes, setNotes, chatContext, setChatContext }) {
   const handleAddNote = async() => {
     if (!newNote.title || !newNote.content) return alert('Title and content are required.');
 
+    // Parse tags before saving
+    const parsedTags = parseAndSaveTags(true);
+
     const user = auth.currentUser;
     if (!user) return;
     const displayName = user.displayName || user.uid;
 
-    // const newEntry = { id: Date.now(), ...newNote };
-    // setNotes(prev => [...prev, newEntry]);
-    // setNewNote({ title: '', content: '' });
-    // setAddingNote(false);
     try {
     const createdAt = new Date(); // current timestamp
     const docRef = await addDoc(collection(db, 'Mort-Notes', displayName, 'Notes'), {
       title: newNote.title,
       content: newNote.content,
+      tags: parsedTags,
       created: createdAt
     });
 
@@ -164,11 +221,13 @@ function NotesTab({ notes, setNotes, chatContext, setChatContext }) {
       id: docRef.id,
       title: newNote.title,
       content: formatNoteContent(newNote.content),
+      tags: parsedTags,
       created: createdAt.toISOString()
     };
 
     setNotes(prev => [...prev, addedNote]);
-    setNewNote({ title: '', content: '' });
+    setNewNote({ title: '', content: '', tags: [] });
+    setNewNoteTagInput('');
     setAddingNote(false);
   } catch (error) {
     console.error('Error adding note:', error);
@@ -216,10 +275,28 @@ function NotesTab({ notes, setNotes, chatContext, setChatContext }) {
           <span>{new Date().toLocaleDateString()}</span>
         </div>
 
+        {/* Tag Filter */}
+        <div className="tag-filter">
+          <label htmlFor="tag-select">Filter by tag:</label>
+          <select 
+            id="tag-select"
+            value={selectedTag} 
+            onChange={(e) => setSelectedTag(e.target.value)}
+            className="tag-select"
+          >
+            <option value="all">All Notes ({notes.length})</option>
+            {allTags.map(tag => (
+              <option key={tag} value={tag}>
+                {tag} ({notes.filter(note => note.tags && note.tags.includes(tag)).length})
+              </option>
+            ))}
+          </select>
+        </div>
+
         <div className="card">
           <h3>📚 Saved Notes</h3>
           <NoteGrid
-            notes={notes}
+            notes={filteredNotes}
             onView={setViewingNote}
             onDelete={handleDeleteNote}
             onReorder={setNotes}
@@ -339,10 +416,10 @@ function NotesTab({ notes, setNotes, chatContext, setChatContext }) {
               }}
             />
 
-
             <div className="btn-group">
               <button className="btn" onClick={() => {
                 setEditingNote(viewingNote);
+                setEditingNoteTagInput(viewingNote.tags ? viewingNote.tags.join(', ') : '');
                 setViewingNote(null);
               }}>✏️ Edit</button>
               <button className="btn" onClick={() => generateQuiz(viewingNote.content)}>🧠 Quiz</button>
@@ -360,35 +437,57 @@ function NotesTab({ notes, setNotes, chatContext, setChatContext }) {
               value={editingNote.title}
               onChange={(e) => setEditingNote({ ...editingNote, title: e.target.value })}
               className="input full"
+              placeholder="Note Title"
             />
             <textarea
               rows={10}
               value={editingNote.content}
               onChange={(e) => setEditingNote({ ...editingNote, content: e.target.value })}
               className="input full"
+              placeholder="Write your note..."
+            />
+            <input
+              value={editingNoteTagInput}
+              onChange={(e) => handleTagInputChange(e.target.value, false)}
+              className="input full"
+              placeholder="Tags (comma-separated, e.g., math, science, homework)"
             />
             <div className="btn-group">
-              <button className="btn" onClick={async () => { const user = auth.currentUser;
-                  if (!user) return; const displayName = user.displayName || user.uid;
-                    try {
-                        await updateDoc(doc(db, 'Mort-Notes', displayName, 'Notes', editingNote.id), {
-                        title: editingNote.title,
-                        content: editingNote.content
-                    });
-                        setNotes(prev =>
-                          prev.map(note =>
-                            note.id === editingNote.id
-                              ? { ...editingNote, content: formatNoteContent(editingNote.content) }
-                              : note
-                          )
-                        );
-                        setEditingNote(null);
-                      } catch (error) {
-                        console.error('Error updating note:', error);
-                        alert('Failed to update note.');
-                      }
-                    }}
-                >✅ Save</button>
+              <button className="btn" onClick={async () => { 
+                // Parse tags before saving
+                const parsedTags = parseAndSaveTags(false);
+                
+                const user = auth.currentUser;
+                if (!user) return; 
+                const displayName = user.displayName || user.uid;
+                
+                // Create updated note with parsed tags
+                const updatedNote = {
+                  ...editingNote,
+                  tags: parsedTags
+                };
+                
+                try {
+                    await updateDoc(doc(db, 'Mort-Notes', displayName, 'Notes', editingNote.id), {
+                    title: editingNote.title,
+                    content: editingNote.content,
+                    tags: parsedTags
+                });
+                    setNotes(prev =>
+                      prev.map(note =>
+                        note.id === editingNote.id
+                          ? { ...updatedNote, content: formatNoteContent(editingNote.content) }
+                          : note
+                      )
+                    );
+                    setEditingNote(null);
+                    setEditingNoteTagInput('');
+                  } catch (error) {
+                    console.error('Error updating note:', error);
+                    alert('Failed to update note.');
+                  }
+                }}
+            >✅ Save</button>
               <button className="btn danger" onClick={() => setEditingNote(null)}>❌ Cancel</button>
             </div>
           </div>
@@ -411,6 +510,12 @@ function NotesTab({ notes, setNotes, chatContext, setChatContext }) {
               className="input full"
               value={newNote.content}
               onChange={(e) => setNewNote({ ...newNote, content: e.target.value })}
+            />
+            <input
+              placeholder="Tags (comma-separated, e.g., math, science, homework)"
+              className="input full"
+              value={newNoteTagInput}
+              onChange={(e) => handleTagInputChange(e.target.value, true)}
             />
             <div className="btn-group">
               <button className="btn" onClick={handleAddNote}>✅ Add</button>
