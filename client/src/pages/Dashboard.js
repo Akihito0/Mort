@@ -12,6 +12,7 @@ import { useNavigate } from 'react-router-dom';
 import NotificationPanel from '../components/NotificationPanel.js'; 
 import GlobalSearch from '../components/GlobalSearch.js';
 import CalendarView from '../components/HomePageCalendar.js';
+import SecretSpace from '../components/SecretSpace';
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -27,6 +28,7 @@ const Dashboard = () => {
   });
   const [recentActivities, setRecentActivities] = useState([]);
   const [chatContext, setChatContext] = useState(null);
+  const [showSecretTab, setShowSecretTab] = useState(false);
 
   useEffect(() => {
     document.body.classList.toggle('dark', isDark);
@@ -221,6 +223,16 @@ useEffect(() => {
   };
 }, []);
 
+useEffect(() => {
+  const handleKeyDown = (e) => {
+    if (e.ctrlKey && e.shiftKey && e.key.toLowerCase() === 'e') {
+      setShowSecretTab(prev => !prev);
+    }
+  };
+  window.addEventListener('keydown', handleKeyDown);
+  return () => window.removeEventListener('keydown', handleKeyDown);
+}, []);
+
   return (
     <div className="app-container">
       {/* Sidebar */}
@@ -255,12 +267,18 @@ useEffect(() => {
               <i className='bx bx-edit'></i>Quiz Maker
             </a>
           </li>
-
           <li className={activeTab === 'settings' ? 'active' : ''}>
             <a href="#" onClick={(e) => { e.preventDefault(); handleNavClick('settings'); }}>
               <i className='bx bx-cog'></i>Account
             </a>
           </li>
+          {showSecretTab && (
+            <li className={activeTab === 'secret' ? 'active' : ''}>
+              <a href="#" onClick={(e) => { e.preventDefault(); handleNavClick('secret'); }}>
+                <i className='bx bx-ghost'></i>Secret
+              </a>
+            </li>
+          )}
         </ul>
         <ul className="side-menu">
           <li>
@@ -460,6 +478,9 @@ useEffect(() => {
             <div className="settings-tab-wrapper">
               <Settings onPhotoUpdate={setProfileImage}/>
             </div>
+          )}
+          {activeTab === 'secret' && showSecretTab && (
+            <SecretSpace plantIdApiKey="xfiXGfoWdCIvYeDwXCUPJdYsHwDRJ6N9pICxkPw3emKwsdynJF" />
           )}
         </main>
       </div>
