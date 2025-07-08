@@ -35,6 +35,10 @@ const ChatbotWidget = ({ contextNote, onClearContext }) => {
     speechSynthesis.speak(utterance);
   };
 
+  const stopSpeaking = () => {
+    speechSynthesis.cancel();
+  };
+
   const startListening = () => {
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     if (!SpeechRecognition) return alert("Speech Recognition not supported.");
@@ -164,7 +168,13 @@ const ChatbotWidget = ({ contextNote, onClearContext }) => {
             <strong>M.O.R.T. Helper</strong>
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
               <button
-                onClick={() => setIsMuted((m) => !m)}
+                onClick={() => {
+                  const newMutedState = !isMuted;
+                  setIsMuted(newMutedState);
+                  if (newMutedState) {
+                    stopSpeaking();
+                  }
+                }}
                 style={{
                   background: 'transparent',
                   border: 'none',
