@@ -302,8 +302,8 @@ function Settings({ onPhotoUpdate }) {
         {showModal && (
           <div className="modal-overlay" onClick={() => setShowModal(false)}>
             <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-              <img src={userData.photoData || "images/logo.png"} alt="Full Profile" />
               <button onClick={() => setShowModal(false)} className="close-modal">×</button>
+              <img src={userData.photoData || "images/logo.png"} alt="Full Profile" />
             </div>
           </div>
         )}

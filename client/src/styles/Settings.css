@@ -75,7 +75,11 @@
 }
 
 .profile-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
   margin-bottom: 30px;
+  flex-direction: row;
 }
 
 .btn {
@@ -402,6 +406,16 @@ body.dark .password-modal input:focus {
     padding-left: 0;
     padding-top: 30px;
     margin-top: 30px;
+  }
+
+  .profile-actions {
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+  }
+  .profile-actions .btn {
+    width: auto;
+    max-width: 250px;
   }
 }
 body.dark .input-group input,
