@@ -23,6 +23,10 @@ function NotesTab({ notes, setNotes, chatContext, setChatContext }) {
   });
   const [viewingFlashcardSet, setViewingFlashcardSet] = useState(null);
 
+  // Spotify embed state
+  const [spotifyUrl, setSpotifyUrl] = useState('');
+  const [embedUrl, setEmbedUrl] = useState('https://open.spotify.com/embed/playlist/37i9dQZF1DX3PFzdbtx1Us?utm_source=generator');
+
   const generateQuiz = async (textToUse) => {
     const res = await fetch('https://reactmort-server.onrender.com/generate-quiz', {
       method: 'POST',
@@ -190,6 +194,20 @@ function NotesTab({ notes, setNotes, chatContext, setChatContext }) {
     }
   };
 
+  const handleSpotifySubmit = (e) => {
+    e.preventDefault();
+    if (!spotifyUrl) return;
+    // Extract the type and ID from the Spotify URL
+    const match = spotifyUrl.match(/spotify\.com\/(track|playlist|album)\/([a-zA-Z0-9]+)/);
+    if (match) {
+      const type = match[1];
+      const id = match[2];
+      setEmbedUrl(`https://open.spotify.com/embed/${type}/${id}?utm_source=generator`);
+    } else {
+      alert('Please enter a valid Spotify track, playlist, or album link.');
+    }
+  };
+
   return (
     <div className="main-container">
       <div className="todo-app">
@@ -217,10 +235,20 @@ function NotesTab({ notes, setNotes, chatContext, setChatContext }) {
       <div className="right-panel">
         <div className="task-status">
           <h3>Spotify</h3>
+          <form onSubmit={handleSpotifySubmit} style={{ marginBottom: '10px' }}>
+            <input
+              type="text"
+              placeholder="Paste Spotify playlist, song, or album link"
+              value={spotifyUrl}
+              onChange={e => setSpotifyUrl(e.target.value)}
+              style={{ width: '70%', marginRight: '5px' }}
+            />
+            <button type="submit" className="btn">Set</button>
+          </form>
           <div className="spotify-player">
             <iframe
               style={{ borderRadius: '12px' }}
-              src="https://open.spotify.com/embed/playlist/37i9dQZF1DX3PFzdbtx1Us?utm_source=generator"
+              src={embedUrl}
               width="100%"
               height="152"
               frameBorder="0"
