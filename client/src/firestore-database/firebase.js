@@ -35,13 +35,13 @@ import {
 } from "firebase/firestore";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyDGbdqTqALsXvs4tm98yL4-lEvsK00ssKw",
-  authDomain: "morts-database.firebaseapp.com",
-  projectId: "morts-database",
-  storageBucket: "morts-database.firebasestorage.app",
-  messagingSenderId: "981455480366",
-  appId: "1:981455480366:web:fa82e61c7b7e50a25161bf",
-  measurementId: "G-B8FHH4PGXM"
+  apiKey: "AIzaSyD_pC3jtVG3NS8w2ediJge36KvoUoXt2NU",
+  authDomain: "mort-2-database.firebaseapp.com",
+  projectId: "mort-2-database",
+  storageBucket: "mort-2-database.firebasestorage.app",
+  messagingSenderId: "274850816058",
+  appId: "1:274850816058:web:a77a8a4860d55894681503",
+  measurementId: "G-5WNEV79X79"
 };
 
 const app = initializeApp(firebaseConfig);
